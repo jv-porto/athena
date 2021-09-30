@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Pessoas - Responsáveis</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Alterar</h2>
+                <form action="{% url 'pessoas_responsaveis_alterar' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados básicos</h3>
+                        <div class="input-unit">
+                            <label for="id">ID <span>*</span></label>
+                            <input type="text" name="id" id="id" required readonly value="{{responsavel.id}}" pattern="[0-9]{9}r[0-9]{1,2}" size="12">
+                        </div>
+                        <div class="input-unit">
+                            <label for="name">Nome completo <span>*</span></label>
+                            <input type="text" name="name" id="name" required value="{{responsavel.nome}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="birthdate">Data de nascimento <span>*</span></label>
+                            <input type="date" name="birthdate" id="birthdate" required value="{{responsavel.data_nascimento|date:'Y-m-d'}}">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cpf">CPF <span>*</span></label>
+                            <input type="text" name="cpf" id="cpf" required value="{{responsavel.cpf}}" pattern="[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}" size="14">
+                        </div>
+                        <div class="input-unit">
+                            <label for="rg">RG <span>*</span></label>
+                            <input type="text" name="rg" id="rg" required value="{{responsavel.rg}}" pattern="[0-9]{2}.[0-9]{3}.[0-9]{3}-[0-9]{1}" size="12">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cellphone-number">Telefone celular <span>*</span></label>
+                            <input type="text" name="cellphone-number" id="cellphone-number" class="telephone" required value="{{responsavel.celular}}" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="phone-number">Telefone fixo</label>
+                            <input type="text" name="phone-number" id="phone-number" class="telephone" value="{{responsavel.telefone}}" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="email">E-mail <span>*</span></label>
+                            <input type="email" name="email" id="email" required value="{{responsavel.email}}" size="30">
+                        </div>
+<!--                        <div class="input-unit">-->
+<!--                            <label for="gender">Gênero <span>*</span></label>-->
+<!--                            <select name="gender" required>-->
+<!--                                <option value="homem">Homem</option>-->
+<!--                                <option value="mulher">Mulher</option>-->
+<!--                                <option value="nao-binario">Não-binário</option>-->
+<!--                                <option value="agenero">Agênero</option>-->
+<!--                                <option value="outro">Outro</option>-->
+<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="input-unit">-->
+<!--                            <label for="color">Cor <span>*</span></label>-->
+<!--                            <select name="color" required>-->
+<!--                                <option value="branca">Branca</option>-->
+<!--                                <option value="preta">Preta</option>-->
+<!--                                <option value="parda">Parda</option>-->
+<!--                                <option value="amarela">Amarela</option>-->
+<!--                                <option value="indigena">Indígena</option>-->
+<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+<!--                        <div class="input-unit">-->
+<!--                            <label for="marital-status">Estado civil <span>*</span></label>-->
+<!--                            <select name="marital-status" required>-->
+<!--                                <option value="solteiro">Solteiro(a)</option>-->
+<!--                                <option value="casado">Casado(a)/Mora com companheiro(a)</option>-->
+<!--                                <option value="divorciado">Divorciado(a)/Separado(a)</option>-->
+<!--                                <option value="viuvo">Viúvo(a)</option>-->
+<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
+<!--                            </select>-->
+<!--                        </div>-->
+                        <div class="input-unit">
+                            <label for="photo">Foto</label>
+                            <input type="file" name="photo" id="photo" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Endereço</h3>
+                        <div class="input-unit">
+                            <label for="postal-code">CEP <span>*</span></label>
+                            <input type="text" name="postal-code" id="postal-code" required value="{{responsavel.cep}}" pattern="[0-9]{5}-[0-9]{3}" size="9">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-street">Lougradouro <span>*</span></label>
+                            <input type="text" name="address-street" id="address-street" required value="{{responsavel.lougradouro}}" size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-number">Número <span>*</span></label>
+                            <input type="text" name="address-number" id="address-number" required value="{{responsavel.numero}}" pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-complements">Complemento</label>
+                            <input type="text" name="address-complements" id="address-complements" value="{{responsavel.complemento}}" size="10">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-neighborhood">Bairro <span>*</span></label>
+                            <input type="text" name="address-neighborhood" id="address-neighborhood" required value="{{responsavel.bairro}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-city">Cidade <span>*</span></label>
+                            <input type="text" name="address-city" id="address-city" required value="{{responsavel.cidade}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-state">Estado <span>*</span></label>
+                            <input type="text" name="address-state" id="address-state" required value="{{responsavel.estado}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-country">País <span>*</span></label>
+                            <input type="text" name="address-country" id="address-country" required value="{{responsavel.pais}}" size="20">
+                        </div>
+                    </div>
+                    <div class="form-section item-section-parent">
+                        <h3 class="light-title">Estudantes relacionados</h3>
+                        {% for estudante in responsavel.estudantes.all %}
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="student-id">Código <span>*</span></label>
+                                <input type="text" name="student-id" id="student-id" class="student-id" required disabled value="{{estudante.id}}" pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="student-name">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name" id="student-name" class="student-name" required disabled value="{{estudante.nome}}" size="35">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Dados de Acesso</h3>
+                        <div class="input-unit">
+                            <label for="username">Usuário <span>*</span></label>
+                            <input type="text" name="username" id="username" required disabled pattern="[a-zA-Z0-9._-]{5,20}" value="{{responsavel.usuario}}" title="O usuário deve ter entre 5 e 20 caracteres, podendo conter letras, números e alguns símbolos (_ - .)" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="password">Senha <span>*</span></label>
+                            <input type="password" name="password" id="password" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter no mínimo 8 caracteres, sendo pelo menos uma maiúscula, uma minúscula, um número e um símbolo" size="32">
+                        </div>
+                        <div class="input-unit">
+                            <label for="password-confirmation">Confirmação de Senha <span>*</span></label>
+                            <input type="password" name="password-confirmation" id="password-confirmation" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter de 8 a 32 caracteres, sendo pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo" size="32">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

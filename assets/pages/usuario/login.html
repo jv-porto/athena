@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt_BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="{% static 'files/athena_icon.svg' %}">
+        <title>Athena</title>
+        <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    </head>
+    <body class="login-screen-body">
+        <main class="login-screen">
+            <h1><img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena"></h1>
+            <div class="login">
+                <form action="{% url 'login' %}" method="post">
+                    {% csrf_token %}
+                    <h2 class="light-title">Login</h2>
+                    <div class="input-unit">
+                        <label for="username">Usuário</label>
+                        <input type="text" name="username" id="username" required>
+                    </div>
+                    <div class="input-unit">
+                        <label for="password">Senha</label>
+                        <input type="password" name="password" id="password" required>
+                    </div>
+                    <input type="submit" value="Entrar">
+                </form>
+                <!--<p>Ainda não possui uma conta? <a href="{% url 'signup' %}">Clique aqui</a></p>-->
+            </div>
+        </main>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>

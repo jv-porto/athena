@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Escolas</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="escolas.html" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Incluir</h2>
+                <form action="escolas.html" method="post">
+                    <h3 class="light-title">Dados básicos</h3>
+                    <div class="form-section">
+                        <div class="input-unit">
+                            <label for="contract-code">Código</label>
+                            <input type="text" name="contract-code" id="contract-code" pattern="[0-9]{6}" title="Um código de seis dígitos deve ser inserido" size="6">
+                        </div>
+                        <div class="input-unit">
+                            <label for="type">Tipo <span>*</span></label>
+                            <select name="type" id="type" required>
+                                <option value="Educacional">Educacional</option>
+                                <option value="Trabalho">Trabalho</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="start-date">Início <span>*</span></label>
+                            <input type="date" name="start-date" id="start-date" required>
+                        </div>
+                        <div class="input-unit">
+                            <label for="end-date">Término <span>*</span></label>
+                            <input type="date" name="end-date" id="end-date" required>
+                        </div>
+                        <div class="input-unit">
+                            <label for="value">Valor <span>*</span></label>
+                            <input type="text" name="value" id="value" required>
+                        </div>
+                        <div class="input-unit">
+                            <label for="digitalized-copy">Digitalização</label>
+                            <input type="file" name="digitalized-copy" id="digitalized-copy" accept="image/*, .pdf">
+                        </div>
+                    </div>
+                    <h3 class="light-title">Dados do Contrato</h3>
+                    <div class="form-section">
+                        <div class="input-unit">
+                            <label for="value">Valor</label>
+                            <input type="text" name="value" id="value">
+                        </div>
+                        contratante
+                        cpf contratante
+                        endereco
+                        numero
+                        bairro
+                        complemento
+                        cep
+                        aluno
+                        rg
+                        curso
+                        dias letivos (semana)
+                        horario letivo
+                        data inicial
+                        data final
+                        valor integral
+                        valor integral por extenso
+                        numero integral de parcelas
+                        valor integral das parcelas
+                        desconto percentual
+                        valor final
+                        numero final de parcelas
+                        valor final das parcelas
+                        valor final por extenso
+                        dia de pagamento
+                        inicio de pagamento
+                        juros
+                        correção diaria
+                        custo do material
+                        custo do material por extenso
+                        numero de parcelas
+                        custo das parcelas
+                        custo parcelas por extenso
+                        data final do cancelamento
+                        data da assinatura
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

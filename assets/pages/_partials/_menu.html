@@ -1,0 +1,65 @@
+{% load static %}
+<div class="menu">
+    <div class="link-section">
+        <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
+    </div>
+
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-administrativo">Administrativo</a>
+        <div class="dropdown-section">
+            <a href="{% url 'escolas' %}" class="body-black-text">Escolas</a>
+            <a class="body-black-text dropdown-button">Pessoas</a>
+            <div class="dropdown-section">
+                <a href="{% url 'pessoas_estudantes' %}" class="body-black-text">Estudantes</a>
+                <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text">Responsáveis</a>
+                <a href="{% url 'pessoas_colaboradores' %}" class="body-black-text">Colaboradores</a>
+            </div>
+            <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
+            <a href="{% url 'secretaria' %}" class="body-black-text">Secretaria</a>
+            <a href="{% url 'recepcao' %}" class="body-black-text">Recepção</a>
+            <a href="{% url 'administrativo_relatorios' %}" class="body-black-text">Relatórios</a>
+        </div>
+    </div>
+
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
+        <div class="dropdown-section">
+            <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
+            <a href="{% url 'disciplinas' %}" class="body-black-text">Disciplinas</a>
+            <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
+            <a href="{% url 'boletim' %}" class="body-black-text">Boletim</a>
+            <a href="{% url 'diario_de_classe' %}" class="body-black-text">Diário de Classe</a>
+            <a href="{% url 'sala_virtual' %}" class="body-black-text">Sala Virtual</a>
+            <a href="{% url 'vestibulares' %}" class="body-black-text">Vestibulares</a>
+            <a href="{% url 'pedagogico_relatorios' %}" class="body-black-text">Relatórios</a>
+        </div>
+    </div>
+
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-financeiro">Financeiro</a>
+        <div class="dropdown-section">
+            <a href="{% url 'bancos' %}" class="body-black-text">Bancos</a>
+            <a href="{% url 'movimentacoes' %}" class="body-black-text">Movimentações</a>
+            <a href="{% url 'financeiro_relatorios' %}" class="body-black-text">Relatórios</a>
+        </div>
+    </div>
+    
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
+        <div class="dropdown-section">
+            <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
+            <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            <a href="{% url 'assinatura' %}" class="body-black-text">Assinatura</a>
+        </div>
+    </div>
+</div>
+<div class="profile">
+    <a class="profile-image"><img src="{% static 'files/perfil_teste.jpeg' %}" alt="Imagem de perfil"></a>
+    <div class="profile-dropdown-section">
+        <a href="{% url 'perfil' %}" class="body-black-text">Perfil</a>
+        <a href="{% url 'preferencias' %}" class="body-black-text">Preferências</a>
+        <a href="{% url 'logout' %}" class="body-black-text">Logout</a>
+    </div>
+</div>
+</nav>
+</header>
