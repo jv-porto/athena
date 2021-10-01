@@ -1,0 +1,16 @@
+athena/__pycache__
+apps/administrativo/__pycache__
+apps/administrativo/documentos/__pycache__
+apps/api/__pycache__
+apps/financeiro/__pycache__
+apps/funcionalidades/__pycache__
+apps/index/__pycache__
+apps/institucional/__pycache__
+apps/pedagogico/__pycache__
+apps/usuario/__pycache__
+*.pyc
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

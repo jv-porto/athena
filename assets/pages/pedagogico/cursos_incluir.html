@@ -2,10 +2,10 @@
 {% load static %}
 {% block content %}
                 <div class="page-title">
-                    <h1 class="page-title-administrativo light-title">Escolas</h1>
+                    <h1 class="page-title-pedagogico light-title">Cursos</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="escolas.html" class="body-black-text page-actions-cancelar">Cancelar</a>
+                    <a href="{% url 'cursos' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
                 </div>
                 
                 {% include '_partials/_menu.html' %}
@@ -13,82 +13,12 @@
         <main>
             <div class="container-body">
                 <h2 class="title">Incluir</h2>
-                <form action="escolas.html" method="post">
-                    <div class="form-schools-include-data">
+                <form action="{% url 'cursos_incluir' %}" method="post">
+                    <div class="form-section">
                         <h3 class="light-title">Dados básicos</h3>
                         <div class="input-unit">
                             <label for="school-code">Código <span>*</span></label>
                             <input type="text" name="school-code" id="school-code" required pattern="[0-9]{4}" title="Um código de quatro dígitos deve ser inserido" size="4">
-                        </div>
-                        <div class="input-unit">
-                            <label for="cnpj">CNPJ <span>*</span></label>
-                            <input type="text" name="cnpj" id="cnpj" required pattern="[0-9]{14}" title="Digite apenas números" size="14">
-                        </div>
-                        <div class="input-unit">
-                            <label for="corporate-name">Razão social <span>*</span></label>
-                            <input type="text" name="corporate-name" id="corporate-name" required size="35">
-                        </div>
-                        <div class="input-unit">
-                            <label for="trading-name">Nome fantasia <span>*</span></label>
-                            <input type="text" name="trading-name" id="trading-name" required size="35">
-                        </div>
-                        <div class="input-unit">
-                            <label for="phone-number">Telefone <span>*</span></label>
-                            <input type="tel" name="phone-number" id="phone-number" required pattern="[0-9]{10,11}" title="Digite apenas números, e não se esqueça do DDD" size="11">
-                        </div>
-                        <div class="input-unit">
-                            <label for="email">E-mail <span>*</span></label>
-                            <input type="email" name="email" id="email" required size="30">
-                        </div>
-                        <div class="input-unit">
-                            <label for="website">Site</label>
-                            <input type="url" name="website" id="website" size="30">
-                        </div>
-                    </div>
-                    <div class="form-schools-include-address">
-                        <h3 class="light-title">Endereço</h3>
-                        <div class="input-unit">
-                            <label for="postal-code">CEP <span>*</span></label>
-                            <input type="text" name="postal-code" id="postal-code" required pattern="[0-9]{8}" title="Digite apenas números" size="8">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-street">Lougradouro <span>*</span></label>
-                            <input type="text" name="address-street" id="address-street" required size="30">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-number">Número <span>*</span></label>
-                            <input type="text" name="address-number" id="address-number" required pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-complements">Complemento</label>
-                            <input type="text" name="address-complements" id="address-complements" size="10">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-neighborhood">Bairro <span>*</span></label>
-                            <input type="text" name="address-neighborhood" id="address-neighborhood" required size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-city">Cidade <span>*</span></label>
-                            <input type="text" name="address-city" id="address-city" required size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-state">Estado <span>*</span></label>
-                            <input type="text" name="address-state" id="address-state" required size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="address-country">País <span>*</span></label>
-                            <input type="text" name="address-country" id="address-country" required size="20">
-                        </div>
-                    </div>
-                    <div class="form-schools-include-legal-representative">
-                        <h3 class="light-title">Responsável legal</h3>
-                        <div class="input-unit">
-                            <label for="legal-representative-code">Código <span>*</span></label>
-                            <input type="text" name="legal-representative-code" id="legal-representative-code" required size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="legal-representative-name">Nome completo</label>
-                            <input type="text" name="legal-representative-name" id="legal-representative-name" size="35">
                         </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">

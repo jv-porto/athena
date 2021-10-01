@@ -551,21 +551,3 @@ div .light-title strong.action-remove-item {
     padding-left: 1rem;
     cursor: pointer;
 }
-
-div.item-section-parent .light-title strong {
-    display: inline;
-}
-
-div.item-section-parent * {
-    display: block;
-}
-
-div.item-section-parent div.item-section div.input-unit {
-    display: inline-block;
-    padding-right: 1rem;
-    padding-bottom: 1rem;
-}
-
-div.item-section-parent div.item-section div.input-unit label span {
-    display: inline;
-}

@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-$%g)yz-9r8dedzc1ypo%0$10*^smomkx^^z7aoz3&2u22v7#$!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://athena.eba-wy5qf7kg.us-west-2.elasticbeanstalk.com/']
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'rest_framework',
 ]
 
 SITE_ID = 1

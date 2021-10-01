@@ -9,6 +9,10 @@ const modelo_monetario = document.querySelectorAll('.money')
 const conta_bancaria = document.querySelectorAll('#bank-account')
 const numero_endereco = document.querySelectorAll('#address-number')
 const codigo_contrato = document.querySelectorAll('#contract-code')
+const id_responsavel = document.querySelectorAll('.guardian-id')
+const desconto = document.querySelectorAll('#discount')
+const parcelas = document.querySelectorAll('#installments')
+const dia_pagamento = document.querySelectorAll('#payment-day')
 
 
 
@@ -101,6 +105,36 @@ for (const item of numero_endereco) {
 for (const item of codigo_contrato) {
     new Cleave(item, {
         blocks: [6],
+        numericOnly: true
+    })
+}
+
+for (const item of id_responsavel) {
+    new Cleave(item, {
+        blocks: [9, 2],
+        delimiters: ['r'],
+        numericOnly: true
+    })
+}
+
+for (const item of desconto) {
+    new Cleave(item, {
+        blocks: [2, 2],
+        delimiters: [','],
+        numericOnly: true
+    });
+}
+
+for (const item of parcelas) {
+    new Cleave(item, {
+        blocks: [2],
+        numericOnly: true
+    })
+}
+
+for (const item of dia_pagamento) {
+    new Cleave(item, {
+        blocks: [2],
         numericOnly: true
     })
 }

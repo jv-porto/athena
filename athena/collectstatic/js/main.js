@@ -49,7 +49,7 @@ for (const item of menuActionsId) {
     })
 }
 
-/*************** GET PERSON INFO ***************/
+/*************** GET STUDENT INFO ***************/
 const studentIdField = document.querySelectorAll('div.item-section-parent input.student-id')
 const studentNameField = document.querySelectorAll('div.item-section-parent input.student-name')
 for (let i = 0; i < studentIdField.length; i++) {
@@ -70,6 +70,32 @@ for (let i = 0; i < studentIdField.length; i++) {
                     studentNameField[i].value = data.nome
                     studentNameField[i].readOnly = true
                     studentNameField[i].tabIndex = '-1'
+                }
+            )
+    })
+}
+
+/*************** GET GUARDIAN INFO ***************/
+const guardianIdField = document.querySelectorAll('div.item-section-parent input.guardian-id')
+const guardianNameField = document.querySelectorAll('div.item-section-parent input.guardian-name')
+for (let i = 0; i < guardianIdField.length; i++) {
+    guardianIdField[i].addEventListener('blur', function () {
+        idValue = guardianIdField[i].value
+        const url = `${window.location.origin}/administrativo/pessoas/responsaveis/${idValue}`
+        const options = {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'content-type': 'application/json;charset=utf-8'
+            }
+        }
+        fetch(url, options).then(
+            response => response.json()
+            ).then(
+                data => {
+                    guardianNameField[i].value = data.nome
+                    guardianNameField[i].readOnly = true
+                    guardianNameField[i].tabIndex = '-1'
                 }
             )
     })

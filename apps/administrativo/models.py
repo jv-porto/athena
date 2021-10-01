@@ -10,6 +10,7 @@ class Escola(models.Model):
     telefone = models.CharField(max_length=13)
     celular = models.CharField(max_length=13, blank=True)
     site = models.CharField(max_length=200, blank=True)
+    logo = models.ImageField(upload_to='escolas/logos/%Y', blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)
@@ -23,6 +24,20 @@ class Escola(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __int__(self):
+        return self.id
+
+class Contrato(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    tipo = models.CharField(max_length=50)
+    inicio_vigencia = models.DateField()
+    termino_vigencia = models.DateField()
+    valor = models.CharField(max_length=20)
+    arquivo = models.FileField(upload_to='contratos/arquivo/%Y/%m')
+    digitalizacao = models.ImageField(upload_to='contratos/digitalizacao/%Y/%m', blank=True)
+    data_assinatura = models.DateField()
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
         return self.id
 
 class PessoaEstudante(models.Model):
@@ -48,6 +63,7 @@ class PessoaEstudante(models.Model):
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
     pais = models.CharField(max_length=200)
+    contratos = models.ManyToManyField(Contrato, related_name='estudante')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
@@ -58,7 +74,7 @@ class PessoaEstudante(models.Model):
 class PessoaResponsavel(models.Model):
     id = models.CharField(primary_key=True, max_length=12)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    estudantes = models.ManyToManyField(PessoaEstudante, related_name='responsavel')
+    estudantes = models.ManyToManyField(PessoaEstudante, related_name='responsaveis')
     nome = models.CharField(max_length=200)
     data_nascimento = models.DateField()
     cpf = models.CharField(max_length=14)
@@ -78,6 +94,7 @@ class PessoaResponsavel(models.Model):
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
     pais = models.CharField(max_length=200)
+    contratos = models.ManyToManyField(Contrato, related_name='responsavel')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
@@ -117,21 +134,10 @@ class PessoaColaborador(models.Model):
     banco = models.CharField(max_length=4)
     agencia = models.CharField(max_length=5)
     conta = models.CharField(max_length=12)
+    contratos = models.ManyToManyField(Contrato, related_name='colaborador')
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.id
-
-class Contrato(models.Model):
-    id = models.CharField(primary_key=True, max_length=10)
-    tipo = models.CharField(max_length=50)
-    inicio_vigencia = models.DateField()
-    termino_vigencia = models.DateField()
-    valor = models.CharField(max_length=20)
-    imagem = models.ImageField(upload_to='contratos/%Y/%m', blank=True)
-    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
-    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.id

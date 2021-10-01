@@ -1,7 +1,9 @@
+from .contratos import contrato_educacional
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
-from .models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, Contrato
+from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, Contrato
+from pedagogico.models import Curso
 
 def empty_input(input):
     if not input.strip():
@@ -34,6 +36,8 @@ def escolas_incluir(request):
             telefone = request.POST['phone-number']
             celular = request.POST['cellphone-number']
             site = request.POST['website']
+            if 'logo' in request.FILES:
+                logo = request.FILES['logo']
             cep = request.POST['postal-code']
             lougradouro = request.POST['address-street']
             numero = request.POST['address-number']
@@ -58,7 +62,7 @@ def escolas_incluir(request):
 
             user = User.objects.create_user(first_name=nome_fantasia, username=usuario, email=email, password=senha)
             user.save()
-            escola = Escola.objects.create(id=escola_id, cnpj=cnpj, razao_social=razao_social, nome_fantasia=nome_fantasia, email=email, telefone=telefone, celular=celular, site=site, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, usuario=user)
+            escola = Escola.objects.create(id=escola_id, cnpj=cnpj, razao_social=razao_social, nome_fantasia=nome_fantasia, email=email, telefone=telefone, celular=celular, site=site, logo=logo, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, usuario=user)
             escola.save()
             return redirect('escolas')
         else:
@@ -95,6 +99,8 @@ def escolas_alterar(request):
             escola.telefone = request.POST['phone-number']
             escola.celular = request.POST['cellphone-number']
             escola.site = request.POST['website']
+            if 'logo' in request.FILES:
+                escola.logo = request.FILES['logo']
             escola.cep = request.POST['postal-code']
             escola.lougradouro = request.POST['address-street']
             escola.numero = request.POST['address-number']
@@ -132,6 +138,22 @@ def escolas_excluir(request, id):
 
 
 
+def find_estudante(request, id):
+    if request.user.is_authenticated:
+        found_pessoa = get_object_or_404(PessoaEstudante, pk=id)
+        data = {
+            'id': found_pessoa.id,
+            'escola_id': found_pessoa.escola.id,
+            'matricula': found_pessoa.matricula,
+            'nome': found_pessoa.nome,
+            'data_nascimento': found_pessoa.data_nascimento,
+            'usuario_username': found_pessoa.usuario.username,
+            'datahora_ultima_alteracao': found_pessoa.datahora_ultima_alteracao,
+            'datahora_cadastro': found_pessoa.datahora_cadastro,
+            'is_active': found_pessoa.is_active,
+        }
+        return JsonResponse(data)
+
 def pessoas_estudantes(request):
     if request.user.is_authenticated:
         pessoas = PessoaEstudante.objects.filter(is_active=True).order_by('datahora_cadastro')
@@ -139,6 +161,21 @@ def pessoas_estudantes(request):
         return render(request, 'administrativo/pessoas_estudantes.html', data)
     else:
         return redirect('login')
+
+def find_responsavel(request, id):
+    if request.user.is_authenticated:
+        found_pessoa = get_object_or_404(PessoaResponsavel, pk=id)
+        data = {
+            'id': found_pessoa.id,
+            'escola_id': found_pessoa.escola.id,
+            'nome': found_pessoa.nome,
+            'data_nascimento': found_pessoa.data_nascimento,
+            'usuario_username': found_pessoa.usuario.username,
+            'datahora_ultima_alteracao': found_pessoa.datahora_ultima_alteracao,
+            'datahora_cadastro': found_pessoa.datahora_cadastro,
+            'is_active': found_pessoa.is_active,
+        }
+        return JsonResponse(data)
 
 def pessoas_responsaveis(request):
     if request.user.is_authenticated:
@@ -155,22 +192,6 @@ def pessoas_colaboradores(request):
         return render(request, 'administrativo/pessoas_colaboradores.html', data)
     else:
         return redirect('login')
-
-def find_estudante(request, id):
-    if request.user.is_authenticated:
-        found_pessoa = get_object_or_404(PessoaEstudante, pk=id)
-        data = {
-            'id': found_pessoa.id,
-            'escola_id': found_pessoa.escola.id,
-            'matricula': found_pessoa.matricula,
-            'nome': found_pessoa.nome,
-            'data_nascimento': found_pessoa.data_nascimento,
-            'usuario_username': found_pessoa.usuario.username,
-            'datahora_ultima_alteracao': found_pessoa.datahora_ultima_alteracao,
-            'datahora_cadastro': found_pessoa.datahora_cadastro,
-            'is_active': found_pessoa.is_active,
-        }
-        return JsonResponse(data)
 
 def pessoas_estudantes_incluir(request):
     if request.user.is_authenticated:
@@ -227,7 +248,7 @@ def pessoas_responsaveis_incluir(request):
         if request.method == 'POST':
             first_student_id = str(request.POST['student-id-0'])
             first_estudante = get_object_or_404(PessoaEstudante, pk=first_student_id)
-            id = str(first_student_id) + 'r' + str(first_estudante.responsavel.all().count()+1)
+            id = str(first_student_id) + 'r' + str(first_estudante.responsaveis.all().count()+1)
             escola = request.user.escola
             nome = request.POST['name']
             data_nascimento = request.POST['birthdate']
@@ -374,7 +395,7 @@ def pessoas_estudantes_alterar(request):
             """estudante.genero = request.POST['gender']
             estudante.cor = request.POST['color']
             estudante.estado_civil = request.POST['marital-status']"""
-            if 'foto' in request.FILES:
+            if 'photo' in request.FILES:
                 estudante.foto = request.FILES['photo']
             estudante.cep = request.POST['postal-code']
             estudante.lougradouro = request.POST['address-street']
@@ -428,7 +449,7 @@ def pessoas_responsaveis_alterar(request):
             """responsavel.genero = request.POST['gender']
             responsavel.cor = request.POST['color']
             responsavel.estado_civil = request.POST['marital-status']"""
-            if 'foto' in request.FILES:
+            if 'photo' in request.FILES:
                 responsavel.foto = request.FILES['photo']
             responsavel.cep = request.POST['postal-code']
             responsavel.lougradouro = request.POST['address-street']
@@ -483,7 +504,7 @@ def pessoas_colaboradores_alterar(request):
             """colaborador.genero = request.POST['gender']
             colaborador.cor = request.POST['color']
             colaborador.estado_civil = request.POST['marital-status']"""
-            if 'foto' in request.FILES:
+            if 'photo' in request.FILES:
                 colaborador.foto = request.FILES['photo']
             colaborador.cep = request.POST['postal-code']
             colaborador.lougradouro = request.POST['address-street']
@@ -557,7 +578,7 @@ def pessoas_colaboradores_excluir(request, id):
 
 def contratos(request):
     if request.user.is_authenticated:
-        contratos = Contrato.objects.filter(is_active=True).order_by('datahora_cadastro')
+        contratos = Contrato.objects.order_by('-datahora_cadastro')
         data = {'contratos': contratos}
         return render(request, 'administrativo/contratos.html', data)
     else:
@@ -565,7 +586,78 @@ def contratos(request):
 
 def contratos_incluir(request):
     if request.user.is_authenticated:
-        return render(request, 'administrativo/contratos_incluir.html')
+        if request.method == 'POST':
+            escola = request.user.escola
+            id = request.POST['contract-code']
+            tipo = request.POST['type']
+            id_curso = request.POST['course-id']
+            curso = Curso.objects.get(pk=id_curso)
+            inicio_vigencia = request.POST['start-date']
+            termino_vigencia = request.POST['end-date']
+            valor = request.POST['value']
+            arquivo
+            data_assinatura = request.POST['sign-date']
+
+            id_estudante = request.POST['student-id']
+            estudante = PessoaEstudante.objects.get(pk=id_estudante)
+            id_responsavel = request.POST['guardian-id']
+            responsavel = PessoaResponsavel.objects.get(pk=id_responsavel)
+            estudante_contratante = request.POST['is-student-contractor']
+            desconto = request.POST['discount']
+            parcelas = request.POST['installments']
+            dia_pagamento = request.POST['payment-day']
+            mes_inicio_pagamento = request.POST['payment-start'].month
+            ano_inicio_pagamento = request.POST['payment-start'].year
+
+            if estudante_contratante is False:
+                contratante = responsavel
+            elif estudante_contratante is True:
+                contratante = estudante
+
+            variaveis_dict = {
+                'escola': escola,
+                'escola_logo': escola.logo,
+                'escola_cnpj': escola.cnpj,
+                'contratante_nome': contratante.nome,
+                'contratante_cpf': contratante.cpf,
+                'contratante_rg': contratante.rg,
+                'endereco_lougradouro': contratante.lougradouro,
+                'endereco_numero': contratante.numero,
+                'endereco_complemento': contratante.complemento,
+                'endereco_bairro': contratante.bairro,
+                'endereco_cidade': contratante.cidade,
+                'endereco_estado': contratante.estado,
+                'endereco_cep': contratante.cep,
+                'estudante_nome': estudante.nome,
+                'estudante_cpf': estudante.cpf,
+                'estudante_rg': estudante.rg,
+                'curso_descricao': curso.descricao,
+                'dias_letivos': 0,
+                'horario_letivo': 0,
+                'data_inicial': 0,
+                'data_final': 0,
+                'valor_integral': 0,
+                'valor_integral_extenso': 0,
+                'numero_integral_parcelas': 0,
+                'valor_integral_parcelas': 0,
+                'percentual_desconto': 0,
+                'valor_final': 0,
+                'numero_final_parcelas': 0,
+                'valor_final_parcelas': 0,
+                'valor_final_extenso': 0,
+                'dia_pagamento': 0,
+                'inicio_pagamento': 0,
+                'custo_material': 0,
+                'custo_material_extenso': 0,
+                'numero_parcelas_material': 0,
+                'custo_parcelas_material': 0,
+                'custo_parcelas_material_extenso': 0,
+                'data_final_cancelamento': 0,
+                'data_assinatura': 0,
+            }
+            contrato_educacional(variaveis_dict)
+        else:
+            return render(request, 'administrativo/contratos_incluir.html')
     else:
         return redirect('login')
 
