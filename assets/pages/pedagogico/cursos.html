@@ -14,5 +14,52 @@
                 {% include '_partials/_menu.html' %}
 
         <main>
+            <div class="container-body">
+                {% if cursos %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Descrição</th>
+                            <th class="light-subtitle">Periodicidade</th>
+                            <th class="light-subtitle">Coordenador</th>
+                            <th class="light-subtitle">Disciplinas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if cursos %}
+                        {% for curso in cursos %}
+                        <tr>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ curso.id }}" value="{{ curso.id }}"></td>
+                            <td>{{ curso.id }}</td>
+                            <td>{{ curso.descricao }}</td>
+                            <td>{{ curso.periodicidade }}</td>
+                            <td>{{ curso.coordenador }}</td>
+                            <td>
+                                {% if curso.disciplinas.0 %}{{ curso.disciplinas.0 }}{% endif %}
+                                {% if curso.disciplinas.1 %}/ {{ curso.disciplinas.1 }}{% endif %}
+                                {% if curso.disciplinas.2 %}/ {{ curso.disciplinas.2 }}{% endif %}
+                                {% if curso.disciplinas.3 %}/ {{ curso.disciplinas.3 }}{% endif %}
+                                {% if curso.disciplinas.4 %}/ {{ curso.disciplinas.4 }}{% endif %}
+                                {% if curso.disciplinas.5 %}/ {{ curso.disciplinas.5 }}{% endif %}
+                                {% if curso.disciplinas.6 %}/ {{ curso.disciplinas.6 }}{% endif %}
+                                {% if curso.disciplinas.7 %}/ {{ curso.disciplinas.7 }}{% endif %}
+                                {% if curso.disciplinas.8 %}/ {{ curso.disciplinas.8 }}{% endif %}
+                                {% if curso.disciplinas.9 %}/ {{ curso.disciplinas.9 }}{% endif %}
+                                {% if curso.disciplinas.10 %}/ {{ curso.disciplinas.10 }}{% endif %}
+                                {% if curso.disciplinas.11 %}/ {{ curso.disciplinas.11 }}{% endif %}
+                                {% if curso.disciplinas.12 %}/ {{ curso.disciplinas.12 }}{% endif %}
+                                {% if curso.disciplinas.13 %}/ {{ curso.disciplinas.13 }}{% endif %}
+                                {% if curso.disciplinas.14 %}/ {{ curso.disciplinas.14 }}{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
         </main>
 {% endblock %}

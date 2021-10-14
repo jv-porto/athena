@@ -15,6 +15,7 @@
 
         <main>
             <div class="container-body">
+                {% include '_partials/_alertas.html' %}
                 {% if escolas %}
                 <h2 class="title">Lista</h2>
                 <table class="list-db-items">
@@ -26,7 +27,6 @@
                             <th class="light-subtitle">E-mail</th>
                             <th class="light-subtitle">Telefone</th>
                             <th class="light-subtitle">Celular</th>
-                            <th class="light-subtitle">Site</th>
                             <th class="light-subtitle">Cidade</th>
                             <th class="light-subtitle">Estado</th>
                         </tr>
@@ -41,7 +41,6 @@
                             <td>{{ escola.email }}</td>
                             <td>{{ escola.telefone }}</td>
                             <td>{{ escola.celular }}</td>
-                            <td>{{ escola.site }}</td>
                             <td>{{ escola.cidade}}</td>
                             <td>{{ escola.estado }}</td>
                         </tr>

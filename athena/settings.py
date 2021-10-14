@@ -20,25 +20,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$%g)yz-9r8dedzc1ypo%0$10*^smomkx^^z7aoz3&2u22v7#$!'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['athena.thrucode.com.br', '127.0.0.1']
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+
+if not DEBUG:
+    SECRET_KEY = os.environ['SECRET_KEY']
+else:
+    SECRET_KEY = '8IyEHaGkOvDOMgmk0Ky4PvU8RXqnypBsIFcR0SJxdZnZcAFLcpT6tWJpd2Cd'
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'index',
-    'administrativo',
-    'pedagogico',
-    'financeiro',
-    'institucional',
-    'usuario',
-    'funcionalidades',
+    'debug_permissions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +45,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'rest_framework',
+    'django_filters',
+    'storages',
+    'index',
+    'administrativo',
+    'pedagogico',
+    'financeiro',
+    'institucional',
+    'usuario',
+    'funcionalidades',
+    'api',
 ]
 
 SITE_ID = 1
@@ -84,19 +94,33 @@ WSGI_APPLICATION = 'athena.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'athena',
-        'USER': 'django',
-        'PASSWORD': '#w%&QPdcVa%wBsE2hJRW5htlfI4Rqg#v9TqoeRmFQWTqQQ$0Mh',
-        'HOST': 'thrucode.cgffddxe4wvm.us-east-1.rds.amazonaws.com',
+if not DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'athena',
+            'USER': 'django',
+            'PASSWORD': os.environ['DB_PASSWORD'],
+            'HOST': 'thrucode.cgffddxe4wvm.us-east-1.rds.amazonaws.com',
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'athena',
+            'USER': 'django',
+            'PASSWORD': '#w%&QPdcVa%wBsE2hJRW5htlfI4Rqg#v9TqoeRmFQWTqQQ$0Mh',
+            'HOST': 'thrucode.cgffddxe4wvm.us-east-1.rds.amazonaws.com',
+            'PORT': '5432',
+        }
+    }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+# Authentication
+
+LOGIN_URL = 'login'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -113,6 +137,63 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#AUTHENTICATION_BACKENDS = [
+#    'django.contrib.auth.backends.RemoteUserBackend',
+#]
+
+CSRF_COOKIE_SECURE = True
+
+SESSION_COOKIE_SECURE = True
+
+
+# Email
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = 'smtp.zoho.com'
+
+EMAIL_HOST_USER = 'hermes@thrucode.com.br'
+DEFAULT_FROM_EMAIL = 'hermes@thrucode.com.br'
+EMAIL_HOST_PASSWORD = 'unHsJHd5N3sh'
+
+"""EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
+
+if not DEBUG:
+    EMAIL_HOST_USER = os.environ['EMAIL_USER']
+    DEFAULT_FROM_EMAIL = os.environ['EMAIL_USER']
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
+else:
+    EMAIL_HOST_USER = 'AKIA5Q2ODCHCTTILUEMB'
+    DEFAULT_FROM_EMAIL = 'athena@hermes.thrucode.com'
+    EMAIL_HOST_PASSWORD = 'BOxXV2lKmauZDubG3zaQo0Bj7FGsXJUiJRc1rhtpYgVj'"""
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_USE_SSL = False
+
+
+# REST Framework
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',
+        'rest_framework.parsers.FormParser',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -128,26 +209,59 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'assets/static')
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'athena/collectstatic')
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Media folder
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'assets/media')
-MEDIA_URL = '/media/'
 
 # Apps folder
 
 PROJECT_ROOT = os.path.dirname(__file__)
 sys.path.insert(0, os.path.join(PROJECT_ROOT, '../apps'))
+
+
+# Messages
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success',
+}
+
+
+"""# Max Data
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000"""
+
+
+# DJANGO STORAGES - S3
+
+if not DEBUG:
+    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+    AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
+else:
+    AWS_ACCESS_KEY_ID = 'AKIA5Q2ODCHCQVIGRYNT'
+    AWS_SECRET_ACCESS_KEY = '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'
+    AWS_STORAGE_BUCKET_NAME = 'thrucodeathenastatic'
+    AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+
+STATIC_LOCATION = 'static'
+STATICFILES_STORAGE = 'athena.custom_storages.StaticStorage'
+STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, STATIC_LOCATION)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'assets/collectstatic')
+]
+
+MEDIA_LOCATION = 'media'
+DEFAULT_FILE_STORAGE = 'athena.custom_storages.MediaStorage'
+MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, MEDIA_LOCATION)
+
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = None
