@@ -15,7 +15,7 @@
 
         <main>
             <div class="container-body">
-                {% if pessoas %}
+                {% if estudantes %}
                 <h2 class="title">Lista</h2>
                 <table class="list-db-items">
                     <thead>
@@ -29,15 +29,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if pessoas %}
-                        {% for pessoa in pessoas %}
+                        {% if estudantes %}
+                        {% for estudante in estudantes %}
                         <tr>
-                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ pessoa.id }}" value="{{ pessoa.id }}"></td>
-                            <td>{{ pessoa.id }}</td>
-                            <td>{{ pessoa.nome }}</td>
-                            <td>{{ pessoa.celular }}</td>
-                            <td>{{ pessoa.telefone }}</td>
-                            <td>{{ pessoa.email }}</td>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ estudante.id }}" value="{{ estudante.id }}"></td>
+                            <td>{{ estudante.id }}</td>
+                            <td>{{ estudante.nome }}</td>
+                            <td>{{ estudante.celular }}</td>
+                            <td>{{ estudante.telefone }}</td>
+                            <td>{{ estudante.email }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}

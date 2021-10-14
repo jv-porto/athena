@@ -13,6 +13,7 @@
         <main>
             <div class="container-body">
                 <h2 class="title">Incluir</h2>
+                {% include '_partials/_alertas.html' %}
                 <form action="{% url 'pessoas_estudantes_incluir' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
@@ -74,10 +75,10 @@
                         <div class="input-unit">
                             <label for="marital-status">Estado civil <span>*</span></label>
                             <select name="marital-status" required>
-                                <option value="Solteiro">Solteiro(a)</option>
-                                <option value="Casado">Casado(a)/Mora com companheiro(a)</option>
-                                <option value="Divorciado">Divorciado(a)/Separado(a)</option>
-                                <option value="Viúvo">Viúvo(a)</option>
+                                <option value="Solteiro(a)">Solteiro(a)</option>
+                                <option value="Casado(a)">Casado(a)/Mora com companheiro(a)</option>
+                                <option value="Divorciado(a)">Divorciado(a)/Separado(a)</option>
+                                <option value="Viúvo(a)">Viúvo(a)</option>
                                 <option value="Prefere não responder" selected>Prefere não responder</option>
                             </select>
                         </div>
@@ -119,21 +120,6 @@
                         <div class="input-unit">
                             <label for="address-country">País <span>*</span></label>
                             <input type="text" name="address-country" id="address-country" required size="20">
-                        </div>
-                    </div>
-                    <div class="form-section">
-                        <h3 class="light-title">Dados de Acesso</h3>
-                        <div class="input-unit">
-                            <label for="username">Usuário <span>*</span></label>
-                            <input type="text" name="username" id="username" required disabled pattern="[a-zA-Z0-9._-]{5,20}" title="O usuário deve ter entre 5 e 20 caracteres, podendo conter letras, números e alguns símbolos (_ - .)" size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="password">Senha <span>*</span></label>
-                            <input type="password" name="password" id="password" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter no mínimo 8 caracteres, sendo pelo menos uma maiúscula, uma minúscula, um número e um símbolo" size="32">
-                        </div>
-                        <div class="input-unit">
-                            <label for="password-confirmation">Confirmação de Senha <span>*</span></label>
-                            <input type="password" name="password-confirmation" id="password-confirmation" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter de 8 a 32 caracteres, sendo pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo" size="32">
                         </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">

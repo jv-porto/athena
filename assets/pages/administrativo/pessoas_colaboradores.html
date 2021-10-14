@@ -15,7 +15,7 @@
 
                 <main>
                     <div class="container-body">
-                        {% if pessoas %}
+                        {% if colaboradores %}
                         <h2 class="title">Lista</h2>
                         <table class="list-db-items">
                             <thead>
@@ -32,18 +32,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if pessoas %}
-                                {% for pessoa in pessoas %}
+                                {% if colaboradores %}
+                                {% for colaborador in colaboradores %}
                                 <tr>
-                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ pessoa.id }}" value="{{ pessoa.id }}"></td>
-                                    <td>{{ pessoa.id }}</td>
-                                    <td>{{ pessoa.nome }}</td>
-                                    <td>{{ pessoa.celular }}</td>
-                                    <td>{{ pessoa.telefone }}</td>
-                                    <td>{{ pessoa.email }}</td>
-                                    <td>{{ pessoa.departamento }}</td>
-                                    <td>{{ pessoa.cargo }}</td>
-                                    <td>{{ pessoa.ramal }}</td>
+                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ colaborador.id }}" value="{{ colaborador.id }}"></td>
+                                    <td>{{ colaborador.id }}</td>
+                                    <td>{{ colaborador.nome }}</td>
+                                    <td>{{ colaborador.celular }}</td>
+                                    <td>{{ colaborador.telefone }}</td>
+                                    <td>{{ colaborador.email }}</td>
+                                    <td>{{ colaborador.departamento }}</td>
+                                    <td>{{ colaborador.cargo }}</td>
+                                    <td>{{ colaborador.ramal }}</td>
                                 </tr>
                                 {% endfor %}
                                 {% endif %}

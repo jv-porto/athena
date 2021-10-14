@@ -13,7 +13,8 @@
         <main>
             <div class="container-body">
                 <h2 class="title">Alterar</h2>
-                <form action="{% url 'pessoas_responsaveis_alterar' %}" method="post" enctype="multipart/form-data">
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'pessoas_responsaveis_alterar' responsavel.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
                         <h3 class="light-title">Dados básicos</h3>
@@ -27,7 +28,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="birthdate">Data de nascimento <span>*</span></label>
-                            <input type="date" name="birthdate" id="birthdate" required value="{{responsavel.data_nascimento|date:'Y-m-d'}}">
+                            <input type="date" name="birthdate" id="birthdate" required value="{{responsavel.data_nascimento}}">
                         </div>
                         <div class="input-unit">
                             <label for="cpf">CPF <span>*</span></label>
@@ -49,38 +50,47 @@
                             <label for="email">E-mail <span>*</span></label>
                             <input type="email" name="email" id="email" required value="{{responsavel.email}}" size="30">
                         </div>
-<!--                        <div class="input-unit">-->
-<!--                            <label for="gender">Gênero <span>*</span></label>-->
-<!--                            <select name="gender" required>-->
-<!--                                <option value="homem">Homem</option>-->
-<!--                                <option value="mulher">Mulher</option>-->
-<!--                                <option value="nao-binario">Não-binário</option>-->
-<!--                                <option value="agenero">Agênero</option>-->
-<!--                                <option value="outro">Outro</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="input-unit">-->
-<!--                            <label for="color">Cor <span>*</span></label>-->
-<!--                            <select name="color" required>-->
-<!--                                <option value="branca">Branca</option>-->
-<!--                                <option value="preta">Preta</option>-->
-<!--                                <option value="parda">Parda</option>-->
-<!--                                <option value="amarela">Amarela</option>-->
-<!--                                <option value="indigena">Indígena</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="input-unit">-->
-<!--                            <label for="marital-status">Estado civil <span>*</span></label>-->
-<!--                            <select name="marital-status" required>-->
-<!--                                <option value="solteiro">Solteiro(a)</option>-->
-<!--                                <option value="casado">Casado(a)/Mora com companheiro(a)</option>-->
-<!--                                <option value="divorciado">Divorciado(a)/Separado(a)</option>-->
-<!--                                <option value="viuvo">Viúvo(a)</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
+                        <div class="input-unit">
+                            <label for="gender">Gênero <span>*</span></label>
+                            <input type="hidden" name="gender" id="gender" class="select-value" value="{{responsavel.genero}}">
+                            <select name="gender" id="gender" required>
+                                <option value="Homem">Homem</option>
+                                <option value="Mulher">Mulher</option>
+                                <option value="Não-binário">Não-binário</option>
+                                <option value="Agênero">Agênero</option>
+                                <option value="Outro">Outro</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="color">Cor <span>*</span></label>
+                            <input type="hidden" name="color" id="color" class="select-value" value="{{responsavel.cor}}">
+                            <select name="color" id="color" required>
+                                <option value="Branca">Branca</option>
+                                <option value="Preta">Preta</option>
+                                <option value="Parda">Parda</option>
+                                <option value="Amarela">Amarela</option>
+                                <option value="Indígena">Indígena</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <input type="hidden" name="marital-status" id="marital-status" class="select-value" value="{{responsavel.estado_civil}}">
+                            <label for="marital-status">Estado civil <span>*</span></label>
+                            <select name="marital-status" id="marital-status" required>
+                                <option value="Solteiro(a)">Solteiro(a)</option>
+                                <option value="Casado(a)">Casado(a)/Mora com companheiro(a)</option>
+                                <option value="Divorciado(a)">Divorciado(a)/Separado(a)</option>
+                                <option value="Viúvo(a)">Viúvo(a)</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        {% if responsavel.foto %}
+                        <div class="input-unit">
+                            <label for="photo">Foto atual</label>
+                            <img src="{{ responsavel.foto }}" alt="Foto" style='height: auto; width: 8.5rem;'>
+                        </div>
+                        {% endif %}
                         <div class="input-unit">
                             <label for="photo">Foto</label>
                             <input type="file" name="photo" id="photo" accept="image/*">
@@ -122,33 +132,56 @@
                         </div>
                     </div>
                     <div class="form-section item-section-parent">
-                        <h3 class="light-title">Estudantes relacionados</h3>
-                        {% for estudante in responsavel.estudantes.all %}
+                        <h3 class="light-title">Estudantes relacionados<strong class="action-remove-item">-</strong></h3>
                         <div class="item-section">
                             <div class="input-unit">
-                                <label for="student-id">Código <span>*</span></label>
-                                <input type="text" name="student-id" id="student-id" class="student-id" required disabled value="{{estudante.id}}" pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" size="9">
+                                <label for="student-id-0">Código <span>*</span></label>
+                                <input type="text" name="student-id-0" id="student-id-0" class="student-id" required pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" value="{{responsavel.estudantes.0}}" size="9">
                             </div>
                             <div class="input-unit">
-                                <label for="student-name">Nome completo <span>*</span></label>
-                                <input type="text" name="student-name" id="student-name" class="student-name" required disabled value="{{estudante.nome}}" size="35">
+                                <label for="student-name-0">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name-0" id="student-name-0" class="student-name" required size="35">
                             </div>
                         </div>
-                        {% endfor %}
-                    </div>
-                    <div class="form-section">
-                        <h3 class="light-title">Dados de Acesso</h3>
-                        <div class="input-unit">
-                            <label for="username">Usuário <span>*</span></label>
-                            <input type="text" name="username" id="username" required disabled pattern="[a-zA-Z0-9._-]{5,20}" value="{{responsavel.usuario}}" title="O usuário deve ter entre 5 e 20 caracteres, podendo conter letras, números e alguns símbolos (_ - .)" size="20">
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="student-id-1">Código <span>*</span></label>
+                                <input type="text" name="student-id-1" id="student-id-1" class="student-id" required pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" value="{{responsavel.estudantes.1}}" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="student-name-1">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name-1" id="student-name-1" class="student-name" required size="35">
+                            </div>
                         </div>
-                        <div class="input-unit">
-                            <label for="password">Senha <span>*</span></label>
-                            <input type="password" name="password" id="password" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter no mínimo 8 caracteres, sendo pelo menos uma maiúscula, uma minúscula, um número e um símbolo" size="32">
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="student-id-2">Código <span>*</span></label>
+                                <input type="text" name="student-id-2" id="student-id-2" class="student-id" required pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" value="{{responsavel.estudantes.2}}" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="student-name-2">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name-2" id="student-name-2" class="student-name" required size="35">
+                            </div>
                         </div>
-                        <div class="input-unit">
-                            <label for="password-confirmation">Confirmação de Senha <span>*</span></label>
-                            <input type="password" name="password-confirmation" id="password-confirmation" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter de 8 a 32 caracteres, sendo pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo" size="32">
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="student-id-3">Código <span>*</span></label>
+                                <input type="text" name="student-id-3" id="student-id-3" class="student-id" required pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" value="{{responsavel.estudantes.3}}" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="student-name-3">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name-3" id="student-name-3" class="student-name" required size="35">
+                            </div>
+                        </div>
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="student-id-4">Código <span>*</span></label>
+                                <input type="text" name="student-id-4" id="student-id-4" class="student-id" required pattern="[0-9]{9}" title="O ID Estudantil deve conter 9 dígitos" value="{{responsavel.estudantes.4}}" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="student-name-4">Nome completo <span>*</span></label>
+                                <input type="text" name="student-name-4" id="student-name-4" class="student-name" required size="35">
+                            </div>
                         </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">

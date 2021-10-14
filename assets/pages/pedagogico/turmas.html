@@ -14,5 +14,40 @@
                 {% include '_partials/_menu.html' %}
 
         <main>
+            <div class="container-body">
+                {% if turmas %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Curso</th>
+                            <th class="light-subtitle">Descrição</th>
+                            <th class="light-subtitle">Ano acadêmico</th>
+                            <th class="light-subtitle">Turno</th>
+                            <th class="light-subtitle">Vagas</th>
+                            <th class="light-subtitle">Tutor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if turmas %}
+                        {% for turma in turmas %}
+                        <tr>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ turma.id }}" value="{{ turma.id }}"></td>
+                            <td>{{ turma.id }}</td>
+                            <td>{{ turma.curso }}</td>
+                            <td>{{ turma.descricao }}</td>
+                            <td>{{ turma.ano_academico }}</td>
+                            <td>{{ turma.turno }}</td>
+                            <td>{{ turma.vagas }}</td>
+                            <td>{{ turma.tutor }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
         </main>
 {% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title">Usuários e Permissões</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'usuarios_permissoes_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="{% url 'usuarios_permissoes_alterar' %}" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                {% if permissoes %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th rowspan="2"></th>
+                            <th rowspan="2">Descrição</th>
+                            <th colspan="8">Administrativo</th>
+                            <th colspan="7">Pedagógico</th>
+                            <th colspan="3">Financeiro</th>
+                            <th colspan="3">Institucional</th>
+                        </tr>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle"></th>
+                            <!-- ADMINISTRATIVO -->
+                            <th class="light-subtitle">E</th>
+                            <th class="light-subtitle">PE</th>
+                            <th class="light-subtitle">PR</th>
+                            <th class="light-subtitle">PC</th>
+                            <th class="light-subtitle">C</th>
+                            <th class="light-subtitle">S</th>
+                            <th class="light-subtitle">R</th>
+                            <th class="light-subtitle">R</th>
+                            <!-- PEDAGÓGICO -->
+                            <th class="light-subtitle">C</th>
+                            <th class="light-subtitle">T</th>
+                            <th class="light-subtitle">B</th>
+                            <th class="light-subtitle">DC</th>
+                            <th class="light-subtitle">SV</th>
+                            <th class="light-subtitle">V</th>
+                            <th class="light-subtitle">R</th>
+                            <!-- FINANCEIRO -->
+                            <th class="light-subtitle">B</th>
+                            <th class="light-subtitle">M</th>
+                            <th class="light-subtitle">R</th>
+                            <!-- INSTITUCIONAL -->
+                            <th class="light-subtitle">CE</th>
+                            <th class="light-subtitle">UP</th>
+                            <th class="light-subtitle">AA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if permissoes %}
+                        {% for group in permissoes %}
+                        <tr>
+                            <td><input type="radio" class="choose-menu-id" id="{{ group.id }}" value="{{ group.id }}"></td>
+                            <td>{{ group.descricao }}</td>
+                            <!-- ADMINISTRATIVO -->
+                            <td>{{ group.administrativo_escolas }}</td>
+                            <td>{{ group.administrativo_pessoas_estudantes }}</td>
+                            <td>{{ group.administrativo_pessoas_responsaveis }}</td>
+                            <td>{{ group.administrativo_pessoas_colaboradores }}</td>
+                            <td>{{ group.administrativo_contratos }}</td>
+                            <td>{{ group.administrativo_secretaria }}</td>
+                            <td>{{ group.administrativo_recepcao }}</td>
+                            <td>{{ group.administrativo_relatorios }}</td>
+                            <!-- PEDAGÓGICO -->
+                            <td>{{ group.pedagogico_cursos }}</td>
+                            <td>{{ group.pedagogico_turmas }}</td>
+                            <td>{{ group.pedagogico_boletim }}</td>
+                            <td>{{ group.pedagogico_diario_classe }}</td>
+                            <td>{{ group.pedagogico_sala_virtual }}</td>
+                            <td>{{ group.pedagogico_vestibulares }}</td>
+                            <td>{{ group.pedagogico_relatorios }}</td>
+                            <!-- FINANCEIRO -->
+                            <td>{{ group.financeiro_bancos }}</td>
+                            <td>{{ group.financeiro_movimentacoes }}</td>
+                            <td>{{ group.financeiro_relatorios }}</td>
+                            <!-- INSTITUCIONAL -->
+                            <td>{{ group.institucional_cadastro_escolar }}</td>
+                            <td>{{ group.institucional_usuarios_permissoes }}</td>
+                            <td>{{ group.institucional_ano_academico }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </main>
+{% endblock %}

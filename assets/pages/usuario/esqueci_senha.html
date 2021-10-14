@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt_BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="{% static 'files/athena_icon.svg' %}">
+        <title>Athena</title>
+        <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    </head>
+    <body class="django-screen-body">
+        <main class="django-screen">
+            <h1><img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena"></h1>
+            <div class="django">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="light-title">Esqueceu sua senha?</h2>
+                    <p>Não se preocupe! Digite o email utilizado em seu cadastro e já te enviaremos instruções para redefinir sua senha :)</p>
+                    <div class="input-unit">
+                        <label for="id_email">Email</label>
+                        <input type="email" name="email" id="id_email" autocomplete="email" required>
+                    </div>
+                    <input type="submit" value="Enviar">
+                </form> 
+            </div>
+        </main>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>

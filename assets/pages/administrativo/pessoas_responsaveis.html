@@ -15,7 +15,7 @@
 
                 <main>
                     <div class="container-body">
-                        {% if pessoas %}
+                        {% if responsaveis %}
                         <h2 class="title">Lista</h2>
                         <table class="list-db-items">
                             <thead>
@@ -30,18 +30,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if pessoas %}
-                                {% for pessoa in pessoas %}
+                                {% if responsaveis %}
+                                {% for responsavel in responsaveis %}
                                 <tr>
-                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ pessoa.id }}" value="{{ pessoa.id }}"></td>
-                                    <td>{{ pessoa.id }}</td>
-                                    <td>{{ pessoa.nome }}</td>
-                                    <td>{{ pessoa.celular }}</td>
-                                    <td>{{ pessoa.telefone }}</td>
-                                    <td>{{ pessoa.email }}</td>
-                                    {% for estudante in pessoa.estudantes.all %}
-                                    <td>{{ estudante.nome }} ({{ estudante.id }})</td>
-                                    {% endfor %}
+                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ responsavel.id }}" value="{{ responsavel.id }}"></td>
+                                    <td>{{ responsavel.id }}</td>
+                                    <td>{{ responsavel.nome }}</td>
+                                    <td>{{ responsavel.celular }}</td>
+                                    <td>{{ responsavel.telefone }}</td>
+                                    <td>{{ responsavel.email }}</td>
+                                    <td>
+                                        {% if responsavel.estudantes.0 %}{{ responsavel.estudantes.0 }}{% endif %}
+                                        {% if responsavel.estudantes.1 %}/ {{ responsavel.estudantes.1 }}{% endif %}
+                                        {% if responsavel.estudantes.2 %}/ {{ responsavel.estudantes.2 }}{% endif %}
+                                        {% if responsavel.estudantes.3 %}/ {{ responsavel.estudantes.3 }}{% endif %}
+                                        {% if responsavel.estudantes.4 %}/ {{ responsavel.estudantes.4 }}{% endif %}
+                                    </td>
                                 </tr>
                                 {% endfor %}
                                 {% endif %}

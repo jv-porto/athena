@@ -1,613 +1,701 @@
-from .contratos import contrato_educacional
+import requests, random, string
+from django.contrib import messages
+from athena.custom_storages import MediaStorage
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse
 from django.contrib.auth.models import User
-from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, Contrato
-from pedagogico.models import Curso
+from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador
+from pedagogico.models import Curso, Turma
+from .modules.numeroExtenso import dExtenso
+from .contratos import *
 
 def empty_input(input):
-    if not input.strip():
-        return redirect('escolas_incluir')
-
-def different_passwords(password, password_confirmation):
-    if password != password_confirmation:
-        return redirect('escolas_incluir')
+    return not input.strip()
 
 
 
-
-
+@login_required()
+@permission_required('administrativo.view_escola', raise_exception=True)
 def escolas(request):
-    if request.user.is_authenticated:
-        escolas = Escola.objects.filter(is_active=True).order_by('datahora_cadastro')
-        data = {'escolas': escolas}
-        return render(request, 'administrativo/escolas.html', data)
-    else:
-        return redirect('login')
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'escolas': requests.get('http://127.0.0.1:8000/api/escola/', cookies=cookies, headers=headers).json()}
+    return render(request, 'administrativo/escolas.html', data)
 
+
+@login_required()
+@permission_required('administrativo.add_escola', raise_exception=True)
 def escolas_incluir(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            escola_id = f'{str(Escola.objects.all().count()+1).zfill(4)}'
-            cnpj = request.POST['cnpj']
-            razao_social = request.POST['corporate-name']
-            nome_fantasia = request.POST['trading-name']
-            email = request.POST['email']
-            telefone = request.POST['phone-number']
-            celular = request.POST['cellphone-number']
-            site = request.POST['website']
-            if 'logo' in request.FILES:
-                logo = request.FILES['logo']
-            cep = request.POST['postal-code']
-            lougradouro = request.POST['address-street']
-            numero = request.POST['address-number']
-            complemento = request.POST['address-complements']
-            bairro = request.POST['address-neighborhood']
-            cidade = request.POST['address-city']
-            estado = request.POST['address-state']
-            pais = request.POST['address-country']
-            usuario = f'{str(Escola.objects.all().count()+1).zfill(4)}'
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-
-            empty_input(razao_social)
-            empty_input(nome_fantasia)
-            empty_input(lougradouro)
-            empty_input(bairro)
-            empty_input(cidade)
-            empty_input(estado)
-            empty_input(pais)
-            empty_input(usuario)
-            different_passwords(senha, senha_confirmacao)
-
-            user = User.objects.create_user(first_name=nome_fantasia, username=usuario, email=email, password=senha)
-            user.save()
-            escola = Escola.objects.create(id=escola_id, cnpj=cnpj, razao_social=razao_social, nome_fantasia=nome_fantasia, email=email, telefone=telefone, celular=celular, site=site, logo=logo, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, usuario=user)
-            escola.save()
-            return redirect('escolas')
+    if request.method == 'GET':
+        return render(request, 'administrativo/escolas_incluir.html')
+    elif request.method == 'POST':
+        if empty_input(request.POST['corporate-name']) or empty_input(request.POST['trading-name']) or empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('escolas_incluir')
+        
+        if request.POST['school-id']:
+            id_escola = request.POST['school-id']
         else:
-            return render(request, 'administrativo/escolas_incluir.html')
-    else:
-        return redirect('login')
+            id_escola = f'{str(Escola.objects.all().count()).zfill(4)}'
 
-def escolas_alterar_page(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'GET':
-            escola = get_object_or_404(Escola, pk=id)
-            edicao = {'escola': escola}
-            return render(request, 'administrativo/escolas_alterar.html', edicao)
-    else:
-        return redirect('login')
+        school_data = {
+            'id': id_escola,
+            'cnpj': request.POST['cnpj'], 
+            'razao_social': request.POST['corporate-name'], 
+            'nome_fantasia': request.POST['trading-name'], 
+            'email': request.POST['email'], 
+            'telefone': request.POST['phone-number'], 
+            'celular': request.POST['cellphone-number'], 
+            'site': request.POST['website'], 
+            'cep': request.POST['postal-code'], 
+            'lougradouro': request.POST['address-street'], 
+            'numero': request.POST['address-number'], 
+            'complemento': request.POST['address-complements'], 
+            'bairro': request.POST['address-neighborhood'], 
+            'cidade': request.POST['address-city'], 
+            'estado': request.POST['address-state'], 
+            'pais': request.POST['address-country'], 
+            'is_active': True,
+        }
+        if 'logo' in request.FILES:
+            file = request.FILES['logo']
+            storage = MediaStorage()
+            filename = storage.save(f'escolas/{school_data["id"]}/logos/logo-{school_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            school_data['logo'] = storage.url(filename)
+        user_data = {
+            'username': school_data['id'],
+            'first_name': school_data['nome_fantasia'],
+            'email': school_data['email'],
+            'password': '0',
+            'is_active': True,
+        }
+        perms_data = {
+            'escola': school_data['id'],
+            'descricao': school_data['id'],
+            'dashboard': 'dashboard' in request.POST,
+            'administrativo_escolas': 'administrativo_escolas' in request.POST,
+            'administrativo_pessoas_estudantes': 'administrativo_pessoas_estudantes' in request.POST,
+            'administrativo_pessoas_responsaveis': 'administrativo_pessoas_responsaveis' in request.POST,
+            'administrativo_pessoas_colaboradores': 'administrativo_pessoas_colaboradores' in request.POST,
+            'administrativo_contratos': 'administrativo_contratos' in request.POST,
+            'administrativo_secretaria': 'administrativo_secretaria' in request.POST,
+            'administrativo_recepcao': 'administrativo_recepcao' in request.POST,
+            'administrativo_relatorios': 'administrativo_relatorios' in request.POST,
+            'pedagogico_cursos': 'pedagogico_cursos' in request.POST,
+            'pedagogico_turmas': 'pedagogico_turmas' in request.POST,
+            'pedagogico_boletim': 'pedagogico_boletim' in request.POST,
+            'pedagogico_diario_classe': 'pedagogico_diario_classe' in request.POST,
+            'pedagogico_sala_virtual': 'pedagogico_sala_virtual' in request.POST,
+            'pedagogico_vestibulares': 'pedagogico_vestibulares' in request.POST,
+            'pedagogico_relatorios': 'pedagogico_relatorios' in request.POST,
+            'financeiro_bancos': 'financeiro_bancos' in request.POST,
+            'financeiro_movimentacoes': 'financeiro_movimentacoes' in request.POST,
+            'financeiro_relatorios': 'financeiro_relatorios' in request.POST,
+            'institucional_cadastro_escolar': 'institucional_cadastro_escolar' in request.POST,
+            'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
+            'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
+            'is_active': True,
+        }
 
-def escolas_alterar(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            empty_input(request.POST['corporate-name'])
-            empty_input(request.POST['trading-name'])
-            empty_input(request.POST['address-street'])
-            empty_input(request.POST['address-neighborhood'])
-            empty_input(request.POST['address-city'])
-            empty_input(request.POST['address-state'])
-            empty_input(request.POST['address-country'])
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.post('http://127.0.0.1:8000/api/usuario/', data=user_data, cookies=cookies, headers=headers)
+        school_data['usuario'] = User.objects.get(username=user_data['username']).id
+        school_request = requests.post('http://127.0.0.1:8000/api/escola/', data=school_data, cookies=cookies, headers=headers)
+        perms_request = requests.post(f'http://127.0.0.1:8000/api/modulos_escola/', data=perms_data, cookies=cookies, headers=headers)
 
-            escola_id = request.POST['school-code']
-            escola = Escola.objects.get(pk=escola_id)
-            escola.cnpj = request.POST['cnpj']
-            escola.razao_social = request.POST['corporate-name']
-            escola.nome_fantasia = request.POST['trading-name']
-            escola.email = request.POST['email']
-            escola.telefone = request.POST['phone-number']
-            escola.celular = request.POST['cellphone-number']
-            escola.site = request.POST['website']
-            if 'logo' in request.FILES:
-                escola.logo = request.FILES['logo']
-            escola.cep = request.POST['postal-code']
-            escola.lougradouro = request.POST['address-street']
-            escola.numero = request.POST['address-number']
-            escola.complemento = request.POST['address-complements']
-            escola.bairro = request.POST['address-neighborhood']
-            escola.cidade = request.POST['address-city']
-            escola.estado = request.POST['address-state']
-            escola.pais = request.POST['address-country']
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-            if senha == senha_confirmacao:
-                escola.usuario.set_password(senha)
-            else:
-                return redirect('escolas_alterar_page', escola_id)
-
-            escola.save()
-            escola.usuario.save()
-            return redirect('escolas')
-    else:
-        return redirect('login')
-
-def escolas_excluir(request, id):
-    if request.user.is_authenticated:
-        escola = get_object_or_404(Escola, pk=id)
-        usuario = User.objects.get(username=escola.usuario)
-        usuario.is_active = False
-        escola.is_active = False
-        usuario.save()
-        escola.save()
         return redirect('escolas')
-    else:
-        return redirect('login')
 
 
+@login_required()
+@permission_required('administrativo.change_escola', raise_exception=True)
+def escolas_alterar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'escola': requests.get(f'http://127.0.0.1:8000/api/escola/{id}/', cookies=cookies, headers=headers).json(), 'modules': requests.get(f'http://127.0.0.1:8000/api/modulos_escola/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/escolas_alterar.html', data)
+    elif request.method == 'POST':
+        if empty_input(request.POST['corporate-name']) or empty_input(request.POST['trading-name']) or empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('escolas_alterar')
 
-
-
-def find_estudante(request, id):
-    if request.user.is_authenticated:
-        found_pessoa = get_object_or_404(PessoaEstudante, pk=id)
-        data = {
-            'id': found_pessoa.id,
-            'escola_id': found_pessoa.escola.id,
-            'matricula': found_pessoa.matricula,
-            'nome': found_pessoa.nome,
-            'data_nascimento': found_pessoa.data_nascimento,
-            'usuario_username': found_pessoa.usuario.username,
-            'datahora_ultima_alteracao': found_pessoa.datahora_ultima_alteracao,
-            'datahora_cadastro': found_pessoa.datahora_cadastro,
-            'is_active': found_pessoa.is_active,
+        school_data = {
+            'cnpj': request.POST['cnpj'], 
+            'razao_social': request.POST['corporate-name'], 
+            'nome_fantasia': request.POST['trading-name'], 
+            'email': request.POST['email'], 
+            'telefone': request.POST['phone-number'], 
+            'celular': request.POST['cellphone-number'], 
+            'site': request.POST['website'], 
+            'cep': request.POST['postal-code'], 
+            'lougradouro': request.POST['address-street'], 
+            'numero': request.POST['address-number'], 
+            'complemento': request.POST['address-complements'], 
+            'bairro': request.POST['address-neighborhood'], 
+            'cidade': request.POST['address-city'], 
+            'estado': request.POST['address-state'], 
+            'pais': request.POST['address-country'], 
         }
-        return JsonResponse(data)
+        if 'logo' in request.FILES:
+            file = request.FILES['logo']
+            storage = MediaStorage()
+            filename = storage.save(f'escolas/{school_data["id"]}/logos/logo-{school_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            school_data['logo'] = storage.url(filename)
+        user_data = {
+            'first_name': school_data['nome_fantasia'],
+            'email': school_data['email'],
+        }
+        perms_data = {
+            'dashboard': 'dashboard' in request.POST,
+            'administrativo_escolas': 'administrativo_escolas' in request.POST,
+            'administrativo_pessoas_estudantes': 'administrativo_pessoas_estudantes' in request.POST,
+            'administrativo_pessoas_responsaveis': 'administrativo_pessoas_responsaveis' in request.POST,
+            'administrativo_pessoas_colaboradores': 'administrativo_pessoas_colaboradores' in request.POST,
+            'administrativo_contratos': 'administrativo_contratos' in request.POST,
+            'administrativo_secretaria': 'administrativo_secretaria' in request.POST,
+            'administrativo_recepcao': 'administrativo_recepcao' in request.POST,
+            'administrativo_relatorios': 'administrativo_relatorios' in request.POST,
+            'pedagogico_cursos': 'pedagogico_cursos' in request.POST,
+            'pedagogico_turmas': 'pedagogico_turmas' in request.POST,
+            'pedagogico_boletim': 'pedagogico_boletim' in request.POST,
+            'pedagogico_diario_classe': 'pedagogico_diario_classe' in request.POST,
+            'pedagogico_sala_virtual': 'pedagogico_sala_virtual' in request.POST,
+            'pedagogico_vestibulares': 'pedagogico_vestibulares' in request.POST,
+            'pedagogico_relatorios': 'pedagogico_relatorios' in request.POST,
+            'financeiro_bancos': 'financeiro_bancos' in request.POST,
+            'financeiro_movimentacoes': 'financeiro_movimentacoes' in request.POST,
+            'financeiro_relatorios': 'financeiro_relatorios' in request.POST,
+            'institucional_cadastro_escolar': 'institucional_cadastro_escolar' in request.POST,
+            'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
+            'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
+        }
 
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+        school_request = requests.patch(f'http://127.0.0.1:8000/api/escola/{id}/', data=school_data, cookies=cookies, headers=headers)
+        perms_request = requests.patch(f'http://127.0.0.1:8000/api/modulos_escola/{id}/', data=perms_data, cookies=cookies, headers=headers)
+
+        return redirect('escolas')
+
+
+@login_required()
+@permission_required('administrativo.delete_escola', raise_exception=True)
+def escolas_excluir(request, id):
+    school_data = {
+        'is_active': False,
+    }
+    user_data = {
+        'is_active': False,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+    school_request = requests.patch(f'http://127.0.0.1:8000/api/escola/{id}/', data=school_data, cookies=cookies, headers=headers)
+
+    return redirect('escolas')
+
+
+
+@login_required()
+@permission_required('administrativo.view_pessoaestudante', raise_exception=True)
 def pessoas_estudantes(request):
-    if request.user.is_authenticated:
-        pessoas = PessoaEstudante.objects.filter(is_active=True).order_by('datahora_cadastro')
-        data = {'pessoas': pessoas}
-        return render(request, 'administrativo/pessoas_estudantes.html', data)
-    else:
-        return redirect('login')
+    escola = request.user.escola.id
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'estudantes': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/estudantes/?is_active=true', cookies=cookies, headers=headers).json()}
+    return render(request, 'administrativo/pessoas_estudantes.html', data)
 
-def find_responsavel(request, id):
-    if request.user.is_authenticated:
-        found_pessoa = get_object_or_404(PessoaResponsavel, pk=id)
-        data = {
-            'id': found_pessoa.id,
-            'escola_id': found_pessoa.escola.id,
-            'nome': found_pessoa.nome,
-            'data_nascimento': found_pessoa.data_nascimento,
-            'usuario_username': found_pessoa.usuario.username,
-            'datahora_ultima_alteracao': found_pessoa.datahora_ultima_alteracao,
-            'datahora_cadastro': found_pessoa.datahora_cadastro,
-            'is_active': found_pessoa.is_active,
-        }
-        return JsonResponse(data)
 
-def pessoas_responsaveis(request):
-    if request.user.is_authenticated:
-        pessoas = PessoaResponsavel.objects.filter(is_active=True).order_by('datahora_cadastro')
-        data = {'pessoas': pessoas}
-        return render(request, 'administrativo/pessoas_responsaveis.html', data)
-    else:
-        return redirect('login')
-
-def pessoas_colaboradores(request):
-    if request.user.is_authenticated:
-        pessoas = PessoaColaborador.objects.filter(is_active=True).order_by('datahora_cadastro')
-        data = {'pessoas': pessoas}
-        return render(request, 'administrativo/pessoas_colaboradores.html', data)
-    else:
-        return redirect('login')
-
+@login_required()
+@permission_required('administrativo.add_pessoaestudante', raise_exception=True)
 def pessoas_estudantes_incluir(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            escola = request.user.escola
-            escola_id = escola.id
-            matricula = request.POST['registration-number']
-            if not matricula.strip():
-                matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
-            id = str(escola_id) + str(matricula)
-            nome = request.POST['name']
-            data_nascimento = request.POST['birthdate']
-            cpf = request.POST['cpf']
-            rg = request.POST['rg']
-            celular = request.POST['cellphone-number']
-            telefone = request.POST['phone-number']
-            email = request.POST['email']
-            genero = request.POST['gender']
-            cor = request.POST['color']
-            estado_civil = request.POST['marital-status']
-            foto = request.POST['photo']
-            cep = request.POST['postal-code']
-            lougradouro = request.POST['address-street']
-            numero = request.POST['address-number']
-            complemento = request.POST['address-complements']
-            bairro = request.POST['address-neighborhood']
-            cidade = request.POST['address-city']
-            estado = request.POST['address-state']
-            pais = request.POST['address-country']
-            usuario = id
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
+    if request.method == 'GET':
+        return render(request, 'administrativo/pessoas_estudantes_incluir.html')
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_estudantes_incluir')
 
-            empty_input(nome)
-            empty_input(lougradouro)
-            empty_input(bairro)
-            empty_input(cidade)
-            empty_input(estado)
-            empty_input(pais)
-            different_passwords(senha, senha_confirmacao)
+        escola = request.user.escola.id
+        matricula = request.POST['registration-number']
+        if not matricula.strip():
+            matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
 
-            user = User.objects.create_user(first_name=nome, username=usuario, email=email, password=senha)
-            user.save()
-            estudante = PessoaEstudante.objects.create(id=id, escola=escola, matricula=matricula, nome=nome, data_nascimento=data_nascimento, cpf=cpf, rg=rg, celular=celular, telefone=telefone, email=email, genero=genero, cor=cor, estado_civil=estado_civil, foto=foto, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, usuario=user)
-            estudante.save()
-            return redirect('pessoas_estudantes')
-        else:
-            return render(request, 'administrativo/pessoas_estudantes_incluir.html')
-    else:
-        return redirect('login')
+        person_data = {
+            'id': str(escola) + str(matricula),
+            'escola': escola,
+            'matricula': matricula,
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+            'is_active': True,
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/estudantes/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'username': person_data['id'],
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+            'password': '0',
+            'is_active': True,
+        }
 
-def pessoas_responsaveis_incluir(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            first_student_id = str(request.POST['student-id-0'])
-            first_estudante = get_object_or_404(PessoaEstudante, pk=first_student_id)
-            id = str(first_student_id) + 'r' + str(first_estudante.responsaveis.all().count()+1)
-            escola = request.user.escola
-            nome = request.POST['name']
-            data_nascimento = request.POST['birthdate']
-            cpf = request.POST['cpf']
-            rg = request.POST['rg']
-            celular = request.POST['cellphone-number']
-            telefone = request.POST['phone-number']
-            email = request.POST['email']
-            genero = request.POST['gender']
-            cor = request.POST['color']
-            estado_civil = request.POST['marital-status']
-            foto = request.POST['photo']
-            cep = request.POST['postal-code']
-            lougradouro = request.POST['address-street']
-            numero = request.POST['address-number']
-            complemento = request.POST['address-complements']
-            bairro = request.POST['address-neighborhood']
-            cidade = request.POST['address-city']
-            estado = request.POST['address-state']
-            pais = request.POST['address-country']
-            usuario = id
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.post('http://127.0.0.1:8000/api/usuario/', data=user_data, cookies=cookies, headers=headers)
+        person_data['usuario'] = User.objects.get(username=user_data['username']).id
+        person_request = requests.post('http://127.0.0.1:8000/api/pessoas/estudante/', data=person_data, cookies=cookies, headers=headers)
 
-            empty_input(nome)
-            empty_input(lougradouro)
-            empty_input(bairro)
-            empty_input(cidade)
-            empty_input(estado)
-            empty_input(pais)
-            different_passwords(senha, senha_confirmacao)
-
-            user = User.objects.create_user(first_name=nome, username=usuario, email=email, password=senha)
-            user.save()
-            responsavel = PessoaResponsavel.objects.create(id=id, escola=escola, nome=nome, data_nascimento=data_nascimento, cpf=cpf, rg=rg, celular=celular, telefone=telefone, email=email, genero=genero, cor=cor, estado_civil=estado_civil, foto=foto, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, usuario=user)
-            responsavel.save()
-
-            i = 0
-            while i <= 4:
-                try:
-                    student_id = str(request.POST[f'student-id-{i}'])
-                    estudante = get_object_or_404(PessoaEstudante, pk=student_id)
-                    responsavel.estudantes.add(estudante)
-                    responsavel.save()
-                    i += 1
-                except:
-                    i += 1
-            return redirect('pessoas_responsaveis')
-        else:
-            return render(request, 'administrativo/pessoas_responsaveis_incluir.html')
-    else:
-        return redirect('login')
-
-def pessoas_colaboradores_incluir(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            escola = request.user.escola
-            escola_id = escola.id
-            matricula = request.POST['registration-number']
-            if not matricula.strip():
-                matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
-            id = str(escola_id) + str(matricula)
-            nome = request.POST['name']
-            data_nascimento = request.POST['birthdate']
-            cpf = request.POST['cpf']
-            rg = request.POST['rg']
-            celular = request.POST['cellphone-number']
-            telefone = request.POST['phone-number']
-            email = request.POST['email']
-            genero = request.POST['gender']
-            cor = request.POST['color']
-            estado_civil = request.POST['marital-status']
-            foto = request.POST['photo']
-            cep = request.POST['postal-code']
-            lougradouro = request.POST['address-street']
-            numero = request.POST['address-number']
-            complemento = request.POST['address-complements']
-            bairro = request.POST['address-neighborhood']
-            cidade = request.POST['address-city']
-            estado = request.POST['address-state']
-            pais = request.POST['address-country']
-            departamento = request.POST['department']
-            cargo = request.POST['position']
-            ramal = request.POST['extension']
-            admissao = request.POST['hiring-date']
-            if request.POST['firing-date']:
-                demissao = request.POST['firing-date']
-            else:
-                demissao = None
-            remuneracao = request.POST['salary']
-            banco = request.POST['bank']
-            agencia = request.POST['bank-branch']
-            conta = request.POST['bank-account']
-            usuario = id
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-
-            empty_input(nome)
-            empty_input(lougradouro)
-            empty_input(bairro)
-            empty_input(cidade)
-            empty_input(estado)
-            empty_input(pais)
-            different_passwords(senha, senha_confirmacao)
-
-            user = User.objects.create_user(first_name=nome, username=usuario, email=email, password=senha)
-            user.save()
-            colaborador = PessoaColaborador.objects.create(id=id, escola=escola, matricula=matricula, nome=nome, data_nascimento=data_nascimento, cpf=cpf, rg=rg, celular=celular, telefone=telefone, email=email, genero=genero, cor=cor, estado_civil=estado_civil, foto=foto, cep=cep, lougradouro=lougradouro, numero=numero, complemento=complemento, bairro=bairro, cidade=cidade, estado=estado, pais=pais, departamento=departamento, cargo=cargo, ramal=ramal, admissao=admissao, demissao=demissao, remuneracao=remuneracao, banco=banco, agencia=agencia, conta=conta, usuario=user)
-            colaborador.save()
-            return redirect('pessoas_colaboradores')
-        else:
-            return render(request, 'administrativo/pessoas_colaboradores_incluir.html')
-    else:
-        return redirect('login')
-
-def pessoas_estudantes_alterar_page(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'GET':
-            estudante = get_object_or_404(PessoaEstudante, pk=id)
-            edicao = {'estudante': estudante}
-            return render(request, 'administrativo/pessoas_estudantes_alterar.html', edicao)
-    else:
-        return redirect('login')
-
-def pessoas_estudantes_alterar(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            empty_input(request.POST['name'])
-            empty_input(request.POST['address-street'])
-            empty_input(request.POST['address-neighborhood'])
-            empty_input(request.POST['address-city'])
-            empty_input(request.POST['address-state'])
-            empty_input(request.POST['address-country'])
-
-            id = request.POST['student-id']
-            estudante = PessoaEstudante.objects.get(pk=id)
-            estudante.nome = request.POST['name']
-            estudante.data_nascimento = request.POST['birthdate']
-            estudante.cpf = request.POST['cpf']
-            estudante.rg = request.POST['rg']
-            estudante.celular = request.POST['cellphone-number']
-            estudante.telefone = request.POST['phone-number']
-            estudante.email = request.POST['email']
-            """estudante.genero = request.POST['gender']
-            estudante.cor = request.POST['color']
-            estudante.estado_civil = request.POST['marital-status']"""
-            if 'photo' in request.FILES:
-                estudante.foto = request.FILES['photo']
-            estudante.cep = request.POST['postal-code']
-            estudante.lougradouro = request.POST['address-street']
-            estudante.numero = request.POST['address-number']
-            estudante.complemento = request.POST['address-complements']
-            estudante.bairro = request.POST['address-neighborhood']
-            estudante.cidade = request.POST['address-city']
-            estudante.estado = request.POST['address-state']
-            estudante.pais = request.POST['address-country']
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-            if senha == senha_confirmacao:
-                estudante.usuario.set_password(senha)
-            else:
-                return redirect('pessoas_estudantes_alterar_page', id)
-
-            estudante.save()
-            estudante.usuario.save()
-            return redirect('pessoas_estudantes')
-    else:
-        return redirect('login')
-
-def pessoas_responsaveis_alterar_page(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'GET':
-            responsavel = get_object_or_404(PessoaResponsavel, pk=id)
-            edicao = {'responsavel': responsavel}
-            return render(request, 'administrativo/pessoas_responsaveis_alterar.html', edicao)
-    else:
-        return redirect('login')
-
-def pessoas_responsaveis_alterar(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            empty_input(request.POST['name'])
-            empty_input(request.POST['address-street'])
-            empty_input(request.POST['address-neighborhood'])
-            empty_input(request.POST['address-city'])
-            empty_input(request.POST['address-state'])
-            empty_input(request.POST['address-country'])
-
-            id = request.POST['id']
-            responsavel = PessoaResponsavel.objects.get(pk=id)
-            responsavel.nome = request.POST['name']
-            responsavel.data_nascimento = request.POST['birthdate']
-            responsavel.cpf = request.POST['cpf']
-            responsavel.rg = request.POST['rg']
-            responsavel.celular = request.POST['cellphone-number']
-            responsavel.telefone = request.POST['phone-number']
-            responsavel.email = request.POST['email']
-            """responsavel.genero = request.POST['gender']
-            responsavel.cor = request.POST['color']
-            responsavel.estado_civil = request.POST['marital-status']"""
-            if 'photo' in request.FILES:
-                responsavel.foto = request.FILES['photo']
-            responsavel.cep = request.POST['postal-code']
-            responsavel.lougradouro = request.POST['address-street']
-            responsavel.numero = request.POST['address-number']
-            responsavel.complemento = request.POST['address-complements']
-            responsavel.bairro = request.POST['address-neighborhood']
-            responsavel.cidade = request.POST['address-city']
-            responsavel.estado = request.POST['address-state']
-            responsavel.pais = request.POST['address-country']
-            #estudantes
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-            if senha == senha_confirmacao:
-                responsavel.usuario.set_password(senha)
-            else:
-                return redirect('pessoas_responsaveis_alterar_page', id)
-
-            responsavel.save()
-            responsavel.usuario.save()
-            return redirect('pessoas_responsaveis')
-    else:
-        return redirect('login')
-
-def pessoas_colaboradores_alterar_page(request, id):
-    if request.user.is_authenticated:
-        if request.method == 'GET':
-            colaborador = get_object_or_404(PessoaColaborador, pk=id)
-            edicao = {'colaborador': colaborador}
-            return render(request, 'administrativo/pessoas_colaboradores_alterar.html', edicao)
-    else:
-        return redirect('login')
-
-def pessoas_colaboradores_alterar(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
-            empty_input(request.POST['name'])
-            empty_input(request.POST['address-street'])
-            empty_input(request.POST['address-neighborhood'])
-            empty_input(request.POST['address-city'])
-            empty_input(request.POST['address-state'])
-            empty_input(request.POST['address-country'])
-
-            id = request.POST['id']
-            colaborador = PessoaColaborador.objects.get(pk=id)
-            colaborador.nome = request.POST['name']
-            colaborador.data_nascimento = request.POST['birthdate']
-            colaborador.cpf = request.POST['cpf']
-            colaborador.rg = request.POST['rg']
-            colaborador.celular = request.POST['cellphone-number']
-            colaborador.telefone = request.POST['phone-number']
-            colaborador.email = request.POST['email']
-            """colaborador.genero = request.POST['gender']
-            colaborador.cor = request.POST['color']
-            colaborador.estado_civil = request.POST['marital-status']"""
-            if 'photo' in request.FILES:
-                colaborador.foto = request.FILES['photo']
-            colaborador.cep = request.POST['postal-code']
-            colaborador.lougradouro = request.POST['address-street']
-            colaborador.numero = request.POST['address-number']
-            colaborador.complemento = request.POST['address-complements']
-            colaborador.bairro = request.POST['address-neighborhood']
-            colaborador.cidade = request.POST['address-city']
-            colaborador.estado = request.POST['address-state']
-            colaborador.pais = request.POST['address-country']
-            colaborador.departamento = request.POST['department']
-            colaborador.cargo = request.POST['position']
-            colaborador.ramal = request.POST['extension']
-            colaborador.admissao = request.POST['hiring-date']
-            colaborador.demissao = request.POST['firing-date']
-            colaborador.remuneracao = request.POST['salary']
-            colaborador.banco = request.POST['bank']
-            colaborador.agencia = request.POST['bank-branch']
-            colaborador.conta = request.POST['bank-account']
-            senha = request.POST['password']
-            senha_confirmacao = request.POST['password-confirmation']
-            if senha == senha_confirmacao:
-                colaborador.usuario.set_password(senha)
-            else:
-                return redirect('pessoas_colaboradores_alterar_page', id)
-
-            colaborador.save()
-            colaborador.usuario.save()
-            return redirect('pessoas_colaboradores')
-    else:
-        return redirect('login')
-
-def pessoas_estudantes_excluir(request, id):
-    if request.user.is_authenticated:
-        estudante = get_object_or_404(PessoaEstudante, pk=id)
-        usuario = User.objects.get(username=estudante.usuario)
-        usuario.is_active = False
-        estudante.is_active = False
-        usuario.save()
-        estudante.save()
         return redirect('pessoas_estudantes')
-    else:
-        return redirect('login')
 
-def pessoas_responsaveis_excluir(request, id):
-    if request.user.is_authenticated:
-        responsavel = get_object_or_404(PessoaResponsavel, pk=id)
-        usuario = User.objects.get(username=responsavel.usuario)
-        usuario.is_active = False
-        responsavel.is_active = False
-        usuario.save()
-        responsavel.save()
+
+@login_required()
+@permission_required('administrativo.change_pessoaestudante', raise_exception=True)
+def pessoas_estudantes_alterar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'estudante': requests.get(f'http://127.0.0.1:8000/api/pessoas/estudante/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/pessoas_estudantes_alterar.html', data)
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_estudantes_alterar')
+        
+        person_data = {
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/estudantes/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+        }
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+        person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/estudante/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+        return redirect('pessoas_estudantes')
+
+
+@login_required()
+@permission_required('administrativo.delete_pessoaestudante', raise_exception=True)
+def pessoas_estudantes_excluir(request, id):
+    person_data = {
+        'is_active': False,
+    }
+    user_data = {
+        'is_active': False,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+    person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/estudante/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+    return redirect('pessoas_estudantes')
+
+
+@login_required()
+@permission_required('administrativo.view_pessoaresponsavel', raise_exception=True)
+def pessoas_responsaveis(request):
+    escola = request.user.escola.id
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'responsaveis': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/responsaveis/?is_active=true', cookies=cookies, headers=headers).json()}
+    return render(request, 'administrativo/pessoas_responsaveis.html', data)
+
+
+@login_required()
+@permission_required('administrativo.add_pessoaresponsavel', raise_exception=True)
+def pessoas_responsaveis_incluir(request):
+    if request.method == 'GET':
+        return render(request, 'administrativo/pessoas_responsaveis_incluir.html')
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_responsaveis_incluir')
+
+        escola = request.user.escola.id
+        first_student_id = str(request.POST['student-id-0'])
+        first_estudante = get_object_or_404(PessoaEstudante, pk=first_student_id)
+
+        person_data = {
+            'id': str(first_student_id) + 'r' + str(first_estudante.responsaveis.all().count()+1),
+            'escola': escola,
+            'estudantes': [],
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+            'is_active': True,
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/responsaveis/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'username': person_data['id'],
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+            'password': '0',
+            'is_active': True,
+        }
+
+        i = 0
+        while i <= 4:
+            try:
+                student_id = str(request.POST[f'student-id-{i}'])
+                person_data['estudantes'].append(student_id)
+                i += 1
+            except:
+                i += 1
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.post('http://127.0.0.1:8000/api/usuario/', data=user_data, cookies=cookies, headers=headers)
+        person_data['usuario'] = User.objects.get(username=user_data['username']).id
+        person_request = requests.post('http://127.0.0.1:8000/api/pessoas/responsavel/', data=person_data, cookies=cookies, headers=headers)
+
         return redirect('pessoas_responsaveis')
-    else:
-        return redirect('login')
 
-def pessoas_colaboradores_excluir(request, id):
-    if request.user.is_authenticated:
-        colaborador = get_object_or_404(PessoaColaborador, pk=id)
-        usuario = User.objects.get(username=colaborador.usuario)
-        usuario.is_active = False
-        colaborador.is_active = False
-        usuario.save()
-        colaborador.save()
+
+@login_required()
+@permission_required('administrativo.change_pessoaresponsavel', raise_exception=True)
+def pessoas_responsaveis_alterar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'responsavel': requests.get(f'http://127.0.0.1:8000/api/pessoas/responsavel/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/pessoas_responsaveis_alterar.html', data)
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_responsaveis_alterar')
+
+        person_data = {
+            'estudantes': [],
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/responsaveis/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+        }
+
+        i = 0
+        while i <= 4:
+            try:
+                student_id = str(request.POST[f'student-id-{i}'])
+                person_data['estudantes'].append(student_id)
+                i += 1
+            except:
+                i += 1
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+        person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/responsavel/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+        return redirect('pessoas_responsaveis')
+
+
+@login_required()
+@permission_required('administrativo.delete_pessoaresponsavel', raise_exception=True)
+def pessoas_responsaveis_excluir(request, id):
+    person_data = {
+        'is_active': False,
+    }
+    user_data = {
+        'is_active': False,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+    person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/responsavel/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+    return redirect('pessoas_responsaveis')
+
+
+@login_required()
+@permission_required('administrativo.view_pessoacolaborador', raise_exception=True)
+def pessoas_colaboradores(request):
+    escola = request.user.escola.id
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'colaboradores': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/colaboradores/?is_active=true', cookies=cookies, headers=headers).json()}
+    return render(request, 'administrativo/pessoas_colaboradores.html', data)
+
+
+@login_required()
+@permission_required('administrativo.add_pessoacolaborador', raise_exception=True)
+def pessoas_colaboradores_incluir(request):
+    if request.method == 'GET':
+        return render(request, 'administrativo/pessoas_colaboradores_incluir.html')
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_colaboradores_incluir')
+
+        escola = request.user.escola.id
+        matricula = request.POST['registration-number']
+        if not matricula.strip():
+            matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
+        if request.POST['firing-date']:
+            demissao = request.POST['firing-date']
+        else:
+            demissao = None
+
+        person_data = {
+            'id': str(escola) + str(matricula),
+            'escola': escola,
+            'matricula': matricula,
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+            'departamento': request.POST['department'],
+            'cargo': request.POST['position'],
+            'ramal': request.POST['extension'],
+            'admissao': request.POST['hiring-date'],
+            'demissao': demissao,
+            'remuneracao': request.POST['salary'],
+            'banco': request.POST['bank'],
+            'agencia': request.POST['bank-branch'],
+            'conta': request.POST['bank-account'],
+            'is_active': True,
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/colaboradores/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'username': person_data['id'],
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+            'password': '0',
+            'is_active': True,
+        }
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.post('http://127.0.0.1:8000/api/usuario/', data=user_data, cookies=cookies, headers=headers)
+        person_data['usuario'] = User.objects.get(username=user_data['username']).id
+        person_request = requests.post('http://127.0.0.1:8000/api/pessoas/colaborador/', data=person_data, cookies=cookies, headers=headers)
+
         return redirect('pessoas_colaboradores')
-    else:
-        return redirect('login')
+
+
+@login_required()
+@permission_required('administrativo.change_pessoacolaborador', raise_exception=True)
+def pessoas_colaboradores_alterar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'colaborador': requests.get(f'http://127.0.0.1:8000/api/pessoas/colaborador/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/pessoas_colaboradores_alterar.html', data)
+    if request.method == 'POST':
+        if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
+            messages.error(request, 'Há campos obrigatórios em branco!')
+            return redirect('pessoas_colaboradores_alterar')
+
+        if request.POST['firing-date']:
+            demissao = request.POST['firing-date']
+        else:
+            demissao = None
+
+        person_data = {
+            'nome': request.POST['name'],
+            'data_nascimento': request.POST['birthdate'],
+            'cpf': request.POST['cpf'],
+            'rg': request.POST['rg'],
+            'celular': request.POST['cellphone-number'],
+            'telefone': request.POST['phone-number'],
+            'email': request.POST['email'],
+            'genero': request.POST['gender'],
+            'cor': request.POST['color'],
+            'estado_civil': request.POST['marital-status'],
+            'cep': request.POST['postal-code'],
+            'lougradouro': request.POST['address-street'],
+            'numero': request.POST['address-number'],
+            'complemento': request.POST['address-complements'],
+            'bairro': request.POST['address-neighborhood'],
+            'cidade': request.POST['address-city'],
+            'estado': request.POST['address-state'],
+            'pais': request.POST['address-country'],
+            'departamento': request.POST['department'],
+            'cargo': request.POST['position'],
+            'ramal': request.POST['extension'],
+            'admissao': request.POST['hiring-date'],
+            'demissao': demissao,
+            'remuneracao': request.POST['salary'],
+            'banco': request.POST['bank'],
+            'agencia': request.POST['bank-branch'],
+            'conta': request.POST['bank-account'],
+        }
+        if 'photo' in request.FILES:
+            file = request.FILES['photo']
+            storage = MediaStorage()
+            filename = storage.save(f'pessoas/colaboradores/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            person_data['foto'] = storage.url(filename)
+        user_data = {
+            'first_name': person_data['nome'],
+            'email': person_data['email'],
+        }
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+        person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/colaborador/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+        return redirect('pessoas_colaboradores')
+
+
+@login_required()
+@permission_required('administrativo.delete_pessoacolaborador', raise_exception=True)
+def pessoas_colaboradores_excluir(request, id):
+    person_data = {
+        'is_active': False,
+    }
+    user_data = {
+        'is_active': False,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
+    person_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/colaborador/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+    return redirect('pessoas_colaboradores')
 
 
 
-
-
+@login_required()
+@permission_required('administrativo.view_contrato', raise_exception=True)
 def contratos(request):
-    if request.user.is_authenticated:
-        contratos = Contrato.objects.order_by('-datahora_cadastro')
-        data = {'contratos': contratos}
-        return render(request, 'administrativo/contratos.html', data)
-    else:
-        return redirect('login')
+    escola = request.user.escola.id
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'contratos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/contratos_educacionais/', cookies=cookies, headers=headers).json()}
+    return render(request, 'administrativo/contratos.html', data)
 
+
+@login_required()
+@permission_required('administrativo.add_contrato', raise_exception=True)
 def contratos_incluir(request):
-    if request.user.is_authenticated:
-        if request.method == 'POST':
+    if request.method == 'GET':
+        escola = request.user.escola.id
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'cursos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/contratos_incluir.html', data)
+    elif request.method == 'POST':
+        if request.POST['type'] == 'Educacional':
             escola = request.user.escola
-            id = request.POST['contract-code']
-            tipo = request.POST['type']
-            id_curso = request.POST['course-id']
-            curso = Curso.objects.get(pk=id_curso)
-            inicio_vigencia = request.POST['start-date']
-            termino_vigencia = request.POST['end-date']
-            valor = request.POST['value']
-            arquivo
-            data_assinatura = request.POST['sign-date']
-
-            id_estudante = request.POST['student-id']
-            estudante = PessoaEstudante.objects.get(pk=id_estudante)
-            id_responsavel = request.POST['guardian-id']
-            responsavel = PessoaResponsavel.objects.get(pk=id_responsavel)
+            curso = Curso.objects.get(pk=request.POST['course-id'])
+            turma = Turma.objects.get(pk=request.POST['class-id'])
+            estudante = PessoaEstudante.objects.get(pk=request.POST['student-id'])
+            responsavel = PessoaResponsavel.objects.get(pk=request.POST['guardian-id'])
             estudante_contratante = request.POST['is-student-contractor']
-            desconto = request.POST['discount']
-            parcelas = request.POST['installments']
-            dia_pagamento = request.POST['payment-day']
-            mes_inicio_pagamento = request.POST['payment-start'].month
-            ano_inicio_pagamento = request.POST['payment-start'].year
+
+            data_pagamento_matricula = request.POST['registration-payment-date']
+            extenso = dExtenso()
 
             if estudante_contratante is False:
                 contratante = responsavel
@@ -615,66 +703,58 @@ def contratos_incluir(request):
                 contratante = estudante
 
             variaveis_dict = {
-                'escola': escola,
-                'escola_logo': escola.logo,
-                'escola_cnpj': escola.cnpj,
-                'contratante_nome': contratante.nome,
-                'contratante_cpf': contratante.cpf,
-                'contratante_rg': contratante.rg,
-                'endereco_lougradouro': contratante.lougradouro,
-                'endereco_numero': contratante.numero,
-                'endereco_complemento': contratante.complemento,
-                'endereco_bairro': contratante.bairro,
-                'endereco_cidade': contratante.cidade,
-                'endereco_estado': contratante.estado,
-                'endereco_cep': contratante.cep,
-                'estudante_nome': estudante.nome,
-                'estudante_cpf': estudante.cpf,
-                'estudante_rg': estudante.rg,
+                'contratante_nome': 0,
+                'contratante_rg': 0,
+                'contratante_cpf': 0,
+                'contratante_endereco_lougradouro': 0,
+                'contratante_endereco_numero': 0,
+                'contratante_endereco_complemento': 0,
+                'contratante_endereco_bairro': 0,
+                'contratante_endereco_cidade': 0,
+                'contratante_endereco_estado': 0,
+                'estudante_nome': 0,
+                'estudante_rg': 0,
+                'estudante_cpf': 0,
                 'curso_descricao': curso.descricao,
-                'dias_letivos': 0,
-                'horario_letivo': 0,
-                'data_inicial': 0,
-                'data_final': 0,
-                'valor_integral': 0,
-                'valor_integral_extenso': 0,
-                'numero_integral_parcelas': 0,
-                'valor_integral_parcelas': 0,
-                'percentual_desconto': 0,
-                'valor_final': 0,
-                'numero_final_parcelas': 0,
-                'valor_final_parcelas': 0,
-                'valor_final_extenso': 0,
-                'dia_pagamento': 0,
-                'inicio_pagamento': 0,
-                'custo_material': 0,
-                'custo_material_extenso': 0,
-                'numero_parcelas_material': 0,
-                'custo_parcelas_material': 0,
-                'custo_parcelas_material_extenso': 0,
-                'data_final_cancelamento': 0,
-                'data_assinatura': 0,
+                'data_inicio': turma.data_inicio,
+                'data_termino': turma.data_termino,
+                'custo_total_curso': curso.valor_curso,
+                'custo_total_curso_extenso': extenso.getExtenso(curso.valor_curso),
+                'parcelas_totais_curso': curso.parcelamento_curso,
+                'custo_total_parcelas_curso': float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso),
+                'percentual_desconto_curso': request.POST['discount'],
+                'custo_final_curso': (1 - (float(request.POST['discount'])/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')),
+                'parcelas_finais_curso': request.POST['installments'],
+                'custo_final_parcelas_curso': ((1 - (float(request.POST['discount'])/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']),
+                'custo_final_parcelas_curso_extenso': extenso.getExtenso(),
+                'dia_pagamento': request.POST['payment-day'],
+                'mes_inicio_pagamento': request.POST['payment-start'].month,
+                'ano_inicio_pagamento': request.POST['payment-start'].year,
+                'custo_total_material': curso.valor_material,
+                'custo_total_material_extenso': extenso.getExtenso(curso.valor_material),
+                'parcelas_totais_material': curso.parcelamento_material,
+                'data_assinatura': request.POST['sign-date'],
+                'escola_nome_fantasia': escola.nome_fantasia,
+                'escola_cnpj': escola.cnpj,
+                'id_contrato': str(escola.id) + request.POST['contract-code'],
             }
-            contrato_educacional(variaveis_dict)
-        else:
-            return render(request, 'administrativo/contratos_incluir.html')
-    else:
-        return redirect('login')
 
+            arquivo = contrato_educacional_engaja_2022(request, variaveis_dict)
+
+
+
+@login_required()
 def secretaria(request):
-    if request.user.is_authenticated:
-        return render(request, 'administrativo/secretaria.html')
-    else:
-        return redirect('login')
+    return render(request, 'administrativo/secretaria.html')
 
+
+
+@login_required()
 def recepcao(request):
-    if request.user.is_authenticated:
-        return render(request, 'administrativo/recepcao.html')
-    else:
-        return redirect('login')
+    return render(request, 'administrativo/recepcao.html')
 
+
+
+@login_required()
 def administrativo_relatorios(request):
-    if request.user.is_authenticated:
-        return render(request, 'administrativo/relatorios.html')
-    else:
-        return redirect('login')
+    return render(request, 'administrativo/relatorios.html')

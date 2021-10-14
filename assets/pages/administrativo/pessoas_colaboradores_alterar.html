@@ -13,7 +13,8 @@
         <main>
             <div class="container-body">
                 <h2 class="title">Alterar</h2>
-                <form action="{% url 'pessoas_colaboradores_alterar' %}" method="post" enctype="multipart/form-data">
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'pessoas_colaboradores_alterar' colaborador.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
                         <h3 class="light-title">Dados básicos</h3>
@@ -27,7 +28,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="birthdate">Data de nascimento <span>*</span></label>
-                            <input type="date" name="birthdate" id="birthdate" required value="{{colaborador.data_nascimento|date:'Y-m-d'}}">
+                            <input type="date" name="birthdate" id="birthdate" required value="{{colaborador.data_nascimento}}">
                         </div>
                         <div class="input-unit">
                             <label for="cpf">CPF <span>*</span></label>
@@ -49,38 +50,47 @@
                             <label for="email">E-mail <span>*</span></label>
                             <input type="email" name="email" id="email" required value="{{colaborador.email}}" size="30">
                         </div>
-<!--                        <div class="input-unit">-->
-<!--                            <label for="gender">Gênero <span>*</span></label>-->
-<!--                            <select name="gender" required>-->
-<!--                                <option value="homem">Homem</option>-->
-<!--                                <option value="mulher">Mulher</option>-->
-<!--                                <option value="nao-binario">Não-binário</option>-->
-<!--                                <option value="agenero">Agênero</option>-->
-<!--                                <option value="outro">Outro</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="input-unit">-->
-<!--                            <label for="color">Cor <span>*</span></label>-->
-<!--                            <select name="color" required>-->
-<!--                                <option value="branca">Branca</option>-->
-<!--                                <option value="preta">Preta</option>-->
-<!--                                <option value="parda">Parda</option>-->
-<!--                                <option value="amarela">Amarela</option>-->
-<!--                                <option value="indigena">Indígena</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
-<!--                        <div class="input-unit">-->
-<!--                            <label for="marital-status">Estado civil <span>*</span></label>-->
-<!--                            <select name="marital-status" required>-->
-<!--                                <option value="solteiro">Solteiro(a)</option>-->
-<!--                                <option value="casado">Casado(a)/Mora com companheiro(a)</option>-->
-<!--                                <option value="divorciado">Divorciado(a)/Separado(a)</option>-->
-<!--                                <option value="viuvo">Viúvo(a)</option>-->
-<!--                                <option value="prefere-nao-responder" selected>Prefere não responder</option>-->
-<!--                            </select>-->
-<!--                        </div>-->
+                        <div class="input-unit">
+                            <label for="gender">Gênero <span>*</span></label>
+                            <input type="hidden" name="gender" id="gender" class="select-value" value="{{colaborador.genero}}">
+                            <select name="gender" id="gender" required>
+                                <option value="Homem">Homem</option>
+                                <option value="Mulher">Mulher</option>
+                                <option value="Não-binário">Não-binário</option>
+                                <option value="Agênero">Agênero</option>
+                                <option value="Outro">Outro</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="color">Cor <span>*</span></label>
+                            <input type="hidden" name="color" id="color" class="select-value" value="{{colaborador.cor}}">
+                            <select name="color" id="color" required>
+                                <option value="Branca">Branca</option>
+                                <option value="Preta">Preta</option>
+                                <option value="Parda">Parda</option>
+                                <option value="Amarela">Amarela</option>
+                                <option value="Indígena">Indígena</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <input type="hidden" name="marital-status" id="marital-status" class="select-value" value="{{colaborador.estado_civil}}">
+                            <label for="marital-status">Estado civil <span>*</span></label>
+                            <select name="marital-status" id="marital-status" required>
+                                <option value="Solteiro(a)">Solteiro(a)</option>
+                                <option value="Casado(a)">Casado(a)/Mora com companheiro(a)</option>
+                                <option value="Divorciado(a)">Divorciado(a)/Separado(a)</option>
+                                <option value="Viúvo(a)">Viúvo(a)</option>
+                                <option value="Prefere não responder" selected>Prefere não responder</option>
+                            </select>
+                        </div>
+                        {% if colaborador.foto %}
+                        <div class="input-unit">
+                            <label for="photo">Foto atual</label>
+                            <img src="{{ colaborador.foto }}" alt="Foto" style='height: auto; width: 8.5rem;'>
+                        </div>
+                        {% endif %}
                         <div class="input-unit">
                             <label for="photo">Foto</label>
                             <input type="file" name="photo" id="photo" accept="image/*">
@@ -90,7 +100,7 @@
                         <h3 class="light-title">Endereço</h3>
                         <div class="input-unit">
                             <label for="postal-code">CEP <span>*</span></label>
-                            <input type="text" name="postal-code" id="postal-code" required value="{{colaborador.cap}}" pattern="[0-9]{5}-[0-9]{3}" size="9">
+                            <input type="text" name="postal-code" id="postal-code" required value="{{colaborador.cep}}" pattern="[0-9]{5}-[0-9]{3}" size="9">
                         </div>
                         <div class="input-unit">
                             <label for="address-street">Lougradouro <span>*</span></label>
@@ -124,34 +134,36 @@
                     <div class="form-section">
                         <h3 class="light-title">Informações trabalhistas</h3>
                         <h4 class="light-subtitle">Trabalho</h4>
-<!--                        <div class="input-unit">--->
-<!--                            <label for="department">Departamento <span>*</span></label>--->
-<!--                            <select name="department" required>--->
-<!--                                <option value="direcao">Direção</option>--->
-<!--                                <option value="administrativo">Administrativo</option>--->
-<!--                                <option value="pedagogico">Pedagógico</option>--->
-<!--                            </select>--->
-<!--                        </div>--->
-<!--                        <div class="input-unit">--->
-<!--                            <label for="position">Cargo <span>*</span></label>--->
-<!--                            <select name="position" required>--->
-<!--                                <option value="diretor_institucional">Diretor Institucional</option>--->
-<!--                                <option value="limpeza">Limpeza</option>--->
-<!--                                <option value="manutencao">Manutenção</option>--->
-<!--                                <option value="ti">T.I.</option>--->
-<!--                                <option value="recepcao-nao-responder">Recepção</option>--->
-<!--                                <option value="recursos_humanos">Recursos Humanos</option>--->
-<!--                                <option value="grafica">Gráfica</option>--->
-<!--                                <option value="compras">Compras</option>--->
-<!--                                <option value="comunicacao">Comunicação</option>--->
-<!--                                <option value="atividade_complementar">Atividade Complementar</option>--->
-<!--                                <option value="orientacao_vocacional">Orientação Educacional</option>--->
-<!--                                <option value="coordenacao_pedagogica">Coordenação Pedagógica</option>--->
-<!--                                <option value="biblioteca">Biblioteca</option>--->
-<!--                                <option value="secretaria">Secretaria</option>--->
-<!--                                <option value="monitoria">Monitoria</option>--->
-<!--                            </select>--->
-<!--                        </div>--->
+                        <div class="input-unit">
+                            <label for="department">Departamento <span>*</span></label>
+                            <input type="hidden" name="department" id="department" class="select-value" value="{{colaborador.departamento}}">
+                            <select name="department" required>
+                                <option value="Direção">Direção</option>
+                                <option value="Administrativo">Administrativo</option>
+                                <option value="Pedagógico">Pedagógico</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="position">Cargo <span>*</span></label>
+                            <input type="hidden" name="position" id="position" class="select-value" value="{{colaborador.cargo}}">
+                            <select name="position" required>
+                                <option value="Diretor Institucional">Diretor Institucional</option>
+                                <option value="Limpeza">Limpeza</option>
+                                <option value="Manutenção">Manutenção</option>
+                                <option value="T.I.">T.I.</option>
+                                <option value="Recepção">Recepção</option>
+                                <option value="Recursos Humanos">Recursos Humanos</option>
+                                <option value="Gráfica">Gráfica</option>
+                                <option value="Compras">Compras</option>
+                                <option value="Comunicação">Comunicação</option>
+                                <option value="Atividades Complementares">Atividades Complementares</option>
+                                <option value="Orientação Vocacional">Orientação Educacional</option>
+                                <option value="Coordenação Pedagógica">Coordenação Pedagógica</option>
+                                <option value="Biblioteca">Biblioteca</option>
+                                <option value="Secretaria">Secretaria</option>
+                                <option value="Monitoria">Monitoria</option>
+                            </select>
+                        </div>
                         <div class="input-unit">
                             <label for="extension">Ramal</label>
                             <input type="text" name="extension" id="extension" pattern="[0-9]{1,8}" value="{{colaborador.ramal}}" title="Digite apenas números" size="8">
@@ -159,11 +171,11 @@
                         <h4 class="light-subtitle">Recursos Humanos</h4>
                         <div class="input-unit">
                             <label for="hiring-date">Data de admissão <span>*</span></label>
-                            <input type="date" name="hiring-date" id="hiring-date" required value="{{colaborador.admissao|date:'Y-m-d'}}">
+                            <input type="date" name="hiring-date" id="hiring-date" required value="{{colaborador.admissao}}">
                         </div>
                         <div class="input-unit">
                             <label for="firing-date">Data de demissão</label>
-                            <input type="date" name="firing-date" id="firing-date" value="{{colaborador.demissao|date:'Y-m-d'}}">
+                            <input type="date" name="firing-date" id="firing-date" value="{{colaborador.demissao}}">
                         </div>
                         <div class="input-unit">
                             <label for="salary">Remuneração <span>*</span></label>
@@ -172,7 +184,8 @@
                         <!--benefícios-->
                         <div class="input-unit">
                             <label for="bank">Banco <span>*</span></label>
-                            <select name="bank" id="bank" required value="{{colaborador.banco}}">
+                            <input type="hidden" name="bank" id="bank" class="select-value" value="{{colaborador.banco}}">
+                            <select name="bank" id="bank" required>
                             </select>
                         </div>
                         <div class="input-unit">
@@ -192,21 +205,6 @@
                         cnh
                         titulo eleitor
                         reservista-->
-                    </div>
-                    <div class="form-section">
-                        <h3 class="light-title">Dados de Acesso</h3>
-                        <div class="input-unit">
-                            <label for="username">Usuário <span>*</span></label>
-                            <input type="text" name="username" id="username" required disabled value="{{colaborador.usuario}}" pattern="[a-zA-Z0-9._-]{5,20}" title="O usuário deve ter entre 5 e 20 caracteres, podendo conter letras, números e alguns símbolos (_ - .)" size="20">
-                        </div>
-                        <div class="input-unit">
-                            <label for="password">Senha <span>*</span></label>
-                            <input type="password" name="password" id="password" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter no mínimo 8 caracteres, sendo pelo menos uma maiúscula, uma minúscula, um número e um símbolo" size="32">
-                        </div>
-                        <div class="input-unit">
-                            <label for="password-confirmation">Confirmação de Senha <span>*</span></label>
-                            <input type="password" name="password-confirmation" id="password-confirmation" required pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%&*\-_=+?]).{8,32}$" title="A senha deve conter de 8 a 32 caracteres, sendo pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo" size="32">
-                        </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">
                 </form>

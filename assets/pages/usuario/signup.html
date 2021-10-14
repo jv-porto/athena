@@ -8,12 +8,14 @@
         <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
         <link rel="icon" href="{% static 'files/athena_icon.svg' %}">
         <title>Athena</title>
+        <link href="{% static 'css/bootstrap-alerts.css' %}" rel="stylesheet">
         <link href="{% static 'css/main.css' %}" rel="stylesheet">
     </head>
     <body class="signup-screen-body">
         <main class="signup-screen">
             <h1><img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena"></h1>
             <div class="signup">
+                {% include '_partials/_alertas.html'%}
                 <form action="{% url 'dashboard' %}" method="POST">
                     <h2 class="light-title">Cadastre-se</h2>
                     <p class="signup-info">Você deseja saber mais informações sobre <span>Athena</span>? Digite seus dados abaixo e entraremos em contato em breve!</p>

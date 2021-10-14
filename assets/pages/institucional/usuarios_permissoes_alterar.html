@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title">Usuários e Permissões</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'usuarios_permissoes' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <form action="{% url 'usuarios_permissoes_alterar' %}" method="post">
+                    {% csrf_token %}
+                    <h2 class="title">Alterar</h2>
+                    <div class="form-section">
+                        <h3 class="light-title">Grupos de Usuários</h3>
+                        <input type="hidden" name="id-escola" value="{{request.user.escola}}">
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <select name="description" id="description" required>
+                                {% for group in permissoes %}
+                                <option value="{{group.descricao}}">{{group.descricao}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-section permissions">
+                        <h3 class="light-title">Permissões</h3>
+                        <h4 class="light-subtitle">Index</h4>
+                        <div class="input-unit">
+                            <label for="dashboard">Dashboard</label>
+                            <input type="checkbox" name="dashboard" id="dashboard">
+                        </div>
+                        <h4 class="light-subtitle">Administrativo</h4>
+                        <div class="input-unit">
+                            <label for="administrativo_escolas">Escolas</label>
+                            <input type="checkbox" name="administrativo_escolas" id="administrativo_escolas">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_estudantes">Pessoas - Estudantes</label>
+                            <input type="checkbox" name="administrativo_pessoas_estudantes" id="administrativo_pessoas_estudantes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_responsaveis">Pessoas - Responsáveis</label>
+                            <input type="checkbox" name="administrativo_pessoas_responsaveis" id="administrativo_pessoas_responsaveis">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_colaboradores">Pessoas - Colaboradores</label>
+                            <input type="checkbox" name="administrativo_pessoas_colaboradores" id="administrativo_pessoas_colaboradores">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_contratos">Contratos</label>
+                            <input type="checkbox" name="administrativo_contratos" id="administrativo_contratos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_secretaria">Secretaria</label>
+                            <input type="checkbox" name="administrativo_secretaria" id="administrativo_secretaria">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_recepcao">Recepção</label>
+                            <input type="checkbox" name="administrativo_recepcao" id="administrativo_recepcao">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_relatorios">Relatórios</label>
+                            <input type="checkbox" name="administrativo_relatorios" id="administrativo_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Pedagógico</h4>
+                        <div class="input-unit">
+                            <label for="pedagogico_cursos">Cursos</label>
+                            <input type="checkbox" name="pedagogico_cursos" id="pedagogico_cursos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_turmas">Turmas</label>
+                            <input type="checkbox" name="pedagogico_turmas" id="pedagogico_turmas">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_boletim">Boletim</label>
+                            <input type="checkbox" name="pedagogico_boletim" id="pedagogico_boletim">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_diario_classe">Diário de Classe</label>
+                            <input type="checkbox" name="pedagogico_diario_classe" id="pedagogico_diario_classe">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_sala_virtual">Sala Virtual</label>
+                            <input type="checkbox" name="pedagogico_sala_virtual" id="pedagogico_sala_virtual">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_vestibulares">Vestibulares</label>
+                            <input type="checkbox" name="pedagogico_vestibulares" id="pedagogico_vestibulares">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_relatorios">Relatórios</label>
+                            <input type="checkbox" name="pedagogico_relatorios" id="pedagogico_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Financeiro</h4>
+                        <div class="input-unit">
+                            <label for="financeiro_bancos">Bancos</label>
+                            <input type="checkbox" name="financeiro_bancos" id="financeiro_bancos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="financeiro_movimentacoes">Movimentações</label>
+                            <input type="checkbox" name="financeiro_movimentacoes" id="financeiro_movimentacoes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="financeiro_relatorios">Relatórios</label>
+                            <input type="checkbox" name="financeiro_relatorios" id="financeiro_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Institucional</h4>
+                        <div class="input-unit">
+                            <label for="institucional_cadastro_escolar">Cadastro Escolar</label>
+                            <input type="checkbox" name="institucional_cadastro_escolar" id="institucional_cadastro_escolar">
+                        </div>
+                        <div class="input-unit">
+                            <label for="institucional_ano_academico">Ano Acadêmico</label>
+                            <input type="checkbox" name="institucional_ano_academico" id="institucional_ano_academico">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}
