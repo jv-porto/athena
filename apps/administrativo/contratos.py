@@ -14,7 +14,9 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.rl_config import TTFSearchPath
 from django.conf import settings
 
-TTFSearchPath.append(str(settings.BASE_DIR) + 'assets/lib/fonts')
+
+path = str(settings.BASE_DIR) + '/assets/lib/fonts'
+TTFSearchPath.append(path)
 registerFont(TTFont('Arial','arial.ttf'))
 registerFont(TTFont('Arial-Bold','arialbd.ttf'))
 registerFontFamily('Arial', normal='Arial', bold='Arial-Bold')
