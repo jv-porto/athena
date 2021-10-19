@@ -9,12 +9,15 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.units import cm
 from functools import partial
 
-
-
 from reportlab.pdfbase.pdfmetrics import registerFont
 from reportlab.pdfbase.ttfonts import TTFont
-registerFont(TTFont('Arial','ARIAL.TTF'))
-registerFont(TTFont('Arial-Bold','ARIALBD.TTF'))
+from reportlab.rl_config import TTFSearchPath
+from django.conf import settings
+
+TTFSearchPath.append(str(settings.STATIC_URL) + 'fonts/')
+registerFont(TTFont('Arial','arial.ttf'))
+registerFont(TTFont('Arial-Bold','arialbd.ttf'))
+
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Arial', fontSize=8, leading=20))
