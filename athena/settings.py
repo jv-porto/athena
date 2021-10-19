@@ -23,15 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['athena.thrucode.com.br', '127.0.0.1']
+ALLOWED_HOSTS = ['athena.thrucode.com.br']
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-if not DEBUG:
-    SECRET_KEY = os.environ['SECRET_KEY']
-else:
-    SECRET_KEY = '8IyEHaGkOvDOMgmk0Ky4PvU8RXqnypBsIFcR0SJxdZnZcAFLcpT6tWJpd2Cd'
+SECRET_KEY = os.environ['SECRET_KEY']
 
 
 # Application definition
@@ -94,28 +91,16 @@ WSGI_APPLICATION = 'athena.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if not DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'athena',
-            'USER': 'django',
-            'PASSWORD': os.environ['DB_PASSWORD'],
-            'HOST': 'thrucode.cgffddxe4wvm.us-east-1.rds.amazonaws.com',
-            'PORT': '5432',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ['DB_TABLENAME'],
+        'USER': os.environ['DB_USERNAME'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT'],
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'athena',
-            'USER': 'django',
-            'PASSWORD': '#w%&QPdcVa%wBsE2hJRW5htlfI4Rqg#v9TqoeRmFQWTqQQ$0Mh',
-            'HOST': 'thrucode.cgffddxe4wvm.us-east-1.rds.amazonaws.com',
-            'PORT': '5432',
-        }
-    }
+}
 
 
 # Authentication
@@ -152,20 +137,19 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.zoho.com'
 
-EMAIL_HOST_USER = 'hermes@thrucode.com.br'
-DEFAULT_FROM_EMAIL = 'hermes@thrucode.com.br'
-EMAIL_HOST_PASSWORD = 'unHsJHd5N3sh'
+EMAIL_HOST_USER = os.environ['EMAIL_USERNAME']
+DEFAULT_FROM_EMAIL = os.environ['EMAIL_USERNAME']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 
 """EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
 
-if not DEBUG:
-    EMAIL_HOST_USER = os.environ['EMAIL_USER']
-    DEFAULT_FROM_EMAIL = os.environ['EMAIL_USER']
-    EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
-else:
-    EMAIL_HOST_USER = 'AKIA5Q2ODCHCTTILUEMB'
-    DEFAULT_FROM_EMAIL = 'athena@hermes.thrucode.com'
-    EMAIL_HOST_PASSWORD = 'BOxXV2lKmauZDubG3zaQo0Bj7FGsXJUiJRc1rhtpYgVj'"""
+EMAIL_HOST_USER = os.environ['EMAIL_USER']
+DEFAULT_FROM_EMAIL = os.environ['EMAIL_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
+
+EMAIL_HOST_USER = 'AKIA5Q2ODCHCTTILUEMB'
+DEFAULT_FROM_EMAIL = 'athena@hermes.thrucode.com'
+EMAIL_HOST_PASSWORD = 'BOxXV2lKmauZDubG3zaQo0Bj7FGsXJUiJRc1rhtpYgVj'"""
 
 EMAIL_PORT = 587
 
@@ -230,22 +214,12 @@ MESSAGE_TAGS = {
 }
 
 
-"""# Max Data
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000"""
-
-
 # DJANGO STORAGES - S3
 
-if not DEBUG:
-    AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
-    AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
-    AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-    AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
-else:
-    AWS_ACCESS_KEY_ID = 'AKIA5Q2ODCHCQVIGRYNT'
-    AWS_SECRET_ACCESS_KEY = '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'
-    AWS_STORAGE_BUCKET_NAME = 'thrucodeathenastatic'
-    AWS_S3_REGION_NAME = 'us-east-1'
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_REGION_NAME = os.environ['AWS_S3_REGION_NAME']
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 AWS_S3_OBJECT_PARAMETERS = {

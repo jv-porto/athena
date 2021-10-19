@@ -54,15 +54,15 @@
                         </div>
                         <div class="input-unit">
                             <label for="tutor">Tutor</label>
-                            <input type="text" name="tutor" id="tutor" class="numeric-code-9" required value="{{turma.tutor}}" pattern="[0-9]{9}" title="Digite o ID do(a) tutor(a)" size="9">
+                            <input type="text" name="tutor" id="tutor" class="numeric-code-9" value="{{turma.tutor}}" pattern="[0-9]{9}" title="Digite o ID do(a) tutor(a)" size="9">
                         </div>
                         <div class="input-unit">
-                            <label for="start-date">Data de início</label>
-                            <input type="date" name="start-date" id="start-date" value="{{turma.data_inicio}}">
+                            <label for="start-date">Data de início <span>*</span></label>
+                            <input type="date" name="start-date" id="start-date" required value="{{turma.data_inicio}}">
                         </div>
                         <div class="input-unit">
-                            <label for="end-date">Data de término</label>
-                            <input type="date" name="end-date" id="end-date"  value="{{turma.data_termino}}">
+                            <label for="end-date">Data de término <span>*</span>label>
+                            <input type="date" name="end-date" id="end-date" required value="{{turma.data_termino}}">
                         </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">
