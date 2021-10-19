@@ -1,5 +1,6 @@
 __pycache__/
 athena/__pycache__
+assets/collectstatic
 apps/administrativo/__pycache__
 apps/administrativo/migrations/__pycache__
 apps/administrativo/documentos/__pycache__
