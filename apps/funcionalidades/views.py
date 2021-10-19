@@ -10,7 +10,7 @@ def mensagens(request):
     return render(request, 'funcionalidades/mensagens.html')
 
 def email(request):
-    if request.method == 'GET':
+    """if request.method == 'GET':
         return render(request, 'funcionalidades/mensagens_email.html')
     if request.method == 'POST':
         mail_data = {
@@ -37,4 +37,4 @@ def email(request):
             )
             email.content_subtype = 'html'
             email.send()
-        connection.close()
+        connection.close()"""

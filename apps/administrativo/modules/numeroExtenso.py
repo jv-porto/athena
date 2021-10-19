@@ -112,7 +112,9 @@ class dExtenso():
         # Remove os zeros iniciais e faz padding
         # para números com quantidade de algarismos
         # não múltipla de 3
-        num = num.lstrip('0')
+        if num == 0:
+            return 'zero'
+        num = str(num).lstrip('0')
         pad = 3 - len(num)%3
         if pad < 3: num = '0'*pad + num
   

@@ -1,21 +1,52 @@
 from io import BytesIO
-from django.http import HttpResponse
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer
+from django.core.files.base import ContentFile
+from reportlab.platypus import SimpleDocTemplate, PageTemplate, Paragraph, Image, Spacer
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.utils import ImageReader
+from reportlab.platypus.frames import Frame
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.units import cm
+from functools import partial
+
+
+
+from reportlab.pdfbase.pdfmetrics import registerFont
+from reportlab.pdfbase.ttfonts import TTFont
+registerFont(TTFont('Arial','ARIAL.TTF'))
+registerFont(TTFont('Arial-Bold','ARIALBD.TTF'))
 
 styles = getSampleStyleSheet()
-styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Times-Roman', fontSize=10, leading=20))
-styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=10))
-styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=10, firstLineIndent=1.25*cm))
-styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=10, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
-styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Times-Roman', fontSize=10))
+styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Arial', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='centered-bold', alignment=TA_CENTER, fontName='Arial-Bold', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8))
+styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, firstLineIndent=1.25*cm))
+styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
+styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Arial', fontSize=8))
 
 
 
-def GeneratePdf(file_name=None, elements_list=None, logo=None):
+def GeneratePdf(elements_list, logo=None):
+    if logo != None:
+        def header(canvas, doc, content):
+            canvas.saveState()
+            width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
+            content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
+            canvas.restoreState()
+        """def footer(canvas, doc, content):
+            canvas.saveState()
+            w, h = content.wrap(doc.width, doc.bottomMargin)
+            content.drawOn(canvas, doc.leftMargin, h)
+            canvas.restoreState()"""
+        def header_and_footer(canvas, doc, header_content):
+            header(canvas, doc, header_content)
+            #footer(canvas, doc, footer_content)
+        def get_image(path, height=1.27*cm):
+            img = ImageReader(path)
+            iw, ih = img.getSize()
+            aspect = iw / float(ih)
+            return Image(path, height=height, width=(height * aspect))
+
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(
@@ -26,6 +57,12 @@ def GeneratePdf(file_name=None, elements_list=None, logo=None):
         topMargin=1.27*cm,
         bottomMargin=1.27*cm)
 
+    if logo != None:
+        frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height)
+        header_content = get_image(logo)
+        #footer_content = Paragraph('')
+        template = PageTemplate(frames=frame, onPage=partial(header_and_footer, header_content=header_content))
+        doc.addPageTemplates([template])
 
     elements = []
     for item in elements_list:
@@ -33,24 +70,26 @@ def GeneratePdf(file_name=None, elements_list=None, logo=None):
     
     doc.build(elements)
 
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename={variaveis_dict["file_name"]}.pdf'
-    response.write(buffer.getvalue())
+    file = ContentFile(buffer.getvalue())
+    file.content_type = 'application/pdf'
     buffer.close()
 
-    return response
+    return file
 
 
 
 ############### Contrato de Prestação de Serviços Educacionais ###############
-def contrato_educacional_engaja_2022(request, variaveis_dict):
+def contrato_educacional_engaja_2022(request, variaveis_dict, estudante_contratante):
     titulo = f'CLÁUSULAS DO CONTRATO'
     subtitulo = f'CURSO ENGAJA'
-    paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, contrata os serviços da contratada a fim de que a (o) aluna (o) {variaveis_dict["estudante_nome"]}, portador (a) do RG {variaveis_dict["estudante_rg"]}, CPF {variaveis_dict["estudante_cpf"]}, tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período, atividades, como: aulas, plantões, simulados, orientação pedagógica individual e coletiva, assembleias, atividades socioemocionais e o curso de políticas públicas.'
+    if estudante_contratante is False:
+        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, CEP {variaveis_dict["contratante_endereco_cep"]}, contrata os serviços da contratada a fim de que a (o) aluna (o) {variaveis_dict["estudante_nome"]}, portador (a) do RG {variaveis_dict["estudante_rg"]}, CPF {variaveis_dict["estudante_cpf"]}, tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período, atividades, como: aulas, plantões, simulados, orientação pedagógica individual e coletiva, assembleias, atividades socioemocionais e o curso de políticas públicas.'
+    elif estudante_contratante is True:
+        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, contrata os serviços da contratada a fim de que tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período, atividades, como: aulas, plantões, simulados, orientação pedagógica individual e coletiva, assembleias, atividades socioemocionais e o curso de políticas públicas.'
     paragrafo_1_1 = f'1.1 – Excepcionalmente, poderá ocorrer atividade aos sábados quando houver aplicação de simulados. Fica assegurado aos alunos sabatistas a entrega dos simulados para serem realizados em outro período.'
     paragrafo_1_2 = f'1.2 – Excepcionalmente, por motivos de força maior, como pandemia, por exemplo, poderá haver alteração na prestação do serviço. Neste caso, garantimos manter a qualidade do serviço pedagógico oferecido pelo cursinho, contemplado no item 1, fazendo as adequações necessárias e comunicando com antecedência as alterações.'
     paragrafo_2 = f'2 – O PERÍODO: As aulas serão ministradas no período de {variaveis_dict["data_inicio"]} a {variaveis_dict["data_termino"]}, com 4 semanas de férias intercaladas na finalização de cada ciclo do currículo (4 ciclos). Todas as informações referentes ao período do curso são passíveis de alteração, sendo a contratante devidamente avisada com antecedência.'
-    paragrafo_3 = f'3 – VALORES E MULTA: O valor integral do curso é {variaveis_dict["custo_total_curso"]} ({variaveis_dict["custo_total_curso_extenso"]}), podendo ser dividido em {variaveis_dict["parcelas_totais_curso"]} parcelas de {variaveis_dict["custo_total_parcelas_curso"]}. Este valor compreende os custos de operação do curso (aulas, utilização do espaço no contraturno, simulados, mentorias, atividades com a psicóloga) e, também, os gastos correspondentes ao uso do aplicativo do PEdu. O material didático é um custo a parte, descrito no item 3.3. Ficou acordado, entre as partes, um desconto de {variaveis_dict["percentual_desconto_curso"]} no valor do curso. Assim sendo, o (a) contratante pagará à contratada o valor de {variaveis_dict["custo_final_curso"]}, dividido em {variaveis_dict["parcelas_finais_curso"]} parcelas de {variaveis_dict["custo_final_parcelas_curso"]} ({variaveis_dict["custo_final_parcelas_curso_extenso"]}).'
+    paragrafo_3 = f'3 – VALORES E MULTA: O valor integral do curso é {variaveis_dict["custo_total_curso"]} ({variaveis_dict["custo_total_curso_extenso"]}), podendo ser dividido em {variaveis_dict["parcelas_totais_curso"]} parcelas de {variaveis_dict["custo_total_parcelas_curso"]} ({variaveis_dict["custo_total_parcelas_curso_extenso"]}). Este valor compreende os custos de operação do curso (aulas, utilização do espaço no contraturno, simulados, mentorias, atividades com a psicóloga) e, também, os gastos correspondentes ao uso do aplicativo do PEdu. O material didático é um custo a parte, descrito no item 3.3. Ficou acordado, entre as partes, um desconto de {variaveis_dict["percentual_desconto_curso"]} no valor do curso. Assim sendo, o (a) contratante pagará à contratada o valor de {variaveis_dict["custo_final_curso"]} ({variaveis_dict["custo_final_curso_extenso"]}), dividido em {variaveis_dict["parcelas_finais_curso"]} parcelas de {variaveis_dict["custo_final_parcelas_curso"]} ({variaveis_dict["custo_final_parcelas_curso_extenso"]}).'
     paragrafo_3_1 = f'3.1 – A ausência do (a) contratante em quaisquer aulas, mesmo que justificada, não o (a) eximirá do pagamento das parcelas correspondentes e nem dá direito a reposição dessas aulas.'
     paragrafo_3_2 = f'3.2 - O pagamento por meio de boleto deverá ser realizado todo dia {variaveis_dict["dia_pagamento"]}, a contar a partir do mês de {variaveis_dict["mes_inicio_pagamento"]} de {variaveis_dict["ano_inicio_pagamento"]}. O atraso no pagamento das parcelas implicará em juros de mora de 2% após o vencimento e correção de 0,03% ao dia.'
     paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), 4 cadernos extras anuais (filosofia, sociologia, arte e questões do ENEM) e plataforma de exercícios (Studos). O custo do material é de {variaveis_dict["custo_total_material"]} ({variaveis_dict["custo_total_material_extenso"]}), podendo ser dividido em até {variaveis_dict["parcelas_totais_material"]} parcelas (com juros).'
@@ -69,10 +108,9 @@ def contrato_educacional_engaja_2022(request, variaveis_dict):
     assinatura_escola = f'{variaveis_dict["escola_nome_fantasia"]} (CNPJ: {variaveis_dict["escola_cnpj"]})'
 
     return GeneratePdf(
-        file_name = f'contrato-{variaveis_dict["id_contrato"]}',
         elements_list = [
-            Paragraph(titulo, styles['centered']),
-            Paragraph(subtitulo, styles['centered']),
+            Paragraph(titulo, styles['centered-bold']),
+            Paragraph(subtitulo, styles['centered-bold']),
             Spacer(1, 12),
             Paragraph(paragrafo_1, styles['justified']),
             Paragraph(paragrafo_1_1, styles['justified-level-2']),

@@ -7,10 +7,12 @@
                 <div class="page-actions">
                     <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
                     <a href="{% url 'contratos_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-imprimir">Imprimir</a>
+                    <a href="" class="body-black-text page-actions-digitalizar">Digitalizar</a>
                     <a href="" class="body-black-text page-actions-alterar">Alterar</a>
                     <a href="" class="body-black-text page-actions-excluir">Excluir</a>
                 </div>
-                
+
                 {% include '_partials/_menu.html' %}
 
         <main>
@@ -22,28 +24,22 @@
                         <tr>
                             <th class="light-subtitle"></th>
                             <th class="light-subtitle">Código</th>
-                            <th class="light-subtitle">Nome fantasia</th>
-                            <th class="light-subtitle">E-mail</th>
-                            <th class="light-subtitle">Telefone</th>
-                            <th class="light-subtitle">Celular</th>
-                            <th class="light-subtitle">Site</th>
-                            <th class="light-subtitle">Cidade</th>
-                            <th class="light-subtitle">Estado</th>
+                            <th class="light-subtitle">Estudante</th>
+                            <th class="light-subtitle">Curso</th>
+                            <th class="light-subtitle">Turma</th>
+                            <th class="light-subtitle">Assinatura</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if contratos %}
                         {% for contrato in contratos %}
                         <tr>
-                            <td><input type="radio" name="school" class="choose-menu-id" id="{{ escola.id }}" value="{{ escola.id }}"></td>
-                            <td>{{ escola.id }}</td>
-                            <td>{{ escola.nome_fantasia }}</td>
-                            <td>{{ escola.email }}</td>
-                            <td>{{ escola.telefone }}</td>
-                            <td>{{ escola.celular }}</td>
-                            <td>{{ escola.site }}</td>
-                            <td>{{ escola.cidade}}</td>
-                            <td>{{ escola.estado }}</td>
+                            <td><input type="radio" name="school" class="choose-menu-id" id="{{ contrato.id }}" value="{{ contrato.id }}"></td>
+                            <td>{{ contrato.id }}</td>
+                            <td>{{ contrato.estudante }}</td>
+                            <td>{{ contrato.curso }}</td>
+                            <td>{{ contrato.turma }}</td>
+                            <td>{{ contrato.data_assinatura|date:"d/m/Y" }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}

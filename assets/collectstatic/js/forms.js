@@ -11,7 +11,7 @@ const conta_bancaria = document.querySelectorAll('#bank-account')
 const numero_endereco = document.querySelectorAll('#address-number')
 const codigo_contrato = document.querySelectorAll('#contract-code')
 const id_responsavel = document.querySelectorAll('.guardian-id')
-const desconto = document.querySelectorAll('#discount')
+const desconto = document.querySelectorAll('.discount')
 const ano_academico = document.querySelectorAll('#academic-year-id')
 const codigo_maiusculo_7 = document.querySelectorAll('.uppercase-code-7')
 const codigo_maiusculo_11 = document.querySelectorAll('.uppercase-code-11')
@@ -28,6 +28,7 @@ for (const item of telefone) {
     })
 }
 
+
 for (const item of cep) {
     new Cleave(item, {
         blocks: [5, 3],
@@ -35,6 +36,7 @@ for (const item of cep) {
         numericOnly: true
     })
 }
+
 
 for (const item of cpf) {
     new Cleave(item, {
@@ -44,6 +46,7 @@ for (const item of cpf) {
     })
 }
 
+
 for (const item of rg) {
     new Cleave(item, {
         blocks: [2, 3, 3, 1],
@@ -51,6 +54,7 @@ for (const item of rg) {
         numericOnly: true
     })
 }
+
 
 for (const item of cnpj) {
     new Cleave(item, {
@@ -60,12 +64,14 @@ for (const item of cnpj) {
     })
 }
 
+
 for (const item of matricula) {
     new Cleave(item, {
         blocks: [5],
         numericOnly: true
     })
 }
+
 
 for (const item of id_estudante) {
     new Cleave(item, {
@@ -74,14 +80,16 @@ for (const item of id_estudante) {
     })
 }
 
+
 for (const item of modelo_monetario) {
     new Cleave(item, {
         numeral: true,
         numeralDecimalMark: ',',
         delimiter: '.',
         prefix: 'R$ '
-    });
+    })
 }
+
 
 for (const item of agencia_bancaria) {
     new Cleave(item, {
@@ -90,13 +98,14 @@ for (const item of agencia_bancaria) {
     })
 }
 
+
 for (const item of conta_bancaria) {
     item.addEventListener('focus', function () {
         new Cleave(item, {
             blocks: [11],
             numericOnly: true
         })
-    });
+    })
     item.addEventListener('blur', function () {
         firstBlockLength = item.value.length - 1
         new Cleave(item, {
@@ -104,8 +113,9 @@ for (const item of conta_bancaria) {
             delimiters: ['-'],
             numericOnly: true
         })
-    });
+    })
 }
+
 
 for (const item of numero_endereco) {
     new Cleave(item, {
@@ -114,12 +124,14 @@ for (const item of numero_endereco) {
     })
 }
 
+
 for (const item of codigo_contrato) {
     new Cleave(item, {
         blocks: [6],
         numericOnly: true
     })
 }
+
 
 for (const item of id_responsavel) {
     new Cleave(item, {
@@ -129,13 +141,17 @@ for (const item of id_responsavel) {
     })
 }
 
+
 for (const item of desconto) {
     new Cleave(item, {
-        blocks: [2, 2],
-        delimiters: ['.'],
-        numericOnly: true
-    });
+        numeral: true,
+        prefix: '%',
+        tailPrefix: true,
+        numeralDecimalMark: ',',
+        delimiter: '.',
+    })
 }
+
 
 for (const item of ano_academico) {
     new Cleave(item, {
@@ -145,12 +161,14 @@ for (const item of ano_academico) {
     })
 }
 
+
 for (const item of codigo_maiusculo_7) {
     new Cleave(item, {
         blocks: [7],
         uppercase: true,
     })
 }
+
 
 for (const item of codigo_maiusculo_11) {
     new Cleave(item, {
@@ -159,6 +177,7 @@ for (const item of codigo_maiusculo_11) {
     })
 }
 
+
 for (const item of codigo_numerico_4) {
     new Cleave(item, {
         blocks: [4],
@@ -166,12 +185,14 @@ for (const item of codigo_numerico_4) {
     })
 }
 
+
 for (const item of codigo_numerico_9) {
     new Cleave(item, {
         blocks: [9],
         numericOnly: true,
     })
 }
+
 
 for (const item of codigo_numerico_2) {
     new Cleave(item, {

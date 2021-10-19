@@ -40,12 +40,14 @@ class ContratoEducacionalViewSet(viewsets.ModelViewSet):
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     search_fields = ['id', 'tipo', 'data_assinatura']
+    filterset_fields = ['deleted']
 
 class ContratoTrabalhistaViewSet(viewsets.ModelViewSet):
     queryset = ContratoTrabalhista.objects.all().order_by('id')
     serializer_class = ContratoTrabalhistaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     search_fields = ['id', 'tipo', 'data_assinatura']
+    filterset_fields = ['deleted']
 
 class PessoaEstudanteViewSet(viewsets.ModelViewSet):
     queryset = PessoaEstudante.objects.all().order_by('id')
@@ -130,7 +132,7 @@ class EscolaContratosEducacionais(generics.ListAPIView):
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['id', 'razao_social', 'nome_fantasia', 'email', 'telefone', 'celular']
-    #filterset_fields = ['is_active']
+    filterset_fields = ['deleted']
 
 class EscolaContratosTrabalhistas(generics.ListAPIView):
     def get_queryset(self):
@@ -139,7 +141,7 @@ class EscolaContratosTrabalhistas(generics.ListAPIView):
     serializer_class = ContratoTrabalhistaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['id', 'razao_social', 'nome_fantasia', 'email', 'telefone', 'celular']
-    #filterset_fields = ['is_active']
+    filterset_fields = ['deleted']
 
 class EscolaEstudantes(generics.ListAPIView):
     def get_queryset(self):

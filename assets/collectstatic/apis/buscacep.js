@@ -1,14 +1,8 @@
-const inputs = document.querySelectorAll('input')
-
-inputs.forEach(input => {
-    const tipoCampo = input.id
-    input.addEventListener('blur', (evento) => {
-        campos[tipoCampo](evento.target)
+const cepInputs = document.querySelectorAll('input#postal-code')
+for (const item of cepInputs) {
+    item.addEventListener('blur', function () {
+        buscacep(item)
     })
-})
-
-const campos = {
-    'postal-code':input => buscacep(input)
 }
 
 
@@ -35,6 +29,8 @@ function buscacep(input) {
         )
     }
 }
+
+
 
 function buscacep_fill(data) {
     const lougradouro = document.querySelector('#address-street')

@@ -1,4 +1,5 @@
-import requests, random, string
+import requests
+from datetime import datetime
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
@@ -63,7 +64,7 @@ def cadastro_escolar_alterar(request):
         if 'logo' in request.FILES:
             file = request.FILES['logo']
             storage = MediaStorage()
-            filename = storage.save(f'escolas/logos/logo-{school_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'escolas/logos/logo-{escola}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             school_data['logo'] = storage.url(filename)
         user_data = {
             'email': school_data['email'],

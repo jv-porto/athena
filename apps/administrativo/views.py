@@ -1,10 +1,13 @@
-import requests, random, string
+import requests, locale, os
+from datetime import datetime
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils.dateparse import parse_date
+from django.http import FileResponse
 from django.contrib.auth.models import User
-from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador
+from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, ContratoEducacional
 from pedagogico.models import Curso, Turma
 from .modules.numeroExtenso import dExtenso
 from .contratos import *
@@ -60,7 +63,7 @@ def escolas_incluir(request):
         if 'logo' in request.FILES:
             file = request.FILES['logo']
             storage = MediaStorage()
-            filename = storage.save(f'escolas/{school_data["id"]}/logos/logo-{school_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'escolas/{school_data["id"]}/logos/logo-{school_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             school_data['logo'] = storage.url(filename)
         user_data = {
             'username': school_data['id'],
@@ -140,7 +143,7 @@ def escolas_alterar(request, id):
         if 'logo' in request.FILES:
             file = request.FILES['logo']
             storage = MediaStorage()
-            filename = storage.save(f'escolas/{school_data["id"]}/logos/logo-{school_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'escolas/{id}/logos/logo-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             school_data['logo'] = storage.url(filename)
         user_data = {
             'first_name': school_data['nome_fantasia'],
@@ -170,7 +173,6 @@ def escolas_alterar(request, id):
             'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
             'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
         }
-
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken']}
@@ -252,7 +254,7 @@ def pessoas_estudantes_incluir(request):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/estudantes/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/estudantes/{person_data["id"]}/fotos/foto-{person_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'username': person_data['id'],
@@ -307,7 +309,7 @@ def pessoas_estudantes_alterar(request, id):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/estudantes/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/estudantes/{id}/fotos/foto-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'first_name': person_data['nome'],
@@ -391,7 +393,7 @@ def pessoas_responsaveis_incluir(request):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/responsaveis/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/responsaveis/{person_data["id"]}/fotos/foto-{person_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'username': person_data['id'],
@@ -456,7 +458,7 @@ def pessoas_responsaveis_alterar(request, id):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/responsaveis/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/responsaveis/{id}/fotos/foto-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'first_name': person_data['nome'],
@@ -563,7 +565,7 @@ def pessoas_colaboradores_incluir(request):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/colaboradores/{person_data["id"]}/fotos/foto-{person_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/colaboradores/{person_data["id"]}/fotos/foto-{person_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'username': person_data['id'],
@@ -632,7 +634,7 @@ def pessoas_colaboradores_alterar(request, id):
         if 'photo' in request.FILES:
             file = request.FILES['photo']
             storage = MediaStorage()
-            filename = storage.save(f'pessoas/colaboradores/{id}/fotos/foto-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'pessoas/colaboradores/{id}/fotos/foto-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             person_data['foto'] = storage.url(filename)
         user_data = {
             'first_name': person_data['nome'],
@@ -672,7 +674,9 @@ def contratos(request):
     escola = request.user.escola.id
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken']}
-    data = {'contratos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/contratos_educacionais/', cookies=cookies, headers=headers).json()}
+    data = {'contratos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/contratos_educacionais/?deleted=false', cookies=cookies, headers=headers).json()}
+    for item in data['contratos']:
+        item['data_assinatura'] = parse_date(item['data_assinatura'])
     return render(request, 'administrativo/contratos.html', data)
 
 
@@ -688,58 +692,247 @@ def contratos_incluir(request):
     elif request.method == 'POST':
         if request.POST['type'] == 'Educacional':
             escola = request.user.escola
+            estudante_contratante = 'is-student-contractor' in request.POST
             curso = Curso.objects.get(pk=request.POST['course-id'])
             turma = Turma.objects.get(pk=request.POST['class-id'])
             estudante = PessoaEstudante.objects.get(pk=request.POST['student-id'])
-            responsavel = PessoaResponsavel.objects.get(pk=request.POST['guardian-id'])
-            estudante_contratante = request.POST['is-student-contractor']
-
-            data_pagamento_matricula = request.POST['registration-payment-date']
-            extenso = dExtenso()
-
             if estudante_contratante is False:
-                contratante = responsavel
-            elif estudante_contratante is True:
+                responsavel = PessoaResponsavel.objects.get(pk=request.POST['guardian-id'])
+
+            extenso = dExtenso()
+            inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
+            data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
+            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+            if estudante_contratante is True:
                 contratante = estudante
+            elif estudante_contratante is False:
+                contratante = responsavel
+            if request.POST['contract-code']:
+                id_contrato = str(escola.id) + request.POST['contract-code']
+            else:
+                id_contrato = str(escola.id) + str(ContratoEducacional.objects.filter(escola=escola.id).count() + 1).zfill(6)
 
             variaveis_dict = {
-                'contratante_nome': 0,
-                'contratante_rg': 0,
-                'contratante_cpf': 0,
-                'contratante_endereco_lougradouro': 0,
-                'contratante_endereco_numero': 0,
-                'contratante_endereco_complemento': 0,
-                'contratante_endereco_bairro': 0,
-                'contratante_endereco_cidade': 0,
-                'contratante_endereco_estado': 0,
-                'estudante_nome': 0,
-                'estudante_rg': 0,
-                'estudante_cpf': 0,
+                'contratante_nome': contratante.nome,
+                'contratante_rg': contratante.rg,
+                'contratante_cpf': contratante.cpf,
+                'contratante_endereco_lougradouro': contratante.lougradouro,
+                'contratante_endereco_numero': contratante.numero,
+                'contratante_endereco_complemento': contratante.complemento,
+                'contratante_endereco_bairro': contratante.bairro,
+                'contratante_endereco_cidade': contratante.cidade,
+                'contratante_endereco_estado': contratante.estado,
+                'contratante_endereco_cep': contratante.cep,
                 'curso_descricao': curso.descricao,
-                'data_inicio': turma.data_inicio,
-                'data_termino': turma.data_termino,
+                'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
+                'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
                 'custo_total_curso': curso.valor_curso,
-                'custo_total_curso_extenso': extenso.getExtenso(curso.valor_curso),
+                'custo_total_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_curso': curso.parcelamento_curso,
-                'custo_total_parcelas_curso': float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso),
+                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso), 2), grouping=True),
+                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)), 2))) + ' centavos',
                 'percentual_desconto_curso': request.POST['discount'],
-                'custo_final_curso': (1 - (float(request.POST['discount'])/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')),
+                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
+                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
                 'parcelas_finais_curso': request.POST['installments'],
-                'custo_final_parcelas_curso': ((1 - (float(request.POST['discount'])/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']),
-                'custo_final_parcelas_curso_extenso': extenso.getExtenso(),
+                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
+                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
                 'dia_pagamento': request.POST['payment-day'],
-                'mes_inicio_pagamento': request.POST['payment-start'].month,
-                'ano_inicio_pagamento': request.POST['payment-start'].year,
+                'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
+                'ano_inicio_pagamento': inicio_pagamento.year,
                 'custo_total_material': curso.valor_material,
-                'custo_total_material_extenso': extenso.getExtenso(curso.valor_material),
+                'custo_total_material_extenso': extenso.getExtenso(int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_material': curso.parcelamento_material,
-                'data_assinatura': request.POST['sign-date'],
+                'data_assinatura': f'{data_assinatura.day} de {data_assinatura.strftime("%B")} de {data_assinatura.year}',
                 'escola_nome_fantasia': escola.nome_fantasia,
                 'escola_cnpj': escola.cnpj,
-                'id_contrato': str(escola.id) + request.POST['contract-code'],
             }
+            if estudante_contratante is False:
+                variaveis_dict['estudante_nome'] = estudante.nome
+                variaveis_dict['estudante_rg'] = estudante.rg
+                variaveis_dict['estudante_cpf'] = estudante.cpf
 
-            arquivo = contrato_educacional_engaja_2022(request, variaveis_dict)
+            file = contrato_educacional_engaja_2022(request, variaveis_dict, estudante_contratante)
+            storage = MediaStorage()
+            filename = storage.save(f'contratos/educacionais/{escola.id}/arquivos/contrato-{id_contrato}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
+            contract_file_url = storage.url(filename)
+
+            contract_data = {
+                'id': id_contrato,
+                'escola': escola.id,
+                'curso': curso.id,
+                'turma': turma.id,
+                'data_assinatura': data_assinatura.strftime("%Y-%m-%d"),
+                'estudante': estudante.id,
+                'estudante_contratante': estudante_contratante,
+                'desconto_pagamento_matricula': str(request.POST['registration-discount']) + '%',
+                'data_pagamento_matricula': request.POST['registration-payment-date'],
+                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'].replace(',', '.'),
+                'parcelas_pagamento_curso': variaveis_dict['parcelas_finais_curso'],
+                'dia_pagamento_curso': variaveis_dict['dia_pagamento'],
+                'data_inicio_pagamento_curso': inicio_pagamento.strftime("%Y-%m-%d"),
+                'arquivo_contrato': contract_file_url,
+                'deleted': False,
+            }
+            if contract_data['estudante_contratante'] is False:
+                contract_data['responsavel'] = responsavel.id
+
+            cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+            headers = {'X-CSRFToken': cookies['csrftoken']}
+            contract_request = requests.post('http://127.0.0.1:8000/api/contrato_educacional/', data=contract_data, cookies=cookies, headers=headers)
+            os.startfile(contract_data['arquivo_contrato'])
+
+            return redirect('contratos')
+
+
+@login_required()
+@permission_required('administrativo.view_contrato', raise_exception=True)
+def contratos_imprimir(request, id):
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    data = {'contratos': requests.get(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
+    os.startfile(data['contratos']['arquivo_contrato'])
+    return redirect('contratos')
+
+
+@login_required()
+@permission_required('administrativo.change_contrato', raise_exception=True)
+def contratos_digitalizar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'contrato': requests.get(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/contratos_digitalizar.html', data)
+    if request.method == 'POST':
+        escola = request.user.escola
+        contract_data = {}
+        if 'digitalized-copy' in request.FILES:
+            file = request.FILES['digitalized-copy']
+            storage = MediaStorage()
+            filename = storage.save(f'contratos/educacionais/{escola.id}/digitalizacoes/digitalizacao-contrato-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
+            contract_data['digitalizacao'] = storage.url(filename)
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        contract_request = requests.patch(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
+
+        return redirect('contratos')
+
+
+@login_required()
+@permission_required('administrativo.change_contrato', raise_exception=True)
+def contratos_alterar(request, id):
+    if request.method == 'GET':
+        escola = request.user.escola
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken']}
+        data = {'contrato': requests.get(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json(), 'cursos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
+        return render(request, 'administrativo/contratos_alterar.html', data)
+    elif request.method == 'POST':
+        if request.POST['type'] == 'Educacional':
+            escola = request.user.escola
+            estudante_contratante = 'is-student-contractor' in request.POST
+            curso = Curso.objects.get(pk=request.POST['course-id'])
+            turma = Turma.objects.get(pk=request.POST['class-id'])
+            estudante = PessoaEstudante.objects.get(pk=request.POST['student-id'])
+            if estudante_contratante is False:
+                responsavel = PessoaResponsavel.objects.get(pk=request.POST['guardian-id'])
+
+            extenso = dExtenso()
+            inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
+            data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
+            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+
+            if estudante_contratante is True:
+                contratante = estudante
+            elif estudante_contratante is False:
+                contratante = responsavel
+
+            variaveis_dict = {
+                'contratante_nome': contratante.nome,
+                'contratante_rg': contratante.rg,
+                'contratante_cpf': contratante.cpf,
+                'contratante_endereco_lougradouro': contratante.lougradouro,
+                'contratante_endereco_numero': contratante.numero,
+                'contratante_endereco_complemento': contratante.complemento,
+                'contratante_endereco_bairro': contratante.bairro,
+                'contratante_endereco_cidade': contratante.cidade,
+                'contratante_endereco_estado': contratante.estado,
+                'contratante_endereco_cep': contratante.cep,
+                'curso_descricao': curso.descricao,
+                'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
+                'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
+                'custo_total_curso': curso.valor_curso,
+                'custo_total_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_curso': curso.parcelamento_curso,
+                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso), 2), grouping=True),
+                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)), 2))) + ' centavos',
+                'percentual_desconto_curso': request.POST['discount'],
+                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
+                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
+                'parcelas_finais_curso': request.POST['installments'],
+                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
+                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
+                'dia_pagamento': request.POST['payment-day'],
+                'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
+                'ano_inicio_pagamento': inicio_pagamento.year,
+                'custo_total_material': curso.valor_material,
+                'custo_total_material_extenso': extenso.getExtenso(int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_material': curso.parcelamento_material,
+                'data_assinatura': f'{data_assinatura.day} de {data_assinatura.strftime("%B")} de {data_assinatura.year}',
+                'escola_nome_fantasia': escola.nome_fantasia,
+                'escola_cnpj': escola.cnpj,
+            }
+            if estudante_contratante is False:
+                variaveis_dict['estudante_nome'] = estudante.nome
+                variaveis_dict['estudante_rg'] = estudante.rg
+                variaveis_dict['estudante_cpf'] = estudante.cpf
+
+            file = contrato_educacional_engaja_2022(request, variaveis_dict, estudante_contratante)
+            storage = MediaStorage()
+            filename = storage.save(f'contratos/educacionais/{escola.id}/arquivos/contrato-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
+            contract_file_url = storage.url(filename)
+
+            contract_data = {
+                'escola': escola.id,
+                'curso': curso.id,
+                'turma': turma.id,
+                'data_assinatura': data_assinatura.strftime("%Y-%m-%d"),
+                'estudante': estudante.id,
+                'estudante_contratante': estudante_contratante,
+                'desconto_pagamento_matricula': str(request.POST['registration-discount']) + '%',
+                'data_pagamento_matricula': request.POST['registration-payment-date'],
+                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'].replace(',', '.'),
+                'parcelas_pagamento_curso': variaveis_dict['parcelas_finais_curso'],
+                'dia_pagamento_curso': variaveis_dict['dia_pagamento'],
+                'data_inicio_pagamento_curso': inicio_pagamento.strftime("%Y-%m-%d"),
+                'arquivo_contrato': contract_file_url,
+                'deleted': False,
+            }
+            if contract_data['estudante_contratante'] is False:
+                contract_data['responsavel'] = responsavel.id
+
+            cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+            headers = {'X-CSRFToken': cookies['csrftoken']}
+            contract_request = requests.patch(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
+            os.startfile(contract_data['arquivo_contrato'])
+
+            return redirect('contratos')
+
+
+@login_required()
+@permission_required('administrativo.delete_contrato', raise_exception=True)
+def contratos_excluir(request, id):
+    contract_data = {
+        'deleted': True,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken']}
+    contract_request = requests.patch(f'http://127.0.0.1:8000/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
+
+    return redirect('contratos')
 
 
 

@@ -1,4 +1,5 @@
-import requests, random, string
+import requests
+from datetime import datetime
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
@@ -55,7 +56,7 @@ def cursos_incluir(request):
         if 'syllabus' in request.FILES:
             file = request.FILES['syllabus']
             storage = MediaStorage()
-            filename = storage.save(f'cursos/{course_data["id"]}/proposta_pedagogica/proposta_pedagogica-{course_data["id"]}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'cursos/{course_data["id"]}/proposta_pedagogica/proposta_pedagogica-{course_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             course_data['proposta_pedagogica'] = storage.url(filename)
         if request.POST['coordinator']:
             if PessoaColaborador.objects.filter(pk=request.POST['coordinator']).exists():
@@ -131,7 +132,7 @@ def cursos_alterar(request, id):
         if 'syllabus' in request.FILES:
             file = request.FILES['syllabus']
             storage = MediaStorage()
-            filename = storage.save(f'cursos/{id}/proposta_pedagogica/proposta_pedagogica-{id}-{"".join(random.choices(string.ascii_letters + string.digits, k=15))}', file)
+            filename = storage.save(f'cursos/{id}/proposta_pedagogica/proposta_pedagogica-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             course_data['proposta_pedagogica'] = storage.url(filename)
         if request.POST['coordinator']:
             if PessoaColaborador.objects.filter(pk=request.POST['coordinator']).exists():
@@ -236,8 +237,8 @@ def turmas_incluir(request):
             'descricao': request.POST['description'],
             'turno': request.POST['shift'],
             'vagas': request.POST['slots'],
-            'data_inicio': request.POST['start-date'],
-            'data_termino': request.POST['end-date'],
+            'data_inicio': data_inicio,
+            'data_termino': data_termino,
             'deleted': False,
         }
         if Curso.objects.filter(pk=request.POST['course-id']).exists():
@@ -246,10 +247,19 @@ def turmas_incluir(request):
             messages.error(request, 'O ID do curso está incorreto!')
             return redirect('turmas_incluir')
         if AnoAcademico.objects.filter(pk=request.POST['academic-year-id'].replace('/', '_')).exists():
-            class_data['ano_academico'] = request.POST['academic-year-id'].replace('/', '_')
+            ano_academico = AnoAcademico.objects.get(pk=request.POST['academic-year-id'].replace('/', '_'))
+            class_data['ano_academico'] = ano_academico.id
         else:
             messages.error(request, 'O ID do ano acadêmico está incorreto!')
             return redirect('turmas_incluir')
+        if request.POST['start-date']:
+            class_data['data_inicio'] = request.POST['start-date']
+        else:
+            class_data['data_inicio'] = ano_academico.data_inicio
+        if request.POST['end-date']:
+            class_data['data_termino'] = request.POST['end-date']
+        else:
+            class_data['data_termino'] = ano_academico.data_termino
         if request.POST['tutor']:
             if PessoaColaborador.objects.filter(pk=request.POST['tutor']).exists():
                 class_data['tutor'] = request.POST['tutor']

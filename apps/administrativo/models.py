@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.apps import apps
 
 class Escola(models.Model):
     id = models.CharField(primary_key=True, max_length=4)
@@ -8,13 +9,13 @@ class Escola(models.Model):
     nome_fantasia = models.CharField(max_length=200)
     email = models.EmailField()
     telefone = models.CharField(max_length=13)
-    celular = models.CharField(max_length=13, blank=True, null=True)
-    site = models.CharField(max_length=200, blank=True, null=True)
-    logo = models.CharField(max_length=200, blank=True, null=True)
+    celular = models.CharField(max_length=13, blank=True)
+    site = models.CharField(max_length=200, blank=True)
+    logo = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)
-    complemento = models.CharField(max_length=200, blank=True, null=True)
+    complemento = models.CharField(max_length=200, blank=True)
     bairro = models.CharField(max_length=200)
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
@@ -55,30 +56,6 @@ class ModulosEscola(models.Model):
     def __str__(self):
         return self.escola
 
-class ContratoEducacional(models.Model):
-    id = models.CharField(primary_key=True, max_length=10)
-    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    valor = models.CharField(max_length=20)
-    arquivo = models.CharField(max_length=200)
-    digitalizacao = models.CharField(max_length=200, blank=True, null=True)
-    data_assinatura = models.DateField()
-    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
-    datahora_cadastro = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.id
-
-class ContratoTrabalhista(models.Model):
-    id = models.CharField(primary_key=True, max_length=10)
-    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    valor = models.CharField(max_length=20)
-    arquivo = models.CharField(max_length=200)
-    digitalizacao = models.CharField(max_length=200, blank=True, null=True)
-    data_assinatura = models.DateField()
-    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
-    datahora_cadastro = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return self.id
-
 class PessoaEstudante(models.Model):
     id = models.CharField(primary_key=True, max_length=9)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
@@ -88,21 +65,20 @@ class PessoaEstudante(models.Model):
     cpf = models.CharField(max_length=14)
     rg = models.CharField(max_length=12)
     celular = models.CharField(max_length=13)
-    telefone = models.CharField(max_length=13, blank=True, null=True)
+    telefone = models.CharField(max_length=13, blank=True)
     email = models.EmailField()
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
-    foto = models.CharField(max_length=200, blank=True, null=True)
+    foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)
-    complemento = models.CharField(max_length=200, blank=True, null=True)
+    complemento = models.CharField(max_length=200, blank=True)
     bairro = models.CharField(max_length=200)
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
     pais = models.CharField(max_length=200)
-    contratos = models.ManyToManyField(ContratoEducacional, related_name='estudante', blank=True)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
@@ -119,25 +95,36 @@ class PessoaResponsavel(models.Model):
     cpf = models.CharField(max_length=14)
     rg = models.CharField(max_length=12)
     celular = models.CharField(max_length=13)
-    telefone = models.CharField(max_length=13, blank=True, null=True)
+    telefone = models.CharField(max_length=13, blank=True)
     email = models.EmailField()
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
-    foto = models.CharField(max_length=200, blank=True, null=True)
+    foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)
-    complemento = models.CharField(max_length=200, blank=True, null=True)
+    complemento = models.CharField(max_length=200, blank=True)
     bairro = models.CharField(max_length=200)
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
     pais = models.CharField(max_length=200)
-    contratos = models.ManyToManyField(ContratoEducacional, related_name='responsavel', blank=True)
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.id
+
+class ContratoTrabalhista(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    valor = models.CharField(max_length=20)
+    arquivo = models.CharField(max_length=200)
+    digitalizacao = models.CharField(max_length=200, blank=True)
+    data_assinatura = models.DateField()
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.id
 
@@ -150,23 +137,23 @@ class PessoaColaborador(models.Model):
     cpf = models.CharField(max_length=14)
     rg = models.CharField(max_length=12)
     celular = models.CharField(max_length=13)
-    telefone = models.CharField(max_length=13, blank=True, null=True)
+    telefone = models.CharField(max_length=13, blank=True)
     email = models.EmailField()
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
-    foto = models.CharField(max_length=200, blank=True, null=True)
+    foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)
-    complemento = models.CharField(max_length=200, blank=True, null=True)
+    complemento = models.CharField(max_length=200, blank=True)
     bairro = models.CharField(max_length=200)
     cidade = models.CharField(max_length=200)
     estado = models.CharField(max_length=200)
     pais = models.CharField(max_length=200)
     departamento = models.CharField(max_length=100)
     cargo = models.CharField(max_length=100)
-    ramal = models.CharField(max_length=10, blank=True, null=True)
+    ramal = models.CharField(max_length=10, blank=True)
     admissao = models.DateField()
     demissao = models.DateField(blank=True, null=True)
     remuneracao = models.CharField(max_length=20)
@@ -178,5 +165,29 @@ class PessoaColaborador(models.Model):
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.id
+
+from pedagogico.models import Curso, Turma
+class ContratoEducacional(models.Model):
+    id = models.CharField(primary_key=True, max_length=10)
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
+    data_assinatura = models.DateField()
+    estudante = models.ForeignKey(PessoaEstudante, on_delete=models.CASCADE)
+    responsavel = models.ForeignKey(PessoaResponsavel, on_delete=models.CASCADE, blank=True, null=True)
+    estudante_contratante = models.BooleanField()
+    desconto_pagamento_matricula = models.CharField(max_length=6)
+    data_pagamento_matricula = models.DateField()
+    desconto_pagamento_curso = models.CharField(max_length=6)
+    parcelas_pagamento_curso = models.CharField(max_length=2)
+    dia_pagamento_curso = models.CharField(max_length=2)
+    data_inicio_pagamento_curso = models.DateField()
+    arquivo_contrato = models.CharField(max_length=200)
+    digitalizacao = models.CharField(max_length=200, blank=True)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
     def __str__(self):
         return self.id

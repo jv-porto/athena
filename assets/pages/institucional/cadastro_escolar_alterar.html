@@ -13,7 +13,7 @@
         <main>
             <div class="container-body">
                 <h2 class="title">Alterar</h2>
-                <form action="{% url 'cadastro_escolar_alterar' %}" method="post">
+                <form action="{% url 'cadastro_escolar_alterar' %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
                         <h3 class="light-title">Dados da Escola</h3>
@@ -51,7 +51,7 @@
                         </div>
                         {% if escola.logo %}
                         <div class="input-unit">
-                            <label for="logo">Logo atual</label>
+                            <label>Logo atual</label>
                             <img src="{{ escola.logo }}" alt="logo" style='height: 70px; width: auto;'>
                         </div>
                         {% endif %}
