@@ -11,18 +11,18 @@ from functools import partial
 
 
 
-from reportlab.pdfbase.pdfmetrics import registerFont
+"""from reportlab.pdfbase.pdfmetrics import registerFont
 from reportlab.pdfbase.ttfonts import TTFont
 registerFont(TTFont('Arial','ARIAL.TTF'))
-registerFont(TTFont('Arial-Bold','ARIALBD.TTF'))
+registerFont(TTFont('Arial-Bold','ARIALBD.TTF'))"""
 
 styles = getSampleStyleSheet()
-styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Arial', fontSize=8, leading=20))
-styles.add(ParagraphStyle(name='centered-bold', alignment=TA_CENTER, fontName='Arial-Bold', fontSize=8, leading=20))
-styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8))
-styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, firstLineIndent=1.25*cm))
-styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
-styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Arial', fontSize=8))
+styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Times-Roman', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='centered-bold', alignment=TA_CENTER, fontName='Times-Bold', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8))
+styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8, firstLineIndent=1.25*cm))
+styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
+styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Times-Roman', fontSize=8))
 
 
 
