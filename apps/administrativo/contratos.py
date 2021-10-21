@@ -11,10 +11,11 @@ from functools import partial
 
 
 
-"""from reportlab.pdfbase.pdfmetrics import registerFont
+"""from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
 from reportlab.pdfbase.ttfonts import TTFont
-registerFont(TTFont('Arial','ARIAL.TTF'))
-registerFont(TTFont('Arial-Bold','ARIALBD.TTF'))"""
+registerFont(TTFont('Arial','arial.ttf'))
+registerFont(TTFont('Arial-Bold','arialbd.ttf'))
+registerFontFamily('Arial', normal='Arial', bold='Arial-Bold')"""
 
 styles = getSampleStyleSheet()
 styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Times-Roman', fontSize=8, leading=20))
