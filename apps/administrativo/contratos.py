@@ -28,24 +28,22 @@ styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Times-Roma
 
 def GeneratePdf(elements_list, logo=None):
     if logo != None:
-        def header(canvas, doc, content):
-            canvas.saveState()
-            width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
-            content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
-            canvas.restoreState()
-        """def footer(canvas, doc, content):
-            canvas.saveState()
-            w, h = content.wrap(doc.width, doc.bottomMargin)
-            content.drawOn(canvas, doc.leftMargin, h)
-            canvas.restoreState()"""
-        def header_and_footer(canvas, doc, header_content):
-            header(canvas, doc, header_content)
-            #footer(canvas, doc, footer_content)
         def get_image(path, height=1.27*cm):
             img = ImageReader(path)
             iw, ih = img.getSize()
             aspect = iw / float(ih)
             return Image(path, height=height, width=(height * aspect))
+
+        def generate_header_footer(canvas, doc, header_content=None, footer_content=None):
+            width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
+            if header_content is not None:
+                canvas.saveState()
+                header_content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
+                canvas.restoreState()
+            if footer_content is not None:
+                canvas.saveState()
+                footer_content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
+                canvas.restoreState()
 
     buffer = BytesIO()
 
@@ -60,8 +58,7 @@ def GeneratePdf(elements_list, logo=None):
     if logo != None:
         frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height)
         header_content = get_image(logo)
-        #footer_content = Paragraph('')
-        template = PageTemplate(frames=frame, onPage=partial(header_and_footer, header_content=header_content))
+        template = PageTemplate(frames=frame, onPage=partial(generate_header_footer, header_content=header_content))
         doc.addPageTemplates([template])
 
     elements = []
