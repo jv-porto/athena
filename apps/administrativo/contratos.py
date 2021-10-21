@@ -9,47 +9,42 @@ from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.units import cm
 from functools import partial
 
-from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
-from reportlab.pdfbase.ttfonts import TTFont
-from reportlab.rl_config import TTFSearchPath
-from django.conf import settings
 
-TTFSearchPath.append(str(settings.BASE_DIR) + 'assets/lib/fonts')
+
+"""from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
+from reportlab.pdfbase.ttfonts import TTFont
 registerFont(TTFont('Arial','arial.ttf'))
 registerFont(TTFont('Arial-Bold','arialbd.ttf'))
-registerFontFamily('Arial', normal='Arial', bold='Arial-Bold')
-
+registerFontFamily('Arial', normal='Arial', bold='Arial-Bold')"""
 
 styles = getSampleStyleSheet()
-styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Arial', fontSize=8, leading=20))
-styles.add(ParagraphStyle(name='centered-bold', alignment=TA_CENTER, fontName='Arial-Bold', fontSize=8, leading=20))
-styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8))
-styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, firstLineIndent=1.25*cm))
-styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Arial', fontSize=8, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
-styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Arial', fontSize=8))
+styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER, fontName='Times-Roman', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='centered-bold', alignment=TA_CENTER, fontName='Times-Bold', fontSize=8, leading=20))
+styles.add(ParagraphStyle(name='justified', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8))
+styles.add(ParagraphStyle(name='justified-level-2', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8, firstLineIndent=1.25*cm))
+styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontName='Times-Roman', fontSize=8, leftIndent=1.25*cm, firstLineIndent=2.5*cm))
+styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Times-Roman', fontSize=8))
 
 
 
 def GeneratePdf(elements_list, logo=None):
     if logo != None:
-        def header(canvas, doc, content):
-            canvas.saveState()
-            width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
-            content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
-            canvas.restoreState()
-        """def footer(canvas, doc, content):
-            canvas.saveState()
-            w, h = content.wrap(doc.width, doc.bottomMargin)
-            content.drawOn(canvas, doc.leftMargin, h)
-            canvas.restoreState()"""
-        def header_and_footer(canvas, doc, header_content):
-            header(canvas, doc, header_content)
-            #footer(canvas, doc, footer_content)
         def get_image(path, height=1.27*cm):
             img = ImageReader(path)
             iw, ih = img.getSize()
             aspect = iw / float(ih)
             return Image(path, height=height, width=(height * aspect))
+
+        def generate_header_footer(canvas, doc, header_content=None, footer_content=None):
+            width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
+            if header_content is not None:
+                canvas.saveState()
+                header_content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
+                canvas.restoreState()
+            if footer_content is not None:
+                canvas.saveState()
+                footer_content.drawOn(canvas, ((width-1.27*cm)/2), (height-doc.topMargin))
+                canvas.restoreState()
 
     buffer = BytesIO()
 
@@ -64,8 +59,7 @@ def GeneratePdf(elements_list, logo=None):
     if logo != None:
         frame = Frame(doc.leftMargin, doc.bottomMargin, doc.width, doc.height)
         header_content = get_image(logo)
-        #footer_content = Paragraph('')
-        template = PageTemplate(frames=frame, onPage=partial(header_and_footer, header_content=header_content))
+        template = PageTemplate(frames=frame, onPage=partial(generate_header_footer, header_content=header_content))
         doc.addPageTemplates([template])
 
     elements = []
