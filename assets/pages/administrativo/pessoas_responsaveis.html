@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Pessoas - Responsáveis</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a href="{% url 'pessoas_responsaveis_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+                <main>
+                    <div class="container-body">
+                        {% if responsaveis %}
+                        <h2 class="title">Lista</h2>
+                        <table class="list-db-items">
+                            <thead>
+                                <tr>
+                                    <th class="light-subtitle"></th>
+                                    <th class="light-subtitle">ID</th>
+                                    <th class="light-subtitle">Nome</th>
+                                    <th class="light-subtitle">Celular</th>
+                                    <th class="light-subtitle">Telefone</th>
+                                    <th class="light-subtitle">E-mail</th>
+                                    <th class="light-subtitle">Estudantes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if responsaveis %}
+                                {% for responsavel in responsaveis %}
+                                <tr>
+                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ responsavel.id }}" value="{{ responsavel.id }}"></td>
+                                    <td>{{ responsavel.id }}</td>
+                                    <td>{{ responsavel.nome }}</td>
+                                    <td>{{ responsavel.celular }}</td>
+                                    <td>{{ responsavel.telefone }}</td>
+                                    <td>{{ responsavel.email }}</td>
+                                    <td>
+                                        {% if responsavel.estudantes.0 %}{{ responsavel.estudantes.0 }}{% endif %}
+                                        {% if responsavel.estudantes.1 %}/ {{ responsavel.estudantes.1 }}{% endif %}
+                                        {% if responsavel.estudantes.2 %}/ {{ responsavel.estudantes.2 }}{% endif %}
+                                        {% if responsavel.estudantes.3 %}/ {{ responsavel.estudantes.3 }}{% endif %}
+                                        {% if responsavel.estudantes.4 %}/ {{ responsavel.estudantes.4 }}{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </main>
+        {% endblock %}

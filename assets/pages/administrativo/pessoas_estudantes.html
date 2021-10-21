@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Pessoas - Estudantes</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a href="{% url 'pessoas_estudantes_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                {% if estudantes %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Nome</th>
+                            <th class="light-subtitle">Celular</th>
+                            <th class="light-subtitle">Telefone</th>
+                            <th class="light-subtitle">E-mail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if estudantes %}
+                        {% for estudante in estudantes %}
+                        <tr>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ estudante.id }}" value="{{ estudante.id }}"></td>
+                            <td>{{ estudante.id }}</td>
+                            <td>{{ estudante.nome }}</td>
+                            <td>{{ estudante.celular }}</td>
+                            <td>{{ estudante.telefone }}</td>
+                            <td>{{ estudante.email }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </main>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title">Cursos</h1>
+                </div>
+                <div class="page-actions">
+                        <a href="{% url 'cursos' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Incluir</h2>
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'cursos_incluir' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados básicos</h3>
+                        <div class="input-unit">
+                            <label for="code">Código</label>
+                            <input type="text" name="code" id="code" class="uppercase-code-7" pattern="[A-Z0-9]{1,7}" size="7">
+                        </div>
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="periodicity">Periodicidade <span>*</span></label>
+                            <select name="periodicity" id="periodicity" required>
+                                <option value="Bimestral">Bimestral</option>
+                                <option value="Trimestral">Trimestral</option>
+                                <option value="Semestral">Semestral</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="coordinator">Coordenador</label>
+                            <input type="text" name="coordinator" id="coordinator" class="numeric-code-9" pattern="[0-9]{9}" size="9">
+                        </div>
+                        <div class="input-unit">
+                            <label for="syllabus">Proposta Pedagógica</label>
+                            <input type="file" name="syllabus" id="syllabus" accept=".pdf, .docx">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Dados contratuais</h3>
+                        <div class="input-unit">
+                            <label for="cost">Valor (curso) <span>*</span></label>
+                            <input type="text" name="cost" id="cost" class="money" required pattern="^R\$ [0-9]{0,3}.?[0-9]{1,3},[0-9]{2}$" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="installments">Parcelamento (curso) <span>*</span></label>
+                            <input type="text" name="installments" id="installments" class="installments" required size="2">
+                        </div>
+                        <div class="input-unit">
+                            <label for="material-cost">Valor (material) <span>*</span></label>
+                            <input type="text" name="material-cost" id="material-cost" class="money" required pattern="^R\$ [0-9]{0,3}.?[0-9]{1,3},[0-9]{2}$" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="material-installments">Parcelamento (material) <span>*</span></label>
+                            <input type="text" name="material-installments" id="material-installments" class="installments" required size="2">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cancel-date">Limite para cancelamento <span>*</span></label>
+                            <input type="date" name="cancel-date" id="cancel-date" required>
+                        </div>
+                    </div>
+                    <div class="form-section subjects">
+                        <h3 class="light-title">Disciplinas<strong class="action-add-item disable-select">+</strong><strong class="action-remove-item disable-select">-</strong></h3>
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="subject-code-0">Código</label>
+                                <input type="text" name="subject-code-0" id="subject-code-0" class="uppercase-code-7" pattern="[A-Z0-9]{1,7}" size="7">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-description-0">Descrição <span>*</span></label>
+                                <input type="text" name="subject-description-0" id="subject-description-0" required size="35">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-teacher-0">Professor <span>*</span></label>
+                                <input type="text" name="subject-teacher-0" id="subject-teacher-0" class="numeric-code-9" required pattern="[0-9]{9}" title="Digite o ID do(a) professor(a)" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-weekday-0">Dia da semana <span>*</span></label>
+                                <select name="subject-weekday-0" id="subject-weekday-0" required>
+                                    <option value="Segunda">Segunda</option>
+                                    <option value="Terça">Terça</option>
+                                    <option value="Quarta">Quarta</option>
+                                    <option value="Quinta">Quinta</option>
+                                    <option value="Sexta">Sexta</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-start-time-0">Início <span>*</span></label>
+                                <input type="time" name="subject-start-time-0" id="subject-start-time-0" class="time" required>
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-end-time-0">Término <span>*</span></label>
+                                <input type="time" name="subject-end-time-0" id="subject-end-time-0" class="time" required>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

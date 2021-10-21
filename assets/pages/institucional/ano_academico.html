@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title">Ano acadêmico</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a href="{% url 'ano_academico_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                {% if ano_academico %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Descrição</th>
+                            <th class="light-subtitle">Periodicidade</th>
+                            <th class="light-subtitle">Início</th>
+                            <th class="light-subtitle">Término</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if ano_academico %}
+                        {% for ano in ano_academico %}
+                        <tr>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ ano.id }}" value="{{ ano.id }}"></td>
+                            <td>{{ ano.id }}</td>
+                            <td>{{ ano.descricao }}</td>
+                            <td>{{ ano.periodicidade }}</td>
+                            <td>{{ ano.inicio|date:"d/m/Y" }}</td>
+                            <td>{{ ano.termino|date:"d/m/Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </main>
+{% endblock %}

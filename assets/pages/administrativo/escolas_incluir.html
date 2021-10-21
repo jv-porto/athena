@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Escolas</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'escolas' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Incluir</h2>
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'escolas_incluir' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados da Escola</h3>
+                        <div class="input-unit">
+                            <label for="school-id">ID</label>
+                            <input type="text" name="school-id" id="school-id" pattern="[0-9]{4}" size="4">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cnpj">CNPJ <span>*</span></label>
+                            <input type="text" name="cnpj" id="cnpj" required pattern="[0-9]{2}.[0-9]{3}.[0-9]{3}/[0-9]{4}-[0-9]{2}" size="18">
+                        </div>
+                        <div class="input-unit">
+                            <label for="corporate-name">Razão social <span>*</span></label>
+                            <input type="text" name="corporate-name" id="corporate-name" required size="34">
+                        </div>
+                        <div class="input-unit">
+                            <label for="trading-name">Nome fantasia <span>*</span></label>
+                            <input type="text" name="trading-name" id="trading-name" required size="34">
+                        </div>
+                        <div class="input-unit">
+                            <label for="phone-number">Telefone <span>*</span></label>
+                            <input type="text" name="phone-number" id="phone-number" required class="telephone" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cellphone-number">Celular</label>
+                            <input type="text" name="cellphone-number" id="cellphone-number" class="telephone" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="email">E-mail <span>*</span></label>
+                            <input type="email" name="email" id="email" required size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="website">Site</label>
+                            <input type="url" name="website" id="website" size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="logo">Logo</label>
+                            <input type="file" name="logo" id="logo" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Endereço</h3>
+                        <div class="input-unit">
+                            <label for="postal-code">CEP <span>*</span></label>
+                            <input type="text" name="postal-code" id="postal-code" required pattern="[0-9]{5}-[0-9]{3}" size="9">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-street">Lougradouro <span>*</span></label>
+                            <input type="text" name="address-street" id="address-street" required size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-number">Número <span>*</span></label>
+                            <input type="text" name="address-number" id="address-number" required pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-complements">Complemento</label>
+                            <input type="text" name="address-complements" id="address-complements" size="10">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-neighborhood">Bairro <span>*</span></label>
+                            <input type="text" name="address-neighborhood" id="address-neighborhood" required size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-city">Cidade <span>*</span></label>
+                            <input type="text" name="address-city" id="address-city" required size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-state">Estado <span>*</span></label>
+                            <input type="text" name="address-state" id="address-state" required size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-country">País <span>*</span></label>
+                            <input type="text" name="address-country" id="address-country" required size="20">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Módulos</h3>
+                        <h4 class="light-subtitle">Index</h4>
+                        <div class="input-unit">
+                            <label for="dashboard">Dashboard</label>
+                            <input type="checkbox" name="dashboard" id="dashboard">
+                        </div>
+                        <h4 class="light-subtitle">Administrativo</h4>
+                        <div class="input-unit">
+                            <label for="administrativo_escolas">Escolas</label>
+                            <input type="checkbox" name="administrativo_escolas" id="administrativo_escolas">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_estudantes">Pessoas - Estudantes</label>
+                            <input type="checkbox" name="administrativo_pessoas_estudantes" id="administrativo_pessoas_estudantes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_responsaveis">Pessoas - Responsáveis</label>
+                            <input type="checkbox" name="administrativo_pessoas_responsaveis" id="administrativo_pessoas_responsaveis">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_colaboradores">Pessoas - Colaboradores</label>
+                            <input type="checkbox" name="administrativo_pessoas_colaboradores" id="administrativo_pessoas_colaboradores">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_contratos">Contratos</label>
+                            <input type="checkbox" name="administrativo_contratos" id="administrativo_contratos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_secretaria">Secretaria</label>
+                            <input type="checkbox" name="administrativo_secretaria" id="administrativo_secretaria">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_recepcao">Recepção</label>
+                            <input type="checkbox" name="administrativo_recepcao" id="administrativo_recepcao">
+                        </div>
+                        <div class="input-unit">
+                            <label for="administrativo_relatorios">Relatórios</label>
+                            <input type="checkbox" name="administrativo_relatorios" id="administrativo_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Pedagógico</h4>
+                        <div class="input-unit">
+                            <label for="pedagogico_cursos">Cursos</label>
+                            <input type="checkbox" name="pedagogico_cursos" id="pedagogico_cursos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_turmas">Turmas</label>
+                            <input type="checkbox" name="pedagogico_turmas" id="pedagogico_turmas">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_boletim">Boletim</label>
+                            <input type="checkbox" name="pedagogico_boletim" id="pedagogico_boletim">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_diario_classe">Diário de Classe</label>
+                            <input type="checkbox" name="pedagogico_diario_classe" id="pedagogico_diario_classe">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_sala_virtual">Sala Virtual</label>
+                            <input type="checkbox" name="pedagogico_sala_virtual" id="pedagogico_sala_virtual">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_vestibulares">Vestibulares</label>
+                            <input type="checkbox" name="pedagogico_vestibulares" id="pedagogico_vestibulares">
+                        </div>
+                        <div class="input-unit">
+                            <label for="pedagogico_relatorios">Relatórios</label>
+                            <input type="checkbox" name="pedagogico_relatorios" id="pedagogico_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Financeiro</h4>
+                        <div class="input-unit">
+                            <label for="financeiro_bancos">Bancos</label>
+                            <input type="checkbox" name="financeiro_bancos" id="financeiro_bancos">
+                        </div>
+                        <div class="input-unit">
+                            <label for="financeiro_movimentacoes">Movimentações</label>
+                            <input type="checkbox" name="financeiro_movimentacoes" id="financeiro_movimentacoes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="financeiro_relatorios">Relatórios</label>
+                            <input type="checkbox" name="financeiro_relatorios" id="financeiro_relatorios">
+                        </div>
+                        <h4 class="light-subtitle">Institucional</h4>
+                        <div class="input-unit">
+                            <label for="institucional_cadastro_escolar">Cadastro Escolar</label>
+                            <input type="checkbox" name="institucional_cadastro_escolar" id="institucional_cadastro_escolar">
+                        </div>
+                        <div class="input-unit">
+                            <label for="institucional_usuarios_permissoes">Usuários e Permissões</label>
+                            <input type="checkbox" name="institucional_usuarios_permissoes" id="institucional_usuarios_permissoes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="institucional_ano_academico">Ano Acadêmico</label>
+                            <input type="checkbox" name="institucional_ano_academico" id="institucional_ano_academico">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

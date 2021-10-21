@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+        <link rel="icon" href="{% static 'files/athena_icon.svg' %}">
+        <title>Athena</title>
+        <link href="{% static 'css/bootstrap-alerts.css' %}" rel="stylesheet">
+        <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <header id="header">
+            <nav class="container">
+                <img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena">
+
+        {% block content %} {% endblock %}
+
+        <footer class="footer">
+            <div class="container">
+                <div class="footer-text disable-select">
+                    <p>{{ request.user.escola.nome_fantasia }}</p>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'calendario' %}" class="body-black-text">Calendário</a>
+                    <a href="{% url 'mensagens' %}" class="body-black-text">Mensagens</a>
+                </div>
+            </div>
+        </footer>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>

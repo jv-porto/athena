@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title">Turmas</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'turmas' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Alterar</h2>
+                {% include '_partials/_alertas.html'%}
+                <form action="{% url 'turmas_alterar' turma.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados do Curso</h3>
+                        <div class="input-unit">
+                            <label for="course-id">ID do Curso <span>*</span></label>
+                            <input type="text" name="course-id" id="course-id" class="uppercase-code-11" required readonly value="{{turma.curso}}" pattern="[A-Z0-9]{11}" size="11">
+                        </div>
+                        <div class="input-unit">
+                            <label for="academic-year-id">Ano acadêmico <span>*</span></label>
+                            <input type="text" name="academic-year-id" id="academic-year-id" required readonly value="{{turma.ano_academico}}" pattern="[0-9]{4}/[0-9]{1}" size="6">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Dados da Turma</h3>
+                        <div class="input-unit">
+                            <label for="code">Código <span>*</span></label>
+                            <input type="text" name="code" id="code" class="uppercase-code-11" required readonly value="{{turma.id}}" 
+                            pattern="[A-Z0-9]{11}" size="11">
+                        </div>
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required value="{{turma.descricao}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="shift">Turno <span>*</span></label>
+                            <input type="hidden" name="shift" id="shift" class="select-value" value="{{turma.turno}}">
+                            <select name="shift" id="shift" required>
+                                <option value="Matutino">Matutino</option>
+                                <option value="Vespertino">Vespertino</option>
+                                <option value="Noturno">Noturno</option>
+                                <option value="Integral">Integral</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="slots">Vagas <span>*</span></label>
+                            <input type="text" name="slots" id="slots" class="numeric-code-4" required value="{{turma.vagas}}" pattern="[0-9]{1,4}" size="4">
+                        </div>
+                        <div class="input-unit">
+                            <label for="tutor">Tutor</label>
+                            <input type="text" name="tutor" id="tutor" class="numeric-code-9" value="{{turma.tutor}}" pattern="[0-9]{9}" title="Digite o ID do(a) tutor(a)" size="9">
+                        </div>
+                        <div class="input-unit">
+                            <label for="start-date">Data de início <span>*</span></label>
+                            <input type="date" name="start-date" id="start-date" required value="{{turma.data_inicio}}">
+                        </div>
+                        <div class="input-unit">
+                            <label for="end-date">Data de término <span>*</span>label>
+                            <input type="date" name="end-date" id="end-date" required value="{{turma.data_termino}}">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

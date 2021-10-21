@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-administrativo light-title">Pessoas - Colaboradores</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a href="{% url 'pessoas_colaboradores_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+                <main>
+                    <div class="container-body">
+                        {% if colaboradores %}
+                        <h2 class="title">Lista</h2>
+                        <table class="list-db-items">
+                            <thead>
+                                <tr>
+                                    <th class="light-subtitle"></th>
+                                    <th class="light-subtitle">ID</th>
+                                    <th class="light-subtitle">Nome</th>
+                                    <th class="light-subtitle">Celular</th>
+                                    <th class="light-subtitle">Telefone</th>
+                                    <th class="light-subtitle">E-mail</th>
+                                    <th class="light-subtitle">Departamento</th>
+                                    <th class="light-subtitle">Cargo</th>
+                                    <th class="light-subtitle">Ramal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if colaboradores %}
+                                {% for colaborador in colaboradores %}
+                                <tr>
+                                    <td><input type="radio" name="person" class="choose-menu-id" id="{{ colaborador.id }}" value="{{ colaborador.id }}"></td>
+                                    <td>{{ colaborador.id }}</td>
+                                    <td>{{ colaborador.nome }}</td>
+                                    <td>{{ colaborador.celular }}</td>
+                                    <td>{{ colaborador.telefone }}</td>
+                                    <td>{{ colaborador.email }}</td>
+                                    <td>{{ colaborador.departamento }}</td>
+                                    <td>{{ colaborador.cargo }}</td>
+                                    <td>{{ colaborador.ramal }}</td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </main>
+        {% endblock %}
