@@ -14,7 +14,7 @@
             <div class="container-body">
                 <h2 class="title">Alterar</h2>
                 {% include '_partials/_alertas.html' %}
-                <form action="{% url 'escolas_alterar' escola.id %}" method="post">
+                <form action="{% url 'escolas_alterar' escola.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
                         <h3 class="light-title">Dados da Escola</h3>
@@ -99,7 +99,7 @@
                     <div class="form-section modules">
                         <h3 class="light-title">Módulos</h3>
                         <h4 class="light-subtitle">Index</h4>
-                        <input type="hidden" name="id-escola" value="{{request.user.escola}}">
+                        <input type="hidden" name="school-id" value="{{request.user.escola}}">
                         <div class="input-unit">
                             <label for="dashboard">Dashboard</label>
                             <input type="checkbox" name="dashboard" id="dashboard">

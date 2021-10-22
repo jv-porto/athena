@@ -112,13 +112,13 @@
 </div>
 
 <div class="profile">
-    {% if request.user.pessoaestudante.foto %}
+    {% if request.user.pessoaestudante %}
     <a class="profile-image"><img src="{{request.user.pessoaestudante.foto}}" alt="Perfil"></a>
-    {% elif request.user.pessoaresponsavel.foto %}
+    {% elif request.user.pessoaresponsavel %}
     <a class="profile-image"><img src="{{request.user.pessoaresponsavel.foto}}" alt="Perfil"></a>
-    {% elif request.user.pessoacolaborador.foto %}
+    {% elif request.user.pessoacolaborador %}
     <a class="profile-image"><img src="{{request.user.pessoacolaborador.foto}}" alt="Perfil"></a>
-    {% elif request.user.escola.logo %}
+    {% elif request.user.escola %}
     <a class="profile-image"><img src="{{request.user.escola.logo}}" alt="Perfil"></a>
     {% else %}
     <a class="profile-image"><img src="{% static 'files/profile_icon.jpeg' %}" alt="Perfil"></a>

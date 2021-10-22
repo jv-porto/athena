@@ -34,7 +34,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             }, indent=4),
         }
         cookies = {'csrftoken': self.context['request'].COOKIES['csrftoken'], 'sessionid': self.context['request'].session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': self.context['request'].META['HTTP_REFERER']}
         email_request = requests.post('https://athena.thrucode.com.br/api/email/', data=email_data, cookies=cookies, headers=headers)
 
         return user
