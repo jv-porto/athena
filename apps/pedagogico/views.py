@@ -38,7 +38,7 @@ def cursos_incluir(request):
         if request.POST['code']:
             codigo = request.POST['code']
         else:
-            codigo = str(Curso.objects.all().count()+1).zfill(7)
+            codigo = str(Curso.objects.filter(escola=escola).count()+1).zfill(7)
         
         course_data = {
             'escola': escola,
@@ -74,7 +74,7 @@ def cursos_incluir(request):
                 if request.POST[f'subject-code-{i}']:
                     codigo_disciplina = request.POST[f'subject-code-{i}']
                 else:
-                    codigo_disciplina = str(Disciplina.objects.all().count()+1).zfill(7)
+                    codigo_disciplina = str(Disciplina.objects.filter(escola=escola).count()+1).zfill(7)
                 subjects_data = {
                 'id': str(escola) + codigo_disciplina,
                 'descricao': request.POST[f'subject-description-{i}'],
@@ -152,7 +152,7 @@ def cursos_alterar(request, id):
                 if request.POST[f'subject-code-{i}']:
                     codigo_disciplina = request.POST[f'subject-code-{i}']
                 else:
-                    codigo_disciplina = str(Disciplina.objects.all().count()+1).zfill(7)
+                    codigo_disciplina = str(Disciplina.objects.filter(escola=escola).count()+1).zfill(7)
                 if len(codigo_disciplina) == 7:
                     id_disciplina = str(escola) + codigo_disciplina
                 elif len(codigo_disciplina) == 11:
@@ -229,7 +229,7 @@ def turmas_incluir(request):
         if request.POST['code']:
             codigo = request.POST['code']
         else:
-            codigo = str(Turma.objects.all().count()+1).zfill(7)
+            codigo = str(Turma.objects.filter(escola=escola).count()+1).zfill(7)
         
         class_data = {
             'escola': escola,

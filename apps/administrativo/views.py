@@ -1,4 +1,4 @@
-import requests, locale, os
+import requests, locale, os, sys, subprocess
 from datetime import datetime
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
@@ -14,6 +14,13 @@ from .contratos import *
 
 def empty_input(input):
     return not input.strip()
+
+def open_file(filename):
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
 
 
 
@@ -225,7 +232,7 @@ def pessoas_estudantes_incluir(request):
         escola = request.user.escola.id
         matricula = request.POST['registration-number']
         if not matricula.strip():
-            matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
+            matricula = f'{str(PessoaEstudante.objects.filter(escola=escola).count()+PessoaColaborador.objects.filter(escola=escola).count()+1).zfill(5)}'
 
         person_data = {
             'id': str(escola) + str(matricula),
@@ -523,7 +530,7 @@ def pessoas_colaboradores_incluir(request):
         escola = request.user.escola.id
         matricula = request.POST['registration-number']
         if not matricula.strip():
-            matricula = f'{str(PessoaEstudante.objects.all().count()+PessoaColaborador.objects.all().count()+1).zfill(5)}'
+            matricula = f'{str(PessoaEstudante.objects.filter(escola=escola).count()+PessoaColaborador.objects.filter(escola=escola).count()+1).zfill(5)}'
         if request.POST['firing-date']:
             demissao = request.POST['firing-date']
         else:
@@ -781,7 +788,7 @@ def contratos_incluir(request):
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
             headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
             contract_request = requests.post('https://athena.thrucode.com.br/api/contrato_educacional/', data=contract_data, cookies=cookies, headers=headers)
-            os.startfile(contract_data['arquivo_contrato'])
+            open_file(contract_data['arquivo_contrato'])
 
             return redirect('contratos')
 
@@ -792,7 +799,7 @@ def contratos_imprimir(request, id):
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'contratos': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
-    os.startfile(data['contratos']['arquivo_contrato'])
+    open_file(data['contratos']['arquivo_contrato'])
     return redirect('contratos')
 
 
@@ -916,7 +923,7 @@ def contratos_alterar(request, id):
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
             headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
             contract_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
-            os.startfile(contract_data['arquivo_contrato'])
+            open_file(contract_data['arquivo_contrato'])
 
             return redirect('contratos')
 

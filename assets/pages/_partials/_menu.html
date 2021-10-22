@@ -1,45 +1,47 @@
 {% load static %}
+{% if request.user.pessoaestudante %}
+{% with selectedschool=request.user.pessoaestudante.escola %}
 <div class="menu">
-    {% if request.user.escola.modulosescola.dashboard %}
+    {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
         <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
     </div>
     {% endif %}
 
-    {% if request.user.escola.modulosescola.administrativo_escolas or request.user.escola.modulosescola.administrativo_pessoas_estudantes or request.user.escola.modulosescola.administrativo_pessoas_responsaveis or request.user.escola.modulosescola.administrativo_pessoas_colaboradores or request.user.escola.modulosescola.administrativo_contratos or request.user.escola.modulosescola.administrativo_secretaria or request.user.escola.modulosescola.administrativo_recepcao or request.user.escola.modulosescola.administrativo_relatorios %}
+    {% if selectedschool.modulosescola.administrativo_escolas or selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores or selectedschool.modulosescola.administrativo_contratos or selectedschool.modulosescola.administrativo_secretaria or selectedschool.modulosescola.administrativo_recepcao or selectedschool.modulosescola.administrativo_relatorios %}
     {% if perms.administrativo.view_escola or perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador or perms.administrativo.view_contrato %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-administrativo">Administrativo</a>
         <div class="dropdown-section">
-            {% if request.user.escola.modulosescola.administrativo_escolas and perms.administrativo.view_escola %}
+            {% if selectedschool.modulosescola.administrativo_escolas and perms.administrativo.view_escola %}
             <a href="{% url 'escolas' %}" class="body-black-text">Escolas</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_pessoas_estudantes or request.user.escola.modulosescola.administrativo_pessoas_responsaveis or request.user.escola.modulosescola.administrativo_pessoas_colaboradores %}
+            {% if selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores %}
             {% if perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador %}
             <a class="body-black-text dropdown-button">Pessoas</a>
             <div class="dropdown-section">
-                {% if request.user.escola.modulosescola.administrativo_pessoas_estudantes and perms.administrativo.view_pessoaestudante %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_estudantes and perms.administrativo.view_pessoaestudante %}
                 <a href="{% url 'pessoas_estudantes' %}" class="body-black-text">Estudantes</a>
                 {% endif %}
-                {% if request.user.escola.modulosescola.administrativo_pessoas_responsaveis and perms.administrativo.view_pessoaresponsavel %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_responsaveis and perms.administrativo.view_pessoaresponsavel %}
                 <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text">Responsáveis</a>
                 {% endif %}
-                {% if request.user.escola.modulosescola.administrativo_pessoas_colaboradores and perms.administrativo.view_pessoacolaborador %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_colaboradores and perms.administrativo.view_pessoacolaborador %}
                 <a href="{% url 'pessoas_colaboradores' %}" class="body-black-text">Colaboradores</a>
                 {% endif %}
             </div>
             {% endif %}
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
+            {% if selectedschool.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
             <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_secretaria %}
+            {% if selectedschool.modulosescola.administrativo_secretaria %}
             <a href="{% url 'secretaria' %}" class="body-black-text">Secretaria</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_recepcao %}
+            {% if selectedschool.modulosescola.administrativo_recepcao %}
             <a href="{% url 'recepcao' %}" class="body-black-text">Recepção</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_relatorios %}
+            {% if selectedschool.modulosescola.administrativo_relatorios %}
             <a href="{% url 'administrativo_relatorios' %}" class="body-black-text">Relatórios</a>
             {% endif %}
         </div>
@@ -47,69 +49,413 @@
     {% endif %}
     {% endif %}
 
-    {% if request.user.escola.modulosescola.pedagogico_cursos or request.user.escola.modulosescola.pedagogico_turmas or request.user.escola.modulosescola.pedagogico_boletim or request.user.escola.modulosescola.pedagogico_diario_classe or request.user.escola.modulosescola.pedagogico_sala_virtual or request.user.escola.modulosescola.pedagogico_vestibulares or request.user.escola.modulosescola.pedagogico_relatorios %}
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
-            {% if request.user.escola.modulosescola.pedagogico_cursos %}
+            {% if selectedschool.modulosescola.pedagogico_cursos %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_turmas %}
+            {% if selectedschool.modulosescola.pedagogico_turmas %}
             <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_boletim %}
+            {% if selectedschool.modulosescola.pedagogico_boletim %}
             <a href="{% url 'boletim' %}" class="body-black-text">Boletim</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_diario_classe %}
+            {% if selectedschool.modulosescola.pedagogico_diario_classe %}
             <a href="{% url 'diario_de_classe' %}" class="body-black-text">Diário de Classe</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_sala_virtual %}
+            {% if selectedschool.modulosescola.pedagogico_sala_virtual %}
             <a href="{% url 'sala_virtual' %}" class="body-black-text">Sala Virtual</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_vestibulares %}
+            {% if selectedschool.modulosescola.pedagogico_vestibulares %}
             <a href="{% url 'vestibulares' %}" class="body-black-text">Vestibulares</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.pedagogico_relatorios %}
+            {% if selectedschool.modulosescola.pedagogico_relatorios %}
             <a href="{% url 'pedagogico_relatorios' %}" class="body-black-text">Relatórios</a>
             {% endif %}
         </div>
     </div>
     {% endif %}
 
-    {% if request.user.escola.modulosescola.financeiro_bancos or request.user.escola.modulosescola.financeiro_movimentacoes or request.user.escola.modulosescola.financeiro_relatorios %}
+    {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-financeiro">Financeiro</a>
         <div class="dropdown-section">
-            {% if request.user.escola.modulosescola.financeiro_bancos %}
+            {% if selectedschool.modulosescola.financeiro_bancos %}
             <a href="{% url 'bancos' %}" class="body-black-text">Bancos</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.financeiro_movimentacoes %}
+            {% if selectedschool.modulosescola.financeiro_movimentacoes %}
             <a href="{% url 'movimentacoes' %}" class="body-black-text">Movimentações</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.financeiro_relatorios %}
+            {% if selectedschool.modulosescola.financeiro_relatorios %}
             <a href="{% url 'financeiro_relatorios' %}" class="body-black-text">Relatórios</a>
             {% endif %}
         </div>
     </div>
     {% endif %}
 
-    {% if request.user.escola.modulosescola.institucional_cadastro_escolar or request.user.escola.modulosescola.institucional_usuarios_permissoes or request.user.escola.modulosescola.institucional_ano_academico %}
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
-            {% if request.user.escola.modulosescola.institucional_cadastro_escolar %}
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
             <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.institucional_usuarios_permissoes %}
+            {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
             <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
             {% endif %}
-            {% if request.user.escola.modulosescola.institucional_ano_academico %}
+            {% if selectedschool.modulosescola.institucional_ano_academico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
         </div>
     </div>
     {% endif %}
 </div>
+{% endwith %}
+{% elif request.user.pessoaresponsavel %}
+{% with selectedschool=request.user.pessoaresponsavel.escola %}
+<div class="menu">
+    {% if selectedschool.modulosescola.dashboard %}
+    <div class="link-section">
+        <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.administrativo_escolas or selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores or selectedschool.modulosescola.administrativo_contratos or selectedschool.modulosescola.administrativo_secretaria or selectedschool.modulosescola.administrativo_recepcao or selectedschool.modulosescola.administrativo_relatorios %}
+    {% if perms.administrativo.view_escola or perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador or perms.administrativo.view_contrato %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-administrativo">Administrativo</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.administrativo_escolas and perms.administrativo.view_escola %}
+            <a href="{% url 'escolas' %}" class="body-black-text">Escolas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores %}
+            {% if perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador %}
+            <a class="body-black-text dropdown-button">Pessoas</a>
+            <div class="dropdown-section">
+                {% if selectedschool.modulosescola.administrativo_pessoas_estudantes and perms.administrativo.view_pessoaestudante %}
+                <a href="{% url 'pessoas_estudantes' %}" class="body-black-text">Estudantes</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_responsaveis and perms.administrativo.view_pessoaresponsavel %}
+                <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text">Responsáveis</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_colaboradores and perms.administrativo.view_pessoacolaborador %}
+                <a href="{% url 'pessoas_colaboradores' %}" class="body-black-text">Colaboradores</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
+            <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_secretaria %}
+            <a href="{% url 'secretaria' %}" class="body-black-text">Secretaria</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_recepcao %}
+            <a href="{% url 'recepcao' %}" class="body-black-text">Recepção</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_relatorios %}
+            <a href="{% url 'administrativo_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_boletim %}
+            <a href="{% url 'boletim' %}" class="body-black-text">Boletim</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_diario_classe %}
+            <a href="{% url 'diario_de_classe' %}" class="body-black-text">Diário de Classe</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_sala_virtual %}
+            <a href="{% url 'sala_virtual' %}" class="body-black-text">Sala Virtual</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_vestibulares %}
+            <a href="{% url 'vestibulares' %}" class="body-black-text">Vestibulares</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_relatorios %}
+            <a href="{% url 'pedagogico_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-financeiro">Financeiro</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.financeiro_bancos %}
+            <a href="{% url 'bancos' %}" class="body-black-text">Bancos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_movimentacoes %}
+            <a href="{% url 'movimentacoes' %}" class="body-black-text">Movimentações</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_relatorios %}
+            <a href="{% url 'financeiro_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
+            <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endwith %}
+{% elif request.user.pessoacolaborador %}
+{% with selectedschool=request.user.pessoacolaborador.escola %}
+<div class="menu">
+    {% if selectedschool.modulosescola.dashboard %}
+    <div class="link-section">
+        <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.administrativo_escolas or selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores or selectedschool.modulosescola.administrativo_contratos or selectedschool.modulosescola.administrativo_secretaria or selectedschool.modulosescola.administrativo_recepcao or selectedschool.modulosescola.administrativo_relatorios %}
+    {% if perms.administrativo.view_escola or perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador or perms.administrativo.view_contrato %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-administrativo">Administrativo</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.administrativo_escolas and perms.administrativo.view_escola %}
+            <a href="{% url 'escolas' %}" class="body-black-text">Escolas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores %}
+            {% if perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador %}
+            <a class="body-black-text dropdown-button">Pessoas</a>
+            <div class="dropdown-section">
+                {% if selectedschool.modulosescola.administrativo_pessoas_estudantes and perms.administrativo.view_pessoaestudante %}
+                <a href="{% url 'pessoas_estudantes' %}" class="body-black-text">Estudantes</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_responsaveis and perms.administrativo.view_pessoaresponsavel %}
+                <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text">Responsáveis</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_colaboradores and perms.administrativo.view_pessoacolaborador %}
+                <a href="{% url 'pessoas_colaboradores' %}" class="body-black-text">Colaboradores</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
+            <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_secretaria %}
+            <a href="{% url 'secretaria' %}" class="body-black-text">Secretaria</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_recepcao %}
+            <a href="{% url 'recepcao' %}" class="body-black-text">Recepção</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_relatorios %}
+            <a href="{% url 'administrativo_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_boletim %}
+            <a href="{% url 'boletim' %}" class="body-black-text">Boletim</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_diario_classe %}
+            <a href="{% url 'diario_de_classe' %}" class="body-black-text">Diário de Classe</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_sala_virtual %}
+            <a href="{% url 'sala_virtual' %}" class="body-black-text">Sala Virtual</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_vestibulares %}
+            <a href="{% url 'vestibulares' %}" class="body-black-text">Vestibulares</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_relatorios %}
+            <a href="{% url 'pedagogico_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-financeiro">Financeiro</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.financeiro_bancos %}
+            <a href="{% url 'bancos' %}" class="body-black-text">Bancos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_movimentacoes %}
+            <a href="{% url 'movimentacoes' %}" class="body-black-text">Movimentações</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_relatorios %}
+            <a href="{% url 'financeiro_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
+            <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endwith %}
+{% elif request.user.escola %}
+{% with selectedschool=request.user.escola %}
+<div class="menu">
+    {% if selectedschool.modulosescola.dashboard %}
+    <div class="link-section">
+        <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.administrativo_escolas or selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores or selectedschool.modulosescola.administrativo_contratos or selectedschool.modulosescola.administrativo_secretaria or selectedschool.modulosescola.administrativo_recepcao or selectedschool.modulosescola.administrativo_relatorios %}
+    {% if perms.administrativo.view_escola or perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador or perms.administrativo.view_contrato %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-administrativo">Administrativo</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.administrativo_escolas and perms.administrativo.view_escola %}
+            <a href="{% url 'escolas' %}" class="body-black-text">Escolas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_pessoas_estudantes or selectedschool.modulosescola.administrativo_pessoas_responsaveis or selectedschool.modulosescola.administrativo_pessoas_colaboradores %}
+            {% if perms.administrativo.view_pessoaestudante or perms.administrativo.view_pessoaresponsavel or perms.administrativo.view_pessoacolaborador %}
+            <a class="body-black-text dropdown-button">Pessoas</a>
+            <div class="dropdown-section">
+                {% if selectedschool.modulosescola.administrativo_pessoas_estudantes and perms.administrativo.view_pessoaestudante %}
+                <a href="{% url 'pessoas_estudantes' %}" class="body-black-text">Estudantes</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_responsaveis and perms.administrativo.view_pessoaresponsavel %}
+                <a href="{% url 'pessoas_responsaveis' %}" class="body-black-text">Responsáveis</a>
+                {% endif %}
+                {% if selectedschool.modulosescola.administrativo_pessoas_colaboradores and perms.administrativo.view_pessoacolaborador %}
+                <a href="{% url 'pessoas_colaboradores' %}" class="body-black-text">Colaboradores</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
+            <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_secretaria %}
+            <a href="{% url 'secretaria' %}" class="body-black-text">Secretaria</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_recepcao %}
+            <a href="{% url 'recepcao' %}" class="body-black-text">Recepção</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.administrativo_relatorios %}
+            <a href="{% url 'administrativo_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_boletim %}
+            <a href="{% url 'boletim' %}" class="body-black-text">Boletim</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_diario_classe %}
+            <a href="{% url 'diario_de_classe' %}" class="body-black-text">Diário de Classe</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_sala_virtual %}
+            <a href="{% url 'sala_virtual' %}" class="body-black-text">Sala Virtual</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_vestibulares %}
+            <a href="{% url 'vestibulares' %}" class="body-black-text">Vestibulares</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.pedagogico_relatorios %}
+            <a href="{% url 'pedagogico_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-financeiro">Financeiro</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.financeiro_bancos %}
+            <a href="{% url 'bancos' %}" class="body-black-text">Bancos</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_movimentacoes %}
+            <a href="{% url 'movimentacoes' %}" class="body-black-text">Movimentações</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.financeiro_relatorios %}
+            <a href="{% url 'financeiro_relatorios' %}" class="body-black-text">Relatórios</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    <div class="link-section">
+        <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
+        <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
+            <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endwith %}
+{% endif %}
 
 <div class="profile">
     {% if request.user.pessoaestudante %}
