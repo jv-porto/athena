@@ -669,7 +669,7 @@ def pessoas_colaboradores_excluir(request, id):
 
 
 @login_required()
-@permission_required('administrativo.view_contrato', raise_exception=True)
+@permission_required('administrativo.view_contratoeducacional', raise_exception=True)
 def contratos(request):
     escola = request.user.escola.id
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
@@ -681,7 +681,7 @@ def contratos(request):
 
 
 @login_required()
-@permission_required('administrativo.add_contrato', raise_exception=True)
+@permission_required('administrativo.add_contratoeducacional', raise_exception=True)
 def contratos_incluir(request):
     if request.method == 'GET':
         escola = request.user.escola.id
@@ -787,7 +787,7 @@ def contratos_incluir(request):
 
 
 @login_required()
-@permission_required('administrativo.view_contrato', raise_exception=True)
+@permission_required('administrativo.view_contratoeducacional', raise_exception=True)
 def contratos_imprimir(request, id):
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
@@ -797,7 +797,7 @@ def contratos_imprimir(request, id):
 
 
 @login_required()
-@permission_required('administrativo.change_contrato', raise_exception=True)
+@permission_required('administrativo.change_contratoeducacional', raise_exception=True)
 def contratos_digitalizar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
@@ -821,7 +821,7 @@ def contratos_digitalizar(request, id):
 
 
 @login_required()
-@permission_required('administrativo.change_contrato', raise_exception=True)
+@permission_required('administrativo.change_contratoeducacional', raise_exception=True)
 def contratos_alterar(request, id):
     if request.method == 'GET':
         escola = request.user.escola
@@ -922,7 +922,7 @@ def contratos_alterar(request, id):
 
 
 @login_required()
-@permission_required('administrativo.delete_contrato', raise_exception=True)
+@permission_required('administrativo.delete_contratoeducacional', raise_exception=True)
 def contratos_excluir(request, id):
     contract_data = {
         'deleted': True,
