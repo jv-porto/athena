@@ -30,7 +30,7 @@
             </div>
             {% endif %}
             {% endif %}
-            {% if request.user.escola.modulosescola.administrativo_contratos and perms.administrativo.view_contrato %}
+            {% if request.user.escola.modulosescola.administrativo_contratos and perms.administrativo.view_contratoeducacional %}
             <a href="{% url 'contratos' %}" class="body-black-text">Contratos</a>
             {% endif %}
             {% if request.user.escola.modulosescola.administrativo_secretaria %}
