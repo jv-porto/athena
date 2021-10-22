@@ -212,7 +212,15 @@ def escolas_excluir(request, id):
 @login_required()
 @permission_required('administrativo.view_pessoaestudante', raise_exception=True)
 def pessoas_estudantes(request):
-    escola = request.user.escola.id
+    if request.user.pessoaestudante:
+        escola = request.user.pessoaestudante.escola.id
+    elif request.user.pessoaresponsavel:
+        escola = request.user.pessoaresponsavel.escola.id
+    elif request.user.pessoacolaborador:
+        escola = request.user.pessoacolaborador.escola.id
+    elif request.user.escola:
+        escola = request.user.escola.id
+
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'estudantes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/estudantes/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -229,7 +237,14 @@ def pessoas_estudantes_incluir(request):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('pessoas_estudantes_incluir')
 
-        escola = request.user.escola.id
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         matricula = request.POST['registration-number']
         if not matricula.strip():
             matricula = f'{str(PessoaEstudante.objects.filter(escola=escola).count()+PessoaColaborador.objects.filter(escola=escola).count()+1).zfill(5)}'
@@ -352,7 +367,14 @@ def pessoas_estudantes_excluir(request, id):
 @login_required()
 @permission_required('administrativo.view_pessoaresponsavel', raise_exception=True)
 def pessoas_responsaveis(request):
-    escola = request.user.escola.id
+    if request.user.pessoaestudante:
+        escola = request.user.pessoaestudante.escola.id
+    elif request.user.pessoaresponsavel:
+        escola = request.user.pessoaresponsavel.escola.id
+    elif request.user.pessoacolaborador:
+        escola = request.user.pessoacolaborador.escola.id
+    elif request.user.escola:
+        escola = request.user.escola.id
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'responsaveis': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/responsaveis/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -369,7 +391,14 @@ def pessoas_responsaveis_incluir(request):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('pessoas_responsaveis_incluir')
 
-        escola = request.user.escola.id
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         first_student_id = str(request.POST['student-id-0'])
         first_estudante = get_object_or_404(PessoaEstudante, pk=first_student_id)
 
@@ -510,7 +539,14 @@ def pessoas_responsaveis_excluir(request, id):
 @login_required()
 @permission_required('administrativo.view_pessoacolaborador', raise_exception=True)
 def pessoas_colaboradores(request):
-    escola = request.user.escola.id
+    if request.user.pessoaestudante:
+        escola = request.user.pessoaestudante.escola.id
+    elif request.user.pessoaresponsavel:
+        escola = request.user.pessoaresponsavel.escola.id
+    elif request.user.pessoacolaborador:
+        escola = request.user.pessoacolaborador.escola.id
+    elif request.user.escola:
+        escola = request.user.escola.id
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'colaboradores': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/colaboradores/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -527,7 +563,14 @@ def pessoas_colaboradores_incluir(request):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('pessoas_colaboradores_incluir')
 
-        escola = request.user.escola.id
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         matricula = request.POST['registration-number']
         if not matricula.strip():
             matricula = f'{str(PessoaEstudante.objects.filter(escola=escola).count()+PessoaColaborador.objects.filter(escola=escola).count()+1).zfill(5)}'
@@ -678,7 +721,14 @@ def pessoas_colaboradores_excluir(request, id):
 @login_required()
 @permission_required('administrativo.view_contratoeducacional', raise_exception=True)
 def contratos(request):
-    escola = request.user.escola.id
+    if request.user.pessoaestudante:
+        escola = request.user.pessoaestudante.escola.id
+    elif request.user.pessoaresponsavel:
+        escola = request.user.pessoaresponsavel.escola.id
+    elif request.user.pessoacolaborador:
+        escola = request.user.pessoacolaborador.escola.id
+    elif request.user.escola:
+        escola = request.user.escola.id
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'contratos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/contratos_educacionais/?deleted=false', cookies=cookies, headers=headers).json()}
@@ -691,14 +741,28 @@ def contratos(request):
 @permission_required('administrativo.add_contratoeducacional', raise_exception=True)
 def contratos_incluir(request):
     if request.method == 'GET':
-        escola = request.user.escola.id
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_incluir.html', data)
     elif request.method == 'POST':
         if request.POST['type'] == 'Educacional':
-            escola = request.user.escola
+            if request.user.pessoaestudante:
+                escola = request.user.pessoaestudante.escola.id
+            elif request.user.pessoaresponsavel:
+                escola = request.user.pessoaresponsavel.escola.id
+            elif request.user.pessoacolaborador:
+                escola = request.user.pessoacolaborador.escola.id
+            elif request.user.escola:
+                escola = request.user.escola.id
             estudante_contratante = 'is-student-contractor' in request.POST
             curso = Curso.objects.get(pk=request.POST['course-id'])
             turma = Turma.objects.get(pk=request.POST['class-id'])
@@ -812,7 +876,14 @@ def contratos_digitalizar(request, id):
         data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_digitalizar.html', data)
     if request.method == 'POST':
-        escola = request.user.escola
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         contract_data = {}
         if 'digitalized-copy' in request.FILES:
             file = request.FILES['digitalized-copy']
@@ -831,14 +902,28 @@ def contratos_digitalizar(request, id):
 @permission_required('administrativo.change_contratoeducacional', raise_exception=True)
 def contratos_alterar(request, id):
     if request.method == 'GET':
-        escola = request.user.escola
+        if request.user.pessoaestudante:
+            escola = request.user.pessoaestudante.escola.id
+        elif request.user.pessoaresponsavel:
+            escola = request.user.pessoaresponsavel.escola.id
+        elif request.user.pessoacolaborador:
+            escola = request.user.pessoacolaborador.escola.id
+        elif request.user.escola:
+            escola = request.user.escola.id
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json(), 'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_alterar.html', data)
     elif request.method == 'POST':
         if request.POST['type'] == 'Educacional':
-            escola = request.user.escola
+            if request.user.pessoaestudante:
+                escola = request.user.pessoaestudante.escola.id
+            elif request.user.pessoaresponsavel:
+                escola = request.user.pessoaresponsavel.escola.id
+            elif request.user.pessoacolaborador:
+                escola = request.user.pessoacolaborador.escola.id
+            elif request.user.escola:
+                escola = request.user.escola.id
             estudante_contratante = 'is-student-contractor' in request.POST
             curso = Curso.objects.get(pk=request.POST['course-id'])
             turma = Turma.objects.get(pk=request.POST['class-id'])
