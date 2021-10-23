@@ -12,8 +12,8 @@
 
         <main>
             <div class="container-body">
-                <h2 class="title">Alterar</h2>
-                <form action="{% url 'contratos_alterar' contrato.id %}" method="post" enctype="multipart/form-data">
+                <h2 class="title">Digitalizar</h2>
+                <form action="{% url 'contratos_digitalizar' contrato.id %}" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="form-section">
                         <h3 class="light-title">Dados Contratuais</h3>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="type">Tipo <span>*</span></label>
-                            <select name="type" id="type" required readonly>
+                            <select name="type" id="type" required disabled>
                                 <option value="Educacional">Educacional</option>
                                 <!--<option value="Trabalho">Trabalho</option>-->
                             </select>
@@ -31,7 +31,7 @@
                         <div class="input-unit course-classes">
                             <label for="course-id">Curso <span>*</span></label>
                             <input type="hidden" name="course-id" id="course-id" class="select-value" value="{{contrato.curso}}">
-                            <select name="course-id" id="course-id" required readonly>
+                            <select name="course-id" id="course-id" required disabled>
                                 {% for curso in cursos %}
                                 <option value="{{curso.id}}">{{curso.descricao}}</option>
                                 {% endfor %}
@@ -40,7 +40,7 @@
                         <div class="input-unit course-classes">
                             <label for="class-id">Turma <span>*</span></label>
                             <input type="hidden" name="class-id" id="class-id" class="select-value" value="{{contrato.turma}}">
-                            <select name="class-id" id="class-id" required readonly>
+                            <select name="class-id" id="class-id" required disabled>
                             </select>
                         </div>
                         <div class="input-unit">
@@ -54,8 +54,8 @@
                         </div>
                         {% endif %}
                         <div class="input-unit">
-                            <label for="digitalized-copy">Digitalização</label>
-                            <input type="file" name="digitalized-copy" id="digitalized-copy" accept="image/*, .pdf">
+                            <label for="digitalized-copy">Digitalização <span>*</span></label>
+                            <input type="file" name="digitalized-copy" id="digitalized-copy" accept="image/*, .pdf" required>
                         </div>
                     </div>
                     <div class="form-section">
@@ -78,7 +78,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="is-student-contractor">Estudante é contratante? <span>*</span></label>
-                            <input type="checkbox" name="is-student-contractor" id="is-student-contractor" readonly {% if contrato.estudante_contratante %}checked{% endif %}>
+                            <input type="checkbox" name="is-student-contractor" id="is-student-contractor" disabled {% if contrato.estudante_contratante %}checked{% endif %}>
                         </div>
                     </div>
                     <div class="form-section">

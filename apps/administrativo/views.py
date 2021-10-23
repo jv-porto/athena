@@ -5,7 +5,6 @@ from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils.dateparse import parse_date
-from django.http import FileResponse
 from django.contrib.auth.models import User
 from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, ContratoEducacional
 from pedagogico.models import Curso, Turma
@@ -24,17 +23,13 @@ def open_file(filename):
 
 def get_school_id(request):
     if hasattr(request.user, 'pessoaestudante'):
-        escola = request.user.pessoaestudante.escola.id
-        return escola
+        return request.user.pessoaestudante.escola.id
     elif hasattr(request.user, 'pessoaresponsavel'):
-        escola = request.user.pessoaresponsavel.escola.id
-        return escola
+        return request.user.pessoaresponsavel.escola.id
     elif hasattr(request.user, 'pessoacolaborador'):
-        escola = request.user.pessoacolaborador.escola.id
-        return escola
+        return request.user.pessoacolaborador.escola.id
     elif hasattr(request.user, 'escola'):
-        escola = request.user.escola.id
-        return escola
+        return request.user.escola.id
 
 
 
@@ -712,7 +707,7 @@ def contratos_incluir(request):
         return render(request, 'administrativo/contratos_incluir.html', data)
     elif request.method == 'POST':
         if request.POST['type'] == 'Educacional':
-            escola = get_school_id(request)
+            escola = Escola.objects.get(pk=get_school_id(request))
             estudante_contratante = 'is-student-contractor' in request.POST
             curso = Curso.objects.get(pk=request.POST['course-id'])
             turma = Turma.objects.get(pk=request.POST['class-id'])
@@ -787,9 +782,9 @@ def contratos_incluir(request):
                 'data_assinatura': data_assinatura.strftime("%Y-%m-%d"),
                 'estudante': estudante.id,
                 'estudante_contratante': estudante_contratante,
-                'desconto_pagamento_matricula': str(request.POST['registration-discount']) + '%',
+                'desconto_pagamento_matricula': request.POST['registration-discount'],
                 'data_pagamento_matricula': request.POST['registration-payment-date'],
-                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'].replace(',', '.'),
+                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'],
                 'parcelas_pagamento_curso': variaveis_dict['parcelas_finais_curso'],
                 'dia_pagamento_curso': variaveis_dict['dia_pagamento'],
                 'data_inicio_pagamento_curso': inicio_pagamento.strftime("%Y-%m-%d"),
@@ -821,12 +816,13 @@ def contratos_imprimir(request, id):
 @permission_required('administrativo.change_contratoeducacional', raise_exception=True)
 def contratos_digitalizar(request, id):
     if request.method == 'GET':
+        escola = Escola.objects.get(pk=get_school_id(request))
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
-        data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
+        data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json(), 'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_digitalizar.html', data)
     if request.method == 'POST':
-        escola = get_school_id(request)
+        escola = Escola.objects.get(pk=get_school_id(request))
         contract_data = {}
         if 'digitalized-copy' in request.FILES:
             file = request.FILES['digitalized-copy']
@@ -852,7 +848,7 @@ def contratos_alterar(request, id):
         return render(request, 'administrativo/contratos_alterar.html', data)
     elif request.method == 'POST':
         if request.POST['type'] == 'Educacional':
-            escola = get_school_id(request)
+            escola = Escola.objects.get(pk=get_school_id(request))
             estudante_contratante = 'is-student-contractor' in request.POST
             curso = Curso.objects.get(pk=request.POST['course-id'])
             turma = Turma.objects.get(pk=request.POST['class-id'])
@@ -922,9 +918,9 @@ def contratos_alterar(request, id):
                 'data_assinatura': data_assinatura.strftime("%Y-%m-%d"),
                 'estudante': estudante.id,
                 'estudante_contratante': estudante_contratante,
-                'desconto_pagamento_matricula': str(request.POST['registration-discount']) + '%',
+                'desconto_pagamento_matricula': request.POST['registration-discount'],
                 'data_pagamento_matricula': request.POST['registration-payment-date'],
-                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'].replace(',', '.'),
+                'desconto_pagamento_curso': variaveis_dict['percentual_desconto_curso'],
                 'parcelas_pagamento_curso': variaveis_dict['parcelas_finais_curso'],
                 'dia_pagamento_curso': variaveis_dict['dia_pagamento'],
                 'data_inicio_pagamento_curso': inicio_pagamento.strftime("%Y-%m-%d"),

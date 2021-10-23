@@ -458,13 +458,13 @@
 {% endif %}
 
 <div class="profile">
-    {% if request.user.pessoaestudante %}
+    {% if request.user.pessoaestudante and request.user.pessoaestudante.foto != "" %}
     <a class="profile-image"><img src="{{request.user.pessoaestudante.foto}}" alt="Perfil"></a>
-    {% elif request.user.pessoaresponsavel %}
+    {% elif request.user.pessoaresponsavel and request.user.pessoaresponsavel.foto != "" %}
     <a class="profile-image"><img src="{{request.user.pessoaresponsavel.foto}}" alt="Perfil"></a>
-    {% elif request.user.pessoacolaborador %}
+    {% elif request.user.pessoacolaborador and request.user.pessoacolaborador.foto != "" %}
     <a class="profile-image"><img src="{{request.user.pessoacolaborador.foto}}" alt="Perfil"></a>
-    {% elif request.user.escola %}
+    {% elif request.user.escola and request.user.escola.logo != "" %}
     <a class="profile-image"><img src="{{request.user.escola.logo}}" alt="Perfil"></a>
     {% else %}
     <a class="profile-image"><img src="{% static 'files/profile_icon.jpeg' %}" alt="Perfil"></a>

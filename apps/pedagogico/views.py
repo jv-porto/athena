@@ -13,17 +13,13 @@ def empty_input(input):
 
 def get_school_id(request):
     if hasattr(request.user, 'pessoaestudante'):
-        escola = request.user.pessoaestudante.escola.id
-        return escola
+        return request.user.pessoaestudante.escola.id
     elif hasattr(request.user, 'pessoaresponsavel'):
-        escola = request.user.pessoaresponsavel.escola.id
-        return escola
+        return request.user.pessoaresponsavel.escola.id
     elif hasattr(request.user, 'pessoacolaborador'):
-        escola = request.user.pessoacolaborador.escola.id
-        return escola
+        return request.user.pessoacolaborador.escola.id
     elif hasattr(request.user, 'escola'):
-        escola = request.user.escola.id
-        return escola
+        return request.user.escola.id
 
 
 

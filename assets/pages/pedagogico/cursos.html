@@ -36,7 +36,7 @@
                             <td>{{ curso.id }}</td>
                             <td>{{ curso.descricao }}</td>
                             <td>{{ curso.periodicidade }}</td>
-                            <td>{{ curso.coordenador }}</td>
+                            <td>{{ curso.coordenador|default:"" }}</td>
                             <td>
                                 {% if curso.disciplinas.0 %}{{ curso.disciplinas.0 }}{% endif %}
                                 {% if curso.disciplinas.1 %}/ {{ curso.disciplinas.1 }}{% endif %}

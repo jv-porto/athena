@@ -41,7 +41,7 @@
                             <td>{{ turma.ano_academico }}</td>
                             <td>{{ turma.turno }}</td>
                             <td>{{ turma.vagas }}</td>
-                            <td>{{ turma.tutor }}</td>
+                            <td>{{ turma.tutor|default:"" }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}
