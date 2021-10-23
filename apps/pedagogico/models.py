@@ -24,7 +24,6 @@ class Curso(models.Model):
     parcelamento_curso = models.CharField(max_length=15, blank=True)
     valor_material = models.CharField(max_length=15, blank=True)
     parcelamento_material = models.CharField(max_length=15, blank=True)
-    data_final_cancelamento = models.DateField(blank=True, null=True)
     disciplinas = models.ManyToManyField(Disciplina, related_name='cursos', blank=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):

@@ -15,18 +15,26 @@
     <body>
         <header id="header">
             <nav class="container">
-                <img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena">
+                <img class="logo disable-select" src="{% static 'files/athena_icon.svg' %}" alt="Athena">
 
         {% block content %} {% endblock %}
 
         <footer class="footer">
             <div class="container">
                 <div class="footer-text disable-select">
+                    {% if request.user.pessoaestudante %}
+                    <p>{{ request.user.pessoaestudante.escola.nome_fantasia }}</p>
+                    {% elif request.user.pessoaresponsavel %}
+                    <p>{{ request.user.pessoaresponsavel.escola.nome_fantasia }}</p>
+                    {% elif request.user.pessoacolaborador %}
+                    <p>{{ request.user.pessoacolaborador.escola.nome_fantasia }}</p>
+                    {% elif request.user.escola %}
                     <p>{{ request.user.escola.nome_fantasia }}</p>
+                    {% endif %}
                 </div>
                 <div class="footer-links">
-                    <a href="{% url 'calendario' %}" class="body-black-text">Calendário</a>
-                    <a href="{% url 'mensagens' %}" class="body-black-text">Mensagens</a>
+                    <a href="{% url 'calendario' %}" class="body-black-text disable-select">Calendário</a>
+                    <a href="{% url 'mensagens' %}" class="body-black-text disable-select">Mensagens</a>
                 </div>
             </div>
         </footer>

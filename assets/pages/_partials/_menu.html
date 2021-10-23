@@ -1,7 +1,7 @@
 {% load static %}
 {% if request.user.pessoaestudante %}
 {% with selectedschool=request.user.pessoaestudante.escola %}
-<div class="menu">
+<div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
         <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
@@ -115,7 +115,7 @@
 {% endwith %}
 {% elif request.user.pessoaresponsavel %}
 {% with selectedschool=request.user.pessoaresponsavel.escola %}
-<div class="menu">
+<div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
         <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
@@ -229,7 +229,7 @@
 {% endwith %}
 {% elif request.user.pessoacolaborador %}
 {% with selectedschool=request.user.pessoacolaborador.escola %}
-<div class="menu">
+<div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
         <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>
@@ -343,7 +343,7 @@
 {% endwith %}
 {% elif request.user.escola %}
 {% with selectedschool=request.user.escola %}
-<div class="menu">
+<div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
         <a href="{% url 'dashboard' %}" class="light-title main-button" id="light-title-dashboard">Dashboard</a>

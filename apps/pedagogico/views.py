@@ -63,7 +63,6 @@ def cursos_incluir(request):
             'parcelamento_curso': request.POST['installments'],
             'valor_material': request.POST['material-cost'],
             'parcelamento_material': request.POST['material-installments'],
-            'data_final_cancelamento': request.POST['cancel-date'],
             'disciplinas': [],
             'is_active': True,
         }
@@ -139,7 +138,6 @@ def cursos_alterar(request, id):
             'parcelamento_curso': request.POST['installments'],
             'valor_material': request.POST['material-cost'],
             'parcelamento_material': request.POST['material-installments'],
-            'data_final_cancelamento': request.POST['cancel-date'],
             'disciplinas': [],
             'is_active': True,
         }
@@ -269,11 +267,11 @@ def turmas_incluir(request):
         if request.POST['start-date']:
             class_data['data_inicio'] = request.POST['start-date']
         else:
-            class_data['data_inicio'] = ano_academico.data_inicio
+            class_data['data_inicio'] = ano_academico.inicio
         if request.POST['end-date']:
             class_data['data_termino'] = request.POST['end-date']
         else:
-            class_data['data_termino'] = ano_academico.data_termino
+            class_data['data_termino'] = ano_academico.termino
         if request.POST['tutor']:
             if PessoaColaborador.objects.filter(pk=request.POST['tutor']).exists():
                 class_data['tutor'] = request.POST['tutor']

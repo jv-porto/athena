@@ -135,6 +135,50 @@ for (let i = 0; i < guardianIdField.length; i++) {
 
 
 
+/*************** ADD FIELDS SUBJECTS ***************/
+var i = 1
+const clickAddSubjects = document.querySelectorAll('.subjects .light-title strong.action-add-item')
+const clickRemoveSubjects = document.querySelectorAll('.subjects .light-title strong.action-remove-item')
+for (const item of clickAddSubjects) {
+    item.addEventListener('click', function() {
+        if (i <= 14) {
+            var originalDiv = document.querySelector('div.item-section')
+            var clone = originalDiv.cloneNode(true)
+            clone.children[0].children[0].setAttribute('for', 'subject-code-' + i)
+            clone.children[0].children[1].id = 'subject-code-' + i
+            clone.children[0].children[1].name = 'subject-code-' + i
+            clone.children[1].children[0].setAttribute('for', 'subject-description-' + i)
+            clone.children[1].children[1].id = 'subject-description-' + i
+            clone.children[1].children[1].name = 'subject-description-' + i
+            clone.children[2].children[0].setAttribute('for', 'subject-teacher-' + i)
+            clone.children[2].children[1].id = 'subject-teacher-' + i
+            clone.children[2].children[1].name = 'subject-teacher-' + i
+            clone.children[3].children[0].setAttribute('for', 'subject-weekday-' + i)
+            clone.children[3].children[1].id = 'subject-weekday-' + i
+            clone.children[3].children[1].name = 'subject-weekday-' + i
+            clone.children[4].children[0].setAttribute('for', 'subject-start-time-' + i)
+            clone.children[4].children[1].id = 'subject-start-time-' + i
+            clone.children[4].children[1].name = 'subject-start-time-' + i
+            clone.children[5].children[0].setAttribute('for', 'subject-end-time-' + i)
+            clone.children[5].children[1].id = 'subject-end-time-' + i
+            clone.children[5].children[1].name = 'subject-end-time-' + i
+            originalDiv.parentNode.appendChild(clone)
+            i++
+        }
+    })
+}
+for (const item of clickRemoveSubjects) {
+    item.addEventListener('click', function () {
+        if (i >= 2) {
+            var lastDiv = document.querySelector('div.item-section:last-child')
+            lastDiv.parentNode.removeChild(lastDiv)
+            i--
+        }
+    })
+}
+
+
+
 /*************** REMOVE FIELD GROUP ***************/
 const maxStudentsForGuardian = 5
 var i = maxStudentsForGuardian
@@ -222,50 +266,6 @@ if (school_id) {
             }
         )
     }
-}
-
-
-
-/*************** ADD FIELDS SUBJECTS ***************/
-var i = 1
-const clickAddSubjects = document.querySelectorAll('.subjects .light-title strong.action-add-item')
-const clickRemoveSubjects = document.querySelectorAll('.subjects .light-title strong.action-remove-item')
-for (const item of clickAddSubjects) {
-    item.addEventListener('click', function() {
-        if (i <= 14) {
-            var originalDiv = document.querySelector('div.item-section')
-            var clone = originalDiv.cloneNode(true)
-            clone.children[0].children[0].setAttribute('for', 'subject-code-' + i)
-            clone.children[0].children[1].id = 'subject-code-' + i
-            clone.children[0].children[1].name = 'subject-code-' + i
-            clone.children[1].children[0].setAttribute('for', 'subject-description-' + i)
-            clone.children[1].children[1].id = 'subject-description-' + i
-            clone.children[1].children[1].name = 'subject-description-' + i
-            clone.children[2].children[0].setAttribute('for', 'subject-teacher-' + i)
-            clone.children[2].children[1].id = 'subject-teacher-' + i
-            clone.children[2].children[1].name = 'subject-teacher-' + i
-            clone.children[3].children[0].setAttribute('for', 'subject-weekday-' + i)
-            clone.children[3].children[1].id = 'subject-weekday-' + i
-            clone.children[3].children[1].name = 'subject-weekday-' + i
-            clone.children[4].children[0].setAttribute('for', 'subject-start-time-' + i)
-            clone.children[4].children[1].id = 'subject-start-time-' + i
-            clone.children[4].children[1].name = 'subject-start-time-' + i
-            clone.children[5].children[0].setAttribute('for', 'subject-end-time-' + i)
-            clone.children[5].children[1].id = 'subject-end-time-' + i
-            clone.children[5].children[1].name = 'subject-end-time-' + i
-            originalDiv.parentNode.appendChild(clone)
-            i++
-        }
-    })
-}
-for (const item of clickRemoveSubjects) {
-    item.addEventListener('click', function () {
-        if (i >= 2) {
-            var lastDiv = document.querySelector('div.item-section:last-child')
-            lastDiv.parentNode.removeChild(lastDiv)
-            i--
-        }
-    })
 }
 
 

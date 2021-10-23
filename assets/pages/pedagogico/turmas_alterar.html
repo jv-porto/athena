@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
                 <div class="page-title">
-                    <h1 class="page-title-pedagogico light-title">Turmas</h1>
+                    <h1 class="page-title-pedagogico light-title disable-select">Turmas</h1>
                 </div>
                 <div class="page-actions">
                     <a href="{% url 'turmas' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
@@ -61,7 +61,7 @@
                             <input type="date" name="start-date" id="start-date" required value="{{turma.data_inicio}}">
                         </div>
                         <div class="input-unit">
-                            <label for="end-date">Data de término <span>*</span>label>
+                            <label for="end-date">Data de término <span>*</span></label>
                             <input type="date" name="end-date" id="end-date" required value="{{turma.data_termino}}">
                         </div>
                     </div>

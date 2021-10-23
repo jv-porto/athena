@@ -227,7 +227,6 @@ def escolas_excluir(request, id):
 @permission_required('administrativo.view_pessoaestudante', raise_exception=True)
 def pessoas_estudantes(request):
     escola = get_school_id(request)
-
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'estudantes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/estudantes/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -775,7 +774,7 @@ def contratos_incluir(request):
                 variaveis_dict['estudante_rg'] = estudante.rg
                 variaveis_dict['estudante_cpf'] = estudante.cpf
 
-            file = contrato_educacional_engaja_2022(request, variaveis_dict, estudante_contratante)
+            file = contrato_educacional(request, variaveis_dict, estudante_contratante)
             storage = MediaStorage()
             filename = storage.save(f'contratos/educacionais/{escola.id}/arquivos/contrato-{id_contrato}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             contract_file_url = storage.url(filename)
@@ -911,7 +910,7 @@ def contratos_alterar(request, id):
                 variaveis_dict['estudante_rg'] = estudante.rg
                 variaveis_dict['estudante_cpf'] = estudante.cpf
 
-            file = contrato_educacional_engaja_2022(request, variaveis_dict, estudante_contratante)
+            file = contrato_educacional(request, variaveis_dict, estudante_contratante)
             storage = MediaStorage()
             filename = storage.save(f'contratos/educacionais/{escola.id}/arquivos/contrato-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
             contract_file_url = storage.url(filename)
