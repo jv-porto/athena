@@ -11,19 +11,26 @@ from institucional.models import AnoAcademico
 def empty_input(input):
     return not input.strip()
 
+def get_school_id(request):
+    if hasattr(request.user, 'pessoaestudante'):
+        escola = request.user.pessoaestudante.escola.id
+        return escola
+    elif hasattr(request.user, 'pessoaresponsavel'):
+        escola = request.user.pessoaresponsavel.escola.id
+        return escola
+    elif hasattr(request.user, 'pessoacolaborador'):
+        escola = request.user.pessoacolaborador.escola.id
+        return escola
+    elif hasattr(request.user, 'escola'):
+        escola = request.user.escola.id
+        return escola
+
 
 
 @login_required()
 @permission_required('pedagogico.view_curso', raise_exception=True)
 def cursos(request):
-    if request.user.pessoaestudante:
-        escola = request.user.pessoaestudante.escola.id
-    elif request.user.pessoaresponsavel:
-        escola = request.user.pessoaresponsavel.escola.id
-    elif request.user.pessoacolaborador:
-        escola = request.user.pessoacolaborador.escola.id
-    elif request.user.escola:
-        escola = request.user.escola.id
+    escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -41,14 +48,7 @@ def cursos_incluir(request):
                 return redirect('cursos_incluir')
         empty_input(request.POST['description'])
 
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         if request.POST['code']:
             codigo = request.POST['code']
         else:
@@ -130,14 +130,7 @@ def cursos_alterar(request, id):
                 return redirect('cursos_alterar')
         empty_input(request.POST['description'])
 
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         
         course_data = {
             'descricao': request.POST['description'],
@@ -227,14 +220,7 @@ def cursos_excluir(request, id):
 @login_required()
 @permission_required('pedagogico.view_turma', raise_exception=True)
 def turmas(request):
-    if request.user.pessoaestudante:
-        escola = request.user.pessoaestudante.escola.id
-    elif request.user.pessoaresponsavel:
-        escola = request.user.pessoaresponsavel.escola.id
-    elif request.user.pessoacolaborador:
-        escola = request.user.pessoacolaborador.escola.id
-    elif request.user.escola:
-        escola = request.user.escola.id
+    escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'turmas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()}
@@ -253,14 +239,7 @@ def turmas_incluir(request):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('turmas_incluir')
 
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         if request.POST['code']:
             codigo = request.POST['code']
         else:

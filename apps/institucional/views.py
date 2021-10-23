@@ -18,20 +18,27 @@ def add_group_permissions(perms_data, perms_list, module, module_perm_name):
     elif perms_data[module] == 'VER_EDITAR_APAGAR':
         perms_list.extend([Permission.objects.get(name=f'Can view {module_perm_name}').id, Permission.objects.get(name=f'Can add {module_perm_name}').id, Permission.objects.get(name=f'Can change {module_perm_name}').id, Permission.objects.get(name=f'Can delete {module_perm_name}').id])
 
+def get_school_id(request):
+    if hasattr(request.user, 'pessoaestudante'):
+        escola = request.user.pessoaestudante.escola.id
+        return escola
+    elif hasattr(request.user, 'pessoaresponsavel'):
+        escola = request.user.pessoaresponsavel.escola.id
+        return escola
+    elif hasattr(request.user, 'pessoacolaborador'):
+        escola = request.user.pessoacolaborador.escola.id
+        return escola
+    elif hasattr(request.user, 'escola'):
+        escola = request.user.escola.id
+        return escola
+
 
 
 @login_required()
 @permission_required('administrativo.view_escola', raise_exception=True)
 def cadastro_escolar(request):
     if request.method == 'GET':
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
@@ -42,14 +49,7 @@ def cadastro_escolar(request):
 @permission_required('administrativo.change_escola', raise_exception=True)
 def cadastro_escolar_alterar(request):
     if request.method == 'GET':
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
@@ -59,14 +59,7 @@ def cadastro_escolar_alterar(request):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('cadastro_escolar_alterar')
 
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
 
         school_data = {
             'email': request.POST['email'], 
@@ -104,14 +97,7 @@ def cadastro_escolar_alterar(request):
 @permission_required('institucional.view_usuariospermissoes', raise_exception=True)
 def usuarios_permissoes(request):
     if request.method == 'GET':
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -222,14 +208,7 @@ def usuarios_permissoes_incluir(request):
 @permission_required('institucional.change_usuariospermissoes', raise_exception=True)
 def usuarios_permissoes_alterar(request):
     if request.method == 'GET':
-        if request.user.pessoaestudante:
-            escola = request.user.pessoaestudante.escola.id
-        elif request.user.pessoaresponsavel:
-            escola = request.user.pessoaresponsavel.escola.id
-        elif request.user.pessoacolaborador:
-            escola = request.user.pessoacolaborador.escola.id
-        elif request.user.escola:
-            escola = request.user.escola.id
+        escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
         data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
@@ -345,14 +324,7 @@ def usuarios_permissoes_excluir(request, id):
 @login_required()
 @permission_required('institucional.view_anoacademico', raise_exception=True)
 def ano_academico(request):
-    if request.user.pessoaestudante:
-        escola = request.user.pessoaestudante.escola.id
-    elif request.user.pessoaresponsavel:
-        escola = request.user.pessoaresponsavel.escola.id
-    elif request.user.pessoacolaborador:
-        escola = request.user.pessoacolaborador.escola.id
-    elif request.user.escola:
-        escola = request.user.escola.id
+    escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
     data = {'ano_academico': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/anos_academicos/?deleted=false', cookies=cookies, headers=headers).json()}
