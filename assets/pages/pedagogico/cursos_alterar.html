@@ -20,7 +20,7 @@
                         <h3 class="light-title">Dados básicos</h3>
                         <div class="input-unit">
                             <label for="code">Código <span>*</span></label>
-                            <input type="text" name="code" id="code" class="uppercase-code-11" required readonly value="{{curso.id}}" pattern="[A-Z0-9]{11}" size="11">
+                            <input type="text" name="code" id="code" class="uppercase-code-7" required readonly value="{{curso.codigo}}" pattern="[A-Z0-9]{7}" size="7">
                         </div>
                         <div class="input-unit">
                             <label for="description">Descrição <span>*</span></label>
@@ -37,7 +37,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="coordinator">Coordenador</label>
-                            <input type="text" name="coordinator" id="coordinator" class="numeric-code-9" value="{{curso.coordenador}}" pattern="[0-9]{9}" size="9">
+                            <input type="text" name="coordinator" id="coordinator" class="numeric-code-9" value="{{curso.coordenador|default:''}}" pattern="[0-9]{9}" size="9">
                         </div>
                         {% if curso.proposta_pedagogica %}
                         <div class="input-unit">

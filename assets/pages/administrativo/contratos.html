@@ -7,7 +7,7 @@
                 <div class="page-actions">
                     <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
                     <a href="{% url 'contratos_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
-                    <a href="" class="body-black-text page-actions-imprimir">Imprimir</a>
+                    <a href="" class="body-black-text page-actions-imprimir" target="_blank">Imprimir</a>
                     <a href="" class="body-black-text page-actions-digitalizar">Digitalizar</a>
                     <a href="" class="body-black-text page-actions-alterar">Alterar</a>
                     <a href="" class="body-black-text page-actions-excluir">Excluir</a>
@@ -35,11 +35,12 @@
                         {% for contrato in contratos %}
                         <tr>
                             <td><input type="radio" name="school" class="choose-menu-id" id="{{ contrato.id }}" value="{{ contrato.id }}"></td>
-                            <td>{{ contrato.id }}</td>
+                            <td>{{ contrato.codigo }}</td>
                             <td>{{ contrato.estudante }}</td>
                             <td>{{ contrato.curso }}</td>
                             <td>{{ contrato.turma }}</td>
-                            <td>{{ contrato.data_assinatura|date:"d/m/Y" }}</td>
+                            <td>{{ contrato.data_assinatura|date:'d/m/Y' }}</td>
+                            <td><input type="hidden" name="contract-file-url" id="contract-file-url" class="select-value" value="{{contrato.arquivo_contrato}}"></td>
                         </tr>
                         {% endfor %}
                         {% endif %}

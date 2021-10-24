@@ -25,7 +25,7 @@ class Escola(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.id
+        return self.nome_fantasia
 
 class ModulosEscola(models.Model):
     escola = models.OneToOneField(Escola, on_delete=models.CASCADE)
@@ -84,7 +84,7 @@ class PessoaEstudante(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.id
+        return self.nome
 
 class PessoaResponsavel(models.Model):
     id = models.CharField(primary_key=True, max_length=12)
@@ -114,7 +114,7 @@ class PessoaResponsavel(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.id
+        return self.nome
 
 class ContratoTrabalhista(models.Model):
     id = models.CharField(primary_key=True, max_length=10)
@@ -166,11 +166,12 @@ class PessoaColaborador(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.id
+        return self.nome
 
 from pedagogico.models import Curso, Turma
 class ContratoEducacional(models.Model):
     id = models.CharField(primary_key=True, max_length=10)
+    codigo = models.CharField(max_length=6)
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
@@ -190,4 +191,4 @@ class ContratoEducacional(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     def __str__(self):
-        return self.id
+        return self.codigo

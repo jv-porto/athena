@@ -58,7 +58,8 @@ for (const item of menuActionsId) {
         menuActionExcluir.href = `excluir/${idValue.replace('/', '_')}/`
         if (menuActionImprimir) {
             for (const item of menuActionImprimir) {
-                item.href = `imprimir/${idValue.replace('/', '_')}/`
+                const imprimirUrl = document.querySelector('input.select-value#contract-file-url[type=hidden]').value
+                item.href = imprimirUrl
             }
         }
         if (menuActionDigitalizar) {

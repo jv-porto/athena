@@ -18,8 +18,8 @@
                     <div class="form-section">
                         <h3 class="light-title">Dados Contratuais</h3>
                         <div class="input-unit">
-                            <label for="contract-id">ID <span>*</span></label>
-                            <input type="text" name="contract-id" id="contract-id" required readonly value="{{contrato.id}}" pattern="[0-9]{10}" size="10">
+                            <label for="contract-code">ID <span>*</span></label>
+                            <input type="text" name="contract-code" id="contract-code" required readonly value="{{contrato.codigo}}" pattern="[0-9]{6}" size="6">
                         </div>
                         <div class="input-unit">
                             <label for="type">Tipo <span>*</span></label>
@@ -70,7 +70,7 @@
                         </div>
                         <div class="input-unit item-section-parent">
                             <label for="guardian-id">ID Responsável</label>
-                            <input type="text" name="guardian-id" id="guardian-id" class="guardian-id" readonly value="{{contrato.responsavel}}" pattern="[0-9]{9}r[0-9]{1,2}" size="12">
+                            <input type="text" name="guardian-id" id="guardian-id" class="guardian-id" readonly value="{{contrato.responsavel|default:''}}" pattern="[0-9]{9}r[0-9]{1,2}" size="12">
                         </div>
                         <div class="input-unit item-section-parent">
                             <label for="guardian-name">Nome Responsável</label>

@@ -21,7 +21,7 @@
                     <thead>
                         <tr>
                             <th class="light-subtitle"></th>
-                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Código</th>
                             <th class="light-subtitle">Curso</th>
                             <th class="light-subtitle">Descrição</th>
                             <th class="light-subtitle">Ano acadêmico</th>
@@ -35,13 +35,13 @@
                         {% for turma in turmas %}
                         <tr>
                             <td><input type="radio" name="person" class="choose-menu-id" id="{{ turma.id }}" value="{{ turma.id }}"></td>
-                            <td>{{ turma.id }}</td>
-                            <td>{{ turma.curso }}</td>
+                            <td>{{ turma.codigo }}</td>
+                            <td>{{ turma.curso.descricao }}</td>
                             <td>{{ turma.descricao }}</td>
-                            <td>{{ turma.ano_academico }}</td>
+                            <td>{{ turma.ano_academico.descricao }}</td>
                             <td>{{ turma.turno }}</td>
                             <td>{{ turma.vagas }}</td>
-                            <td>{{ turma.tutor|default:"" }}</td>
+                            <td>{{ turma.tutor|default:'' }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}

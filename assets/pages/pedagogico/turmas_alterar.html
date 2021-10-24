@@ -19,20 +19,19 @@
                     <div class="form-section">
                         <h3 class="light-title">Dados do Curso</h3>
                         <div class="input-unit">
-                            <label for="course-id">ID do Curso <span>*</span></label>
-                            <input type="text" name="course-id" id="course-id" class="uppercase-code-11" required readonly value="{{turma.curso}}" pattern="[A-Z0-9]{11}" size="11">
+                            <label for="course-id">Código do Curso <span>*</span></label>
+                            <input type="text" name="course-id" id="course-id" class="uppercase-code-7" required readonly value="{{turma_curso.codigo}}" pattern="[A-Z0-9]{7}" size="7">
                         </div>
                         <div class="input-unit">
                             <label for="academic-year-id">Ano acadêmico <span>*</span></label>
-                            <input type="text" name="academic-year-id" id="academic-year-id" required readonly value="{{turma.ano_academico}}" pattern="[0-9]{4}/[0-9]{1}" size="6">
+                            <input type="text" name="academic-year-id" id="academic-year-id" required readonly value="{{turma_ano_academico.codigo}}" pattern="[0-9]{4}/[0-9]{1}" size="6">
                         </div>
                     </div>
                     <div class="form-section">
                         <h3 class="light-title">Dados da Turma</h3>
                         <div class="input-unit">
                             <label for="code">Código <span>*</span></label>
-                            <input type="text" name="code" id="code" class="uppercase-code-11" required readonly value="{{turma.id}}" 
-                            pattern="[A-Z0-9]{11}" size="11">
+                            <input type="text" name="code" id="code" class="uppercase-code-7" required readonly value="{{turma.codigo}}" pattern="[A-Z0-9]{7}" size="7">
                         </div>
                         <div class="input-unit">
                             <label for="description">Descrição <span>*</span></label>
@@ -54,7 +53,7 @@
                         </div>
                         <div class="input-unit">
                             <label for="tutor">Tutor</label>
-                            <input type="text" name="tutor" id="tutor" class="numeric-code-9" value="{{turma.tutor}}" pattern="[0-9]{9}" title="Digite o ID do(a) tutor(a)" size="9">
+                            <input type="text" name="tutor" id="tutor" class="numeric-code-9" value="{{turma.tutor|default:''}}" pattern="[0-9]{9}" title="Digite o ID do(a) tutor(a)" size="9">
                         </div>
                         <div class="input-unit">
                             <label for="start-date">Data de início <span>*</span></label>

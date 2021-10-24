@@ -36,7 +36,7 @@ def cadastro_escolar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/cadastro_escolar.html', data)
 
@@ -47,7 +47,7 @@ def cadastro_escolar_alterar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/cadastro_escolar_alterar.html', data)
     elif request.method == 'POST':
@@ -81,7 +81,7 @@ def cadastro_escolar_alterar(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{escola}/', data=user_data, cookies=cookies, headers=headers)
         school_request = requests.patch(f'https://athena.thrucode.com.br/api/escola/{escola}/', data=school_data, cookies=cookies, headers=headers)
 
@@ -95,7 +95,7 @@ def usuarios_permissoes(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/usuarios_permissoes.html', data)
 
@@ -194,7 +194,7 @@ def usuarios_permissoes_incluir(request):
         group.permissions.set(perms_list)
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         perms_request = requests.post(f'https://athena.thrucode.com.br/api/usuarios_permissoes/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('usuarios_permissoes')
@@ -206,7 +206,7 @@ def usuarios_permissoes_alterar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/usuarios_permissoes_alterar.html', data)
     elif request.method == 'POST':
@@ -296,7 +296,7 @@ def usuarios_permissoes_alterar(request):
         group.permissions.set(perms_list)
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         perms_request = requests.patch(f'https://athena.thrucode.com.br/api/usuarios_permissoes/{perms_data["descricao"]}/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('usuarios_permissoes')
@@ -310,7 +310,7 @@ def usuarios_permissoes_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     perms_request = requests.patch(f'https://athena.thrucode.com.br/api/usuarios_permissoes/{id}/',data=perms_data, cookies=cookies, headers=headers)
 
     return redirect('usuarios_permissoes')
@@ -322,10 +322,11 @@ def usuarios_permissoes_excluir(request, id):
 def ano_academico(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'ano_academico': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/anos_academicos/?deleted=false', cookies=cookies, headers=headers).json()}
     for item in data['ano_academico']:
         item['id'] = item['id'].replace('_', '/')
+        item['codigo'] = item['codigo'].replace('_', '/')
         item['inicio'] = parse_date(item['inicio'])
         item['termino'] = parse_date(item['termino'])
     return render(request, 'institucional/ano_academico.html', data)
@@ -337,9 +338,13 @@ def ano_academico_incluir(request):
     if request.method == 'GET':
         return render(request, 'institucional/ano_academico_incluir.html')
     elif request.method == 'POST':
+        escola = get_school_id(request)
+        codigo = request.POST['academic-year-id'].replace('/', '_')
+
         perms_data = {
-            'escola': request.user.escola.id,
-            'id': request.POST['academic-year-id'].replace('/', '_'),
+            'escola': escola,
+            'id': escola + codigo,
+            'codigo': codigo,
             'descricao': request.POST['description'],
             'periodicidade': request.POST['periodicity'],
             'inicio': request.POST['start-date'],
@@ -348,7 +353,7 @@ def ano_academico_incluir(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         perms_request = requests.post(f'https://athena.thrucode.com.br/api/ano_academico/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('ano_academico')
@@ -359,8 +364,9 @@ def ano_academico_incluir(request):
 def ano_academico_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'ano_academico': requests.get(f'https://athena.thrucode.com.br/api/ano_academico/{id}/', cookies=cookies, headers=headers).json()}
+        data['ano_academico']['codigo'] = data['ano_academico']['codigo'].replace('_', '/')
         return render(request, 'institucional/ano_academico_alterar.html', data)
     elif request.method == 'POST':
         perms_data = {
@@ -371,7 +377,7 @@ def ano_academico_alterar(request, id):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         perms_request = requests.patch(f'https://athena.thrucode.com.br/api/ano_academico/{id}/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('ano_academico')
@@ -385,7 +391,7 @@ def ano_academico_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     perms_request = requests.patch(f'https://athena.thrucode.com.br/api/ano_academico/{id}/',data=perms_data, cookies=cookies, headers=headers)
 
     return redirect('ano_academico')

@@ -28,8 +28,14 @@ def get_school_id(request):
 def cursos(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
+    for item in data['cursos']:
+        item['coordenador'] = Curso.objects.get(pk=item['id']).coordenador
+        i = 0
+        for disciplina in item['disciplinas']:
+            item['disciplinas'][i] = Curso.objects.get(pk=item['id']).disciplinas[i]
+            i += 1
     return render(request, 'pedagogico/cursos.html', data)
 
 
@@ -52,6 +58,7 @@ def cursos_incluir(request):
         
         course_data = {
             'escola': escola,
+            'codigo': codigo,
             'id': str(escola) + codigo,
             'descricao': request.POST['description'],
             'periodicidade': request.POST['periodicity'],
@@ -75,7 +82,7 @@ def cursos_incluir(request):
                 return redirect('cursos_incluir')
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
 
         i = 0
         while i <= 14:
@@ -86,6 +93,7 @@ def cursos_incluir(request):
                     codigo_disciplina = str(Disciplina.objects.filter(escola=escola).count()+1).zfill(7)
                 subjects_data = {
                 'id': str(escola) + codigo_disciplina,
+                'codigo': codigo_disciplina,
                 'descricao': request.POST[f'subject-description-{i}'],
                 'weekday': request.POST[f'subject-weekday-{i}'],
                 'horario_inicio': request.POST[f'subject-start-time-{i}'],
@@ -114,7 +122,7 @@ def cursos_incluir(request):
 def cursos_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'curso': requests.get(f'https://athena.thrucode.com.br/api/curso/{id}/', cookies=cookies, headers=headers).json(), 'disciplinas': []}
         for disciplina in data['curso']['disciplinas']:
             data['disciplinas'].append(Disciplina.objects.get(pk=disciplina))
@@ -148,9 +156,11 @@ def cursos_alterar(request, id):
             else:
                 messages.error(request, 'O ID do coordenador está incorreto!')
                 return redirect('cursos_alterar')
+        else:
+            course_data['coordenador'] = ''
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         course_request = requests.patch(f'https://athena.thrucode.com.br/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
         curso = Curso.objects.get(pk=id)
 
@@ -171,6 +181,7 @@ def cursos_alterar(request, id):
 
                 subjects_data = {
                 'id': id_disciplina,
+                'codigo': codigo_disciplina,
                 'descricao': request.POST[f'subject-description-{i}'],
                 'weekday': request.POST[f'subject-weekday-{i}'],
                 'horario_inicio': request.POST[f'subject-start-time-{i}'],
@@ -185,7 +196,7 @@ def cursos_alterar(request, id):
                 subjects_request = requests.post(f'https://athena.thrucode.com.br/api/disciplina/', data=subjects_data, cookies=cookies, headers=headers)
                 if not subjects_request.ok:
                     subjects_request = requests.patch(f'https://athena.thrucode.com.br/api/disciplina/{id}/', data=subjects_data, cookies=cookies, headers=headers)
-                disciplina = Disciplina.objects.get(pk=subjects_data)
+                disciplina = Disciplina.objects.get(pk=subjects_data['id'])
                 disciplina.professores.add(professor)
                 curso.disciplinas.add(disciplina)
 
@@ -204,7 +215,7 @@ def cursos_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     course_request = requests.patch(f'https://athena.thrucode.com.br/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
 
     return redirect('cursos')
@@ -216,10 +227,12 @@ def cursos_excluir(request, id):
 def turmas(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'turmas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()}
     for item in data['turmas']:
-        item['ano_academico'] = item['ano_academico'].replace('_', '/')
+        item['curso'] = Turma.objects.get(pk=item['id']).curso
+        item['ano_academico'] = Turma.objects.get(pk=item['id']).ano_academico
+        item['tutor'] = Turma.objects.get(pk=item['id']).tutor
     return render(request, 'pedagogico/turmas.html', data)
 
 
@@ -242,6 +255,7 @@ def turmas_incluir(request):
         class_data = {
             'escola': escola,
             'id': str(escola) + codigo,
+            'codigo': codigo,
             'descricao': request.POST['description'],
             'turno': request.POST['shift'],
             'vagas': request.POST['slots'],
@@ -249,13 +263,13 @@ def turmas_incluir(request):
             'data_termino': request.POST['end-date'],
             'deleted': False,
         }
-        if Curso.objects.filter(pk=request.POST['course-id']).exists():
-            class_data['curso'] = request.POST['course-id']
+        if Curso.objects.filter(codigo=request.POST['course-id'], escola=escola).exists():
+            class_data['curso'] = escola + request.POST['course-id']
         else:
             messages.error(request, 'O ID do curso está incorreto!')
             return redirect('turmas_incluir')
-        if AnoAcademico.objects.filter(pk=request.POST['academic-year-id'].replace('/', '_')).exists():
-            ano_academico = AnoAcademico.objects.get(pk=request.POST['academic-year-id'].replace('/', '_'))
+        if AnoAcademico.objects.filter(codigo=request.POST['academic-year-id'].replace('/', '_'), escola=escola).exists():
+            ano_academico = AnoAcademico.objects.get(codigo=request.POST['academic-year-id'].replace('/', '_'), escola=escola)
             class_data['ano_academico'] = ano_academico.id
         else:
             messages.error(request, 'O ID do ano acadêmico está incorreto!')
@@ -276,7 +290,7 @@ def turmas_incluir(request):
                 return redirect('turmas_incluir')
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         course_request = requests.post('https://athena.thrucode.com.br/api/turma/', data=class_data, cookies=cookies, headers=headers)
 
         return redirect('turmas')
@@ -287,14 +301,16 @@ def turmas_incluir(request):
 def turmas_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
-        data = {'turma': requests.get(f'https://athena.thrucode.com.br/api/turma/{id}/', cookies=cookies, headers=headers).json()}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        data = {'turma': requests.get(f'https://athena.thrucode.com.br/api/turma/{id}/', cookies=cookies, headers=headers).json(), 'turma_curso': Turma.objects.get(pk=id).curso, 'turma_ano_academico': Turma.objects.get(pk=id).ano_academico}
         data['turma']['ano_academico'] = data['turma']['ano_academico'].replace('_', '/')
         return render(request, 'pedagogico/turmas_alterar.html', data)
     if request.method == 'POST':
         if empty_input(request.POST['description']):
             messages.error(request, 'Há campos obrigatórios em branco!')
             return redirect('turmas_alterar')
+
+        escola = get_school_id(request)
 
         class_data = {
             'descricao': request.POST['description'],
@@ -303,13 +319,13 @@ def turmas_alterar(request, id):
             'data_inicio': request.POST['start-date'],
             'data_termino': request.POST['end-date'],
         }
-        if Curso.objects.filter(pk=request.POST['course-id']).exists():
-            class_data['curso'] = request.POST['course-id']
+        if Curso.objects.filter(codigo=request.POST['course-id'], escola=escola).exists():
+            class_data['curso'] = escola + request.POST['course-id']
         else:
             messages.error(request, 'O ID do curso está incorreto!')
             return redirect('turmas_alterar')
-        if AnoAcademico.objects.filter(pk=request.POST['academic-year-id'].replace('/', '_')).exists():
-            class_data['ano_academico'] = request.POST['academic-year-id'].replace('/', '_')
+        if AnoAcademico.objects.filter(codigo=request.POST['academic-year-id'].replace('/', '_'), escola=escola).exists():
+            class_data['ano_academico'] = escola + request.POST['academic-year-id'].replace('/', '_')
         else:
             messages.error(request, 'O ID do ano acadêmico está incorreto!')
             return redirect('turmas_alterar')
@@ -319,9 +335,11 @@ def turmas_alterar(request, id):
             else:
                 messages.error(request, 'O ID do tutor está incorreto!')
                 return redirect('turmas_alterar')
+        else:
+            class_data['tutor'] = ''
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         course_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
 
         return redirect('turmas')
@@ -335,7 +353,7 @@ def turmas_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     class_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
 
     return redirect('turmas')

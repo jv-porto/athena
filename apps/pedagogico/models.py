@@ -5,17 +5,19 @@ from institucional.models import AnoAcademico
 
 class Disciplina(models.Model):
     id = models.CharField(primary_key=True, max_length=11)
+    codigo = models.CharField(max_length=7)
     descricao = models.CharField(max_length=100)
     professores = models.ManyToManyField(PessoaColaborador, related_name='disciplinas', blank=True)
     weekday = fields.ArrayField(models.CharField(max_length=50), default=list)
     horario_inicio = fields.ArrayField(models.TimeField(), default=list)
     horario_termino = fields.ArrayField(models.TimeField(), default=list)
     def __str__(self):
-        return self.id
+        return self.descricao
 
 class Curso(models.Model):
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     id = models.CharField(primary_key=True, max_length=11)
+    codigo = models.CharField(max_length=7)
     descricao = models.CharField(max_length=100)
     periodicidade = models.CharField(max_length=100)
     coordenador = models.ForeignKey(PessoaColaborador, on_delete=models.CASCADE, blank=True, null=True)
@@ -27,13 +29,14 @@ class Curso(models.Model):
     disciplinas = models.ManyToManyField(Disciplina, related_name='cursos', blank=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.id
+        return self.descricao
 
 class Turma(models.Model):
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
     ano_academico = models.ForeignKey(AnoAcademico, on_delete=models.CASCADE)
     id = models.CharField(primary_key=True, max_length=11)
+    codigo = models.CharField(max_length=7)
     descricao = models.CharField(max_length=100)
     turno = models.CharField(max_length=50)
     vagas = models.CharField(max_length=4)
@@ -43,4 +46,4 @@ class Turma(models.Model):
     alunos = models.ManyToManyField(PessoaEstudante, related_name='turmas', blank=True)
     deleted = models.BooleanField(default=False)
     def __str__(self):
-        return self.id
+        return self.descricao

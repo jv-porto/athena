@@ -1,4 +1,4 @@
-import requests, locale, os, sys, subprocess
+import requests, locale
 from datetime import datetime
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
@@ -13,13 +13,6 @@ from .contratos import *
 
 def empty_input(input):
     return not input.strip()
-
-def open_file(filename):
-    if sys.platform == "win32":
-        os.startfile(filename)
-    else:
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
-        subprocess.call([opener, filename])
 
 def get_school_id(request):
     if hasattr(request.user, 'pessoaestudante'):
@@ -37,7 +30,7 @@ def get_school_id(request):
 @permission_required('administrativo.view_escola', raise_exception=True)
 def escolas(request):
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'escolas': requests.get('https://athena.thrucode.com.br/api/escola/', cookies=cookies, headers=headers).json()}
     return render(request, 'administrativo/escolas.html', data)
 
@@ -117,7 +110,7 @@ def escolas_incluir(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         school_data['usuario'] = User.objects.get(username=user_data['username']).id
         school_request = requests.post('https://athena.thrucode.com.br/api/escola/', data=school_data, cookies=cookies, headers=headers)
@@ -131,7 +124,7 @@ def escolas_incluir(request):
 def escolas_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{id}/', cookies=cookies, headers=headers).json(), 'modules': requests.get(f'https://athena.thrucode.com.br/api/modulos_escola/{id}/', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/escolas_alterar.html', data)
     elif request.method == 'POST':
@@ -191,7 +184,7 @@ def escolas_alterar(request, id):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         school_request = requests.patch(f'https://athena.thrucode.com.br/api/escola/{id}/', data=school_data, cookies=cookies, headers=headers)
         perms_request = requests.patch(f'https://athena.thrucode.com.br/api/modulos_escola/{id}/', data=perms_data, cookies=cookies, headers=headers)
@@ -210,7 +203,7 @@ def escolas_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
     school_request = requests.patch(f'https://athena.thrucode.com.br/api/escola/{id}/', data=school_data, cookies=cookies, headers=headers)
 
@@ -223,7 +216,7 @@ def escolas_excluir(request, id):
 def pessoas_estudantes(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'estudantes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/estudantes/?is_active=true', cookies=cookies, headers=headers).json()}
     return render(request, 'administrativo/pessoas_estudantes.html', data)
 
@@ -281,7 +274,7 @@ def pessoas_estudantes_incluir(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/estudante/', data=person_data, cookies=cookies, headers=headers)
@@ -294,7 +287,7 @@ def pessoas_estudantes_incluir(request):
 def pessoas_estudantes_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'estudante': requests.get(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/pessoas_estudantes_alterar.html', data)
     if request.method == 'POST':
@@ -333,7 +326,7 @@ def pessoas_estudantes_alterar(request, id):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -351,7 +344,7 @@ def pessoas_estudantes_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
     person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -363,7 +356,7 @@ def pessoas_estudantes_excluir(request, id):
 def pessoas_responsaveis(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'responsaveis': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/responsaveis/?is_active=true', cookies=cookies, headers=headers).json()}
     return render(request, 'administrativo/pessoas_responsaveis.html', data)
 
@@ -429,7 +422,7 @@ def pessoas_responsaveis_incluir(request):
                 i += 1
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/responsavel/', data=person_data, cookies=cookies, headers=headers)
@@ -442,7 +435,7 @@ def pessoas_responsaveis_incluir(request):
 def pessoas_responsaveis_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'responsavel': requests.get(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/pessoas_responsaveis_alterar.html', data)
     if request.method == 'POST':
@@ -491,7 +484,7 @@ def pessoas_responsaveis_alterar(request, id):
                 i += 1
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -509,7 +502,7 @@ def pessoas_responsaveis_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
     person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -521,7 +514,7 @@ def pessoas_responsaveis_excluir(request, id):
 def pessoas_colaboradores(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'colaboradores': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/colaboradores/?is_active=true', cookies=cookies, headers=headers).json()}
     return render(request, 'administrativo/pessoas_colaboradores.html', data)
 
@@ -592,7 +585,7 @@ def pessoas_colaboradores_incluir(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/colaborador/', data=person_data, cookies=cookies, headers=headers)
@@ -605,7 +598,7 @@ def pessoas_colaboradores_incluir(request):
 def pessoas_colaboradores_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'colaborador': requests.get(f'https://athena.thrucode.com.br/api/pessoas/colaborador/{id}/', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/pessoas_colaboradores_alterar.html', data)
     if request.method == 'POST':
@@ -658,7 +651,7 @@ def pessoas_colaboradores_alterar(request, id):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/colaborador/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -676,7 +669,7 @@ def pessoas_colaboradores_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
     person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/colaborador/{id}/', data=person_data, cookies=cookies, headers=headers)
 
@@ -689,10 +682,13 @@ def pessoas_colaboradores_excluir(request, id):
 def contratos(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     data = {'contratos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/contratos_educacionais/?deleted=false', cookies=cookies, headers=headers).json()}
     for item in data['contratos']:
         item['data_assinatura'] = parse_date(item['data_assinatura'])
+        item['estudante'] = ContratoEducacional.objects.get(pk=item['id']).estudante
+        item['curso'] = ContratoEducacional.objects.get(pk=item['id']).curso
+        item['turma'] = ContratoEducacional.objects.get(pk=item['id']).turma
     return render(request, 'administrativo/contratos.html', data)
 
 
@@ -702,7 +698,7 @@ def contratos_incluir(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_incluir.html', data)
     elif request.method == 'POST':
@@ -725,9 +721,11 @@ def contratos_incluir(request):
             elif estudante_contratante is False:
                 contratante = responsavel
             if request.POST['contract-code']:
-                id_contrato = str(escola.id) + request.POST['contract-code']
+                codigo_contrato = request.POST['contract-code']
+                id_contrato = str(escola.id) + codigo_contrato
             else:
-                id_contrato = str(escola.id) + str(ContratoEducacional.objects.filter(escola=escola.id).count() + 1).zfill(6)
+                codigo_contrato = str(ContratoEducacional.objects.filter(escola=escola.id).count() + 1).zfill(6)
+                id_contrato = str(escola.id) + codigo_contrato
 
             variaveis_dict = {
                 'contratante_nome': contratante.nome,
@@ -776,6 +774,7 @@ def contratos_incluir(request):
 
             contract_data = {
                 'id': id_contrato,
+                'codigo': codigo_contrato,
                 'escola': escola.id,
                 'curso': curso.id,
                 'turma': turma.id,
@@ -795,30 +794,19 @@ def contratos_incluir(request):
                 contract_data['responsavel'] = responsavel.id
 
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-            headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+            headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
             contract_request = requests.post('https://athena.thrucode.com.br/api/contrato_educacional/', data=contract_data, cookies=cookies, headers=headers)
-            open_file(contract_data['arquivo_contrato'])
 
             return redirect('contratos')
-
-
-@login_required()
-@permission_required('administrativo.view_contratoeducacional', raise_exception=True)
-def contratos_imprimir(request, id):
-    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
-    data = {'contratos': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
-    open_file(data['contratos']['arquivo_contrato'])
-    return redirect('contratos')
 
 
 @login_required()
 @permission_required('administrativo.change_contratoeducacional', raise_exception=True)
 def contratos_digitalizar(request, id):
     if request.method == 'GET':
-        escola = Escola.objects.get(pk=get_school_id(request))
+        escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json(), 'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_digitalizar.html', data)
     if request.method == 'POST':
@@ -831,7 +819,7 @@ def contratos_digitalizar(request, id):
             contract_data['digitalizacao'] = storage.url(filename)
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         contract_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
 
         return redirect('contratos')
@@ -843,7 +831,7 @@ def contratos_alterar(request, id):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         data = {'contrato': requests.get(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', cookies=cookies, headers=headers).json(), 'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'administrativo/contratos_alterar.html', data)
     elif request.method == 'POST':
@@ -931,9 +919,8 @@ def contratos_alterar(request, id):
                 contract_data['responsavel'] = responsavel.id
 
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-            headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+            headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
             contract_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
-            open_file(contract_data['arquivo_contrato'])
 
             return redirect('contratos')
 
@@ -946,7 +933,7 @@ def contratos_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': request.META['HTTP_REFERER']}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     contract_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
 
     return redirect('contratos')

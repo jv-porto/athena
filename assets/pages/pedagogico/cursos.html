@@ -21,7 +21,7 @@
                     <thead>
                         <tr>
                             <th class="light-subtitle"></th>
-                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Código</th>
                             <th class="light-subtitle">Descrição</th>
                             <th class="light-subtitle">Periodicidade</th>
                             <th class="light-subtitle">Coordenador</th>
@@ -33,10 +33,10 @@
                         {% for curso in cursos %}
                         <tr>
                             <td><input type="radio" name="person" class="choose-menu-id" id="{{ curso.id }}" value="{{ curso.id }}"></td>
-                            <td>{{ curso.id }}</td>
+                            <td>{{ curso.codigo }}</td>
                             <td>{{ curso.descricao }}</td>
                             <td>{{ curso.periodicidade }}</td>
-                            <td>{{ curso.coordenador|default:"" }}</td>
+                            <td>{{ curso.coordenador|default:'' }}</td>
                             <td>
                                 {% if curso.disciplinas.0 %}{{ curso.disciplinas.0 }}{% endif %}
                                 {% if curso.disciplinas.1 %}/ {{ curso.disciplinas.1 }}{% endif %}

@@ -4,14 +4,15 @@ from administrativo.models import Escola
 
 class AnoAcademico(models.Model):
     escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
-    id = models.CharField(primary_key=True, max_length=6)
+    id = models.CharField(primary_key=True, max_length=10)
+    codigo = models.CharField(max_length=6)
     descricao = models.CharField(max_length=100)
     periodicidade = models.CharField(max_length=100)
     inicio = models.DateField()
     termino = models.DateField()
     deleted = models.BooleanField(default=False)
     def __str__(self):
-        return self.id
+        return self.descricao
 
 class UsuariosPermissoes(models.Model):
     NENHUMA, VER, VER_EDITAR, VER_EDITAR_APAGAR = 'NENHUMA', 'VER', 'VER_EDITAR', 'VER_EDITAR_APAGAR'
@@ -49,4 +50,4 @@ class UsuariosPermissoes(models.Model):
     institucional_ano_academico = models.CharField(max_length=50, choices=perms_opcoes, default=NENHUMA)
     is_active = models.BooleanField(default=True)
     def __str__(self):
-        return self.escola
+        return self.descricao

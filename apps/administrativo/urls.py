@@ -24,7 +24,6 @@ urlpatterns = [
 
     path('contratos/', contratos, name='contratos'),
     path('contratos/incluir/', contratos_incluir, name='contratos_incluir'),
-    path('contratos/imprimir/<str:id>/', contratos_imprimir, name='contratos_imprimir'),
     path('contratos/digitalizar/<str:id>/', contratos_digitalizar, name='contratos_digitalizar'),
     path('contratos/alterar/<str:id>/', contratos_alterar, name='contratos_alterar'),
     path('contratos/excluir/<str:id>/', contratos_excluir, name='contratos_excluir'),

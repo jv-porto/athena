@@ -21,7 +21,7 @@
                     <thead>
                         <tr>
                             <th class="light-subtitle"></th>
-                            <th class="light-subtitle">ID</th>
+                            <th class="light-subtitle">Código</th>
                             <th class="light-subtitle">Descrição</th>
                             <th class="light-subtitle">Periodicidade</th>
                             <th class="light-subtitle">Início</th>
@@ -33,11 +33,11 @@
                         {% for ano in ano_academico %}
                         <tr>
                             <td><input type="radio" name="person" class="choose-menu-id" id="{{ ano.id }}" value="{{ ano.id }}"></td>
-                            <td>{{ ano.id }}</td>
+                            <td>{{ ano.codigo }}</td>
                             <td>{{ ano.descricao }}</td>
                             <td>{{ ano.periodicidade }}</td>
-                            <td>{{ ano.inicio|date:"d/m/Y" }}</td>
-                            <td>{{ ano.termino|date:"d/m/Y" }}</td>
+                            <td>{{ ano.inicio|date:'d/m/Y' }}</td>
+                            <td>{{ ano.termino|date:'d/m/Y' }}</td>
                         </tr>
                         {% endfor %}
                         {% endif %}
