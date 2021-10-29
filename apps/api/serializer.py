@@ -3,7 +3,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
 from pedagogico.models import Disciplina, Curso, Turma
-from institucional.models import AnoAcademico, UsuariosPermissoes
+from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -108,4 +108,14 @@ class UsuariosPermissoesSerializer(serializers.ModelSerializer):
 class EmailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Email
+        fields = '__all__'
+
+class IntegracoesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Integracoes
+        fields = '__all__'
+
+class IntegracaoContaAzulSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IntegracaoContaAzul
         fields = '__all__'

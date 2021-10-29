@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet
+from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet, IntegracoesViewSet, IntegracaoContaAzulViewSet
 from .views import EscolaUsuarios, EscolaContratosEducacionais, EscolaContratosTrabalhistas, EscolaEstudantes, EscolaResponsaveis, EscolaColaboradores, EscolaDisciplinas, EscolaCursos, EscolaTurmas, CursoTurmas, EscolaAnosAcademicos, EscolaUsuariosPermissoes
 
 router = routers.DefaultRouter()
@@ -19,6 +19,8 @@ router.register('turma', TurmaViewSet, basename='api-turma')
 router.register('ano_academico', AnoAcademicoViewSet, basename='api-ano-academico')
 router.register('usuarios_permissoes', UsuariosPermissoesViewSet, basename='api-usuarios-permissoes')
 router.register('email', EmailViewSet, basename='api-email')
+router.register('integracoes', IntegracoesViewSet, basename='api-integracoes')
+router.register('integracao_conta_azul', IntegracaoContaAzulViewSet, basename='api-integracao-conta-azul')
 
 urlpatterns = [
     path('', include(router.urls)),

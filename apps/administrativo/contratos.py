@@ -8,7 +8,19 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_RIGHT
 from reportlab.lib.units import cm
 from functools import partial
+from .models import Escola
 
+
+
+def get_school_id(request):
+    if hasattr(request.user, 'pessoaestudante'):
+        return request.user.pessoaestudante.escola.id
+    elif hasattr(request.user, 'pessoaresponsavel'):
+        return request.user.pessoaresponsavel.escola.id
+    elif hasattr(request.user, 'pessoacolaborador'):
+        return request.user.pessoacolaborador.escola.id
+    elif hasattr(request.user, 'escola'):
+        return request.user.escola.id
 
 
 from reportlab.pdfbase.pdfmetrics import registerFont, registerFontFamily
@@ -80,18 +92,18 @@ def GeneratePdf(elements_list, logo=None):
 def contrato_educacional(request, variaveis_dict, estudante_contratante):
     titulo = f'CLÁUSULAS DO CONTRATO'
     subtitulo = f'CURSO ENGAJA'
-    if estudante_contratante is False:
-        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, CEP {variaveis_dict["contratante_endereco_cep"]}, contrata os serviços da contratada a fim de que a (o) aluna (o) {variaveis_dict["estudante_nome"]}, portador (a) do RG {variaveis_dict["estudante_rg"]}, CPF {variaveis_dict["estudante_cpf"]}, tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de'
-    elif estudante_contratante is True:
-        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, contrata os serviços da contratada a fim de que tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período,'
     if variaveis_dict['curso_descricao'] == 'Engaja':
-        paragrafo_1 = paragrafo_1 + f' SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período, atividades, como: aulas, plantões, simulados, orientação pedagógica individual e coletiva, assembleias, atividades socioemocionais e o curso de políticas públicas.'
+        horarios_curso = 'SEGUNDA A SEXTA, das 9h às 19h'
     elif variaveis_dict['curso_descricao'] == 'Engaja Online':
-        paragrafo_1 = paragrafo_1 + f' SEGUNDA A SEXTA, das 9h às 19h, compreendendo, neste período, atividades online, como: aulas, plantões, simulados, orientação pedagógica coletiva, atividades socioemocionais e o curso de políticas públicas.'
+        horarios_curso = 'SEGUNDA A SEXTA, das 9h às 19h'
     elif variaveis_dict['curso_descricao'] == 'Conexão':
-        paragrafo_1 = paragrafo_1 + f' SEGUNDA A QUINTA, das 19h às 22h40min, compreendendo, neste período, aulas, plantões, simulados, orientação pedagógica coletiva, assembleias e atividades do contraturno (atividades socioemocionais e o curso de políticas públicas) a depender da disponibilidade do aluno.'
+        horarios_curso = 'SEGUNDA A QUINTA, das 19h às 22h40min, e SEXTA, das 19h às 21h'
     elif variaveis_dict['curso_descricao'] == 'Conexão Online':
-        paragrafo_1 = paragrafo_1 + f' SEGUNDA A SEXTA, das 19h às 22h40min, compreendendo, neste período, atividades online, como: aulas, plantões, simulados e orientação psicopedagógica.'
+        horarios_curso = 'SEGUNDA A QUINTA, das 19h às 22h40min, e SEXTA, das 19h às 21h'
+    if estudante_contratante is False:
+        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, CEP {variaveis_dict["contratante_endereco_cep"]}, contrata os serviços da contratada a fim de que a (o) aluna (o) {variaveis_dict["estudante_nome"]}, portador (a) do RG {variaveis_dict["estudante_rg"]}, CPF {variaveis_dict["estudante_cpf"]}, tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de {horarios_curso}, compreendendo, neste período: aulas, plantões, simulados, orientação pedagógica coletiva, assembleias e atividades do contraturno (atividades socioemocionais e o curso de políticas públicas), a depender da disponibilidade do aluno.'
+    elif estudante_contratante is True:
+        paragrafo_1 = f'1 –  O CURSO: O (a) contratante {variaveis_dict["contratante_nome"]}, portador (a) do RG {variaveis_dict["contratante_rg"]}, CPF {variaveis_dict["contratante_cpf"]}, residente em {variaveis_dict["contratante_endereco_lougradouro"]}, {variaveis_dict["contratante_endereco_numero"]}, {variaveis_dict["contratante_endereco_complemento"]}, {variaveis_dict["contratante_endereco_bairro"]}, {variaveis_dict["contratante_endereco_cidade"]}, {variaveis_dict["contratante_endereco_estado"]}, contrata os serviços da contratada a fim de que tenha livre acesso a todas as atividades do curso {variaveis_dict["curso_descricao"]}, que terão suas atividades ministradas de {horarios_curso}, compreendendo, neste período: aulas, plantões, simulados, orientação pedagógica coletiva, assembleias e atividades do contraturno (atividades socioemocionais e o curso de políticas públicas), a depender da disponibilidade do aluno.'
     paragrafo_1_1 = f'1.1 – Excepcionalmente, poderá ocorrer atividade aos sábados quando houver aplicação de simulados. Fica assegurado aos alunos sabatistas a entrega dos simulados para serem realizados em outro período.'
     paragrafo_1_2 = f'1.2 – Excepcionalmente, por motivos de força maior, como pandemia, por exemplo, poderá haver alteração na prestação do serviço. Neste caso, garantimos manter a qualidade do serviço pedagógico oferecido pelo cursinho, contemplado no item 1, fazendo as adequações necessárias e comunicando com antecedência as alterações.'
     paragrafo_2 = f'2 – O PERÍODO: As aulas serão ministradas no período de {variaveis_dict["data_inicio"]} a {variaveis_dict["data_termino"]}, com 4 semanas de férias intercaladas na finalização de cada ciclo do currículo (4 ciclos). Todas as informações referentes ao período do curso são passíveis de alteração, sendo a contratante devidamente avisada com antecedência.'
@@ -101,7 +113,7 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     paragrafo_3 = paragrafo_3 + f' Assim sendo, o (a) contratante pagará à contratada o valor de {variaveis_dict["custo_final_curso"]} ({variaveis_dict["custo_final_curso_extenso"]}), dividido em {variaveis_dict["parcelas_finais_curso"]} parcelas de {variaveis_dict["custo_final_parcelas_curso"]} ({variaveis_dict["custo_final_parcelas_curso_extenso"]}).'
     paragrafo_3_1 = f'3.1 – A ausência do (a) contratante em quaisquer aulas, mesmo que justificada, não o (a) eximirá do pagamento das parcelas correspondentes e nem dá direito a reposição dessas aulas.'
     paragrafo_3_2 = f'3.2 - O pagamento por meio de boleto deverá ser realizado todo dia {variaveis_dict["dia_pagamento"]}, a contar a partir do mês de {variaveis_dict["mes_inicio_pagamento"]} de {variaveis_dict["ano_inicio_pagamento"]}. O atraso no pagamento das parcelas implicará em juros de mora de 2% após o vencimento e correção de 0,03% ao dia.'
-    paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), 4 cadernos extras anuais (filosofia, sociologia, arte e questões do ENEM) e plataforma de exercícios (Studos). O custo do material é de {variaveis_dict["custo_total_material"]} ({variaveis_dict["custo_total_material_extenso"]}), podendo ser dividido em até {variaveis_dict["parcelas_totais_material"]} parcelas (com juros).'
+    paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), 4 cadernos extras anuais (filosofia, sociologia, arte e questões do ENEM) e plataforma de exercícios (Sae Digital/Studos/Evolucional). O custo do material é de {variaveis_dict["custo_total_material"]} ({variaveis_dict["custo_total_material_extenso"]}), podendo ser dividido em até {variaveis_dict["parcelas_totais_material"]} parcelas (com juros).'
     paragrafo_3_4 = f'3.4 - A venda dos recursos didáticos será feita de forma direta pela editora Sae Digital, em site específico do fornecedor. Qualquer adversidade surgida que venha a descumprir o pagamento do material deverá ser tratado diretamente com a editora.'
     paragrafo_4 = f'4 – CANCELAMENTO DO CONTRATO E MULTA RESCISÓRIA: caso seja necessário realizar o cancelamento deste contrato, o (a) contratante deverá informar à contratada por e-mail (endereçado a atendimento@personaleduca.com.br), Whatsapp ou presencialmente na secretaria.'
     paragrafo_4_1 = f'4.1 – Para a solicitação do cancelamento será considerada a data do comunicado, mas sua efetivação apenas ocorrerá após a assinatura do termo de cancelamento pelo (a) contratante em até 15 dias após a solicitação.'
@@ -116,6 +128,7 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     assinatura_cliente = f'{variaveis_dict["contratante_nome"]} (CPF: {variaveis_dict["contratante_cpf"]})'
     assinatura_escola = f'{variaveis_dict["escola_nome_fantasia"]} (CNPJ: {variaveis_dict["escola_cnpj"]})'
 
+    escola = Escola.objects.get(pk=get_school_id(request))
     return GeneratePdf(
         elements_list = [
             Paragraph(titulo, styles['centered-bold']),
@@ -147,4 +160,4 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
             Paragraph(campo_assinatura, styles['centered']),
             Paragraph(assinatura_escola, styles['centered']),
         ],
-        logo=request.user.escola.logo,)
+        logo=escola.logo,)

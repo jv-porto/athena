@@ -3,9 +3,9 @@ from rest_framework import viewsets, generics, filters
 from django.contrib.auth.models import User, Group
 from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
 from pedagogico.models import Disciplina, Curso, Turma
-from institucional.models import AnoAcademico, UsuariosPermissoes
+from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
-from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer
+from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer, IntegracoesSerializer, IntegracaoContaAzulSerializer
 
 ############### VIEWSETS ###############
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -110,6 +110,20 @@ class EmailViewSet(viewsets.ModelViewSet):
     serializer_class = EmailSerializer
     filter_backends = [filters.SearchFilter]
     search_fields = ['tipo']
+
+class IntegracoesViewSet(viewsets.ModelViewSet):
+    queryset = Integracoes.objects.all().order_by('escola')
+    serializer_class = IntegracoesSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['escola', 'descricao']
+    filterset_fields = ['is_active']
+
+class IntegracaoContaAzulViewSet(viewsets.ModelViewSet):
+    queryset = IntegracaoContaAzul.objects.all().order_by('escola')
+    serializer_class = IntegracaoContaAzulSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    search_fields = ['escola', 'descricao']
+    filterset_fields = ['is_active']
 
 
 

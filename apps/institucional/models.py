@@ -10,6 +10,8 @@ class AnoAcademico(models.Model):
     periodicidade = models.CharField(max_length=100)
     inicio = models.DateField()
     termino = models.DateField()
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     def __str__(self):
         return self.descricao
@@ -48,6 +50,30 @@ class UsuariosPermissoes(models.Model):
     institucional_cadastro_escolar = models.CharField(max_length=50, choices=perms_opcoes, default=NENHUMA)
     institucional_usuarios_permissoes = models.CharField(max_length=50, choices=perms_opcoes, default=NENHUMA)
     institucional_ano_academico = models.CharField(max_length=50, choices=perms_opcoes, default=NENHUMA)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.descricao
+
+class Integracoes(models.Model):
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    descricao = models.CharField(primary_key=True, max_length=4)
+    conta_azul = models.BooleanField(default=False)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.descricao
+
+class IntegracaoContaAzul(models.Model):
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE, related_name='integracaocontaazul')
+    descricao = models.CharField(primary_key=True, max_length=4)
+    state = models.CharField(max_length=100, blank=True)
+    access_token = models.CharField(max_length=100, blank=True)
+    refresh_token = models.CharField(max_length=100, blank=True)
+    expires_in = models.DateTimeField(blank=True, null=True)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=False)
     def __str__(self):
         return self.descricao

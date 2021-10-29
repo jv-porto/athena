@@ -14,4 +14,10 @@ urlpatterns = [
     path('ano_academico/incluir/', views.ano_academico_incluir, name='ano_academico_incluir'),
     path('ano_academico/alterar/<str:id>/', views.ano_academico_alterar, name='ano_academico_alterar'),
     path('ano_academico/excluir/<str:id>/', views.ano_academico_excluir, name='ano_academico_excluir'),
+
+    path('integracoes/', views.integracoes, name='integracoes'),
+    path('integracoes/alterar/', views.integracoes_alterar, name='integracoes_alterar'),
+    path('integracoes/conta_azul/ativar/', views.integracao_conta_azul_ativar, name='integracao_conta_azul_ativar'),
+    path('integracoes/conta_azul/token/', views.integracao_conta_azul_token, name='integracao_conta_azul_token'),
+    path('integracoes/conta_azul/refresh_token/', views.integracao_conta_azul_refresh_token, name='integracao_conta_azul_refresh_token'),
 ]

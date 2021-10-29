@@ -11,6 +11,9 @@ class Disciplina(models.Model):
     weekday = fields.ArrayField(models.CharField(max_length=50), default=list)
     horario_inicio = fields.ArrayField(models.TimeField(), default=list)
     horario_termino = fields.ArrayField(models.TimeField(), default=list)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.descricao
 
@@ -22,11 +25,8 @@ class Curso(models.Model):
     periodicidade = models.CharField(max_length=100)
     coordenador = models.ForeignKey(PessoaColaborador, on_delete=models.CASCADE, blank=True, null=True)
     proposta_pedagogica = models.CharField(max_length=200, blank=True)
-    valor_curso = models.CharField(max_length=15, blank=True)
-    parcelamento_curso = models.CharField(max_length=15, blank=True)
-    valor_material = models.CharField(max_length=15, blank=True)
-    parcelamento_material = models.CharField(max_length=15, blank=True)
-    disciplinas = models.ManyToManyField(Disciplina, related_name='cursos', blank=True)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.descricao
@@ -43,7 +43,15 @@ class Turma(models.Model):
     tutor = models.ForeignKey(PessoaColaborador, on_delete=models.CASCADE, blank=True, null=True)
     data_inicio = models.DateField(blank=True)
     data_termino = models.DateField(blank=True)
+    valor_curso = models.CharField(max_length=15, blank=True)
+    parcelamento_curso = models.CharField(max_length=2, blank=True)
+    valor_material = models.CharField(max_length=15, blank=True)
+    parcelamento_material = models.CharField(max_length=2, blank=True)
+    disciplinas = models.ManyToManyField(Disciplina, related_name='turmas', blank=True)
     alunos = models.ManyToManyField(PessoaEstudante, related_name='turmas', blank=True)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
+    id_conta_azul = models.CharField(max_length=36, blank=True)
     def __str__(self):
         return self.descricao

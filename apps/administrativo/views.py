@@ -1,5 +1,6 @@
 import requests, locale
 from datetime import datetime
+from django.utils import timezone
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
@@ -8,6 +9,7 @@ from django.utils.dateparse import parse_date
 from django.contrib.auth.models import User
 from administrativo.models import Escola, PessoaEstudante, PessoaResponsavel, PessoaColaborador, ContratoEducacional
 from pedagogico.models import Curso, Turma
+from institucional.models import IntegracaoContaAzul
 from .modules.numeroExtenso import dExtenso
 from .contratos import *
 
@@ -106,6 +108,12 @@ def escolas_incluir(request):
             'institucional_cadastro_escolar': 'institucional_cadastro_escolar' in request.POST,
             'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
             'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
+            'institucional_integracoes': 'institucional_integracoes' in request.POST,
+            'is_active': True,
+        }
+        integration_data = {
+            'escola': school_data['id'],
+            'descricao': school_data['id'],
             'is_active': True,
         }
 
@@ -115,6 +123,7 @@ def escolas_incluir(request):
         school_data['usuario'] = User.objects.get(username=user_data['username']).id
         school_request = requests.post('https://athena.thrucode.com.br/api/escola/', data=school_data, cookies=cookies, headers=headers)
         perms_request = requests.post(f'https://athena.thrucode.com.br/api/modulos_escola/', data=perms_data, cookies=cookies, headers=headers)
+        integration_request = requests.post(f'https://athena.thrucode.com.br/api/integracoes/', data=integration_data, cookies=cookies, headers=headers)
 
         return redirect('escolas')
 
@@ -181,6 +190,7 @@ def escolas_alterar(request, id):
             'institucional_cadastro_escolar': 'institucional_cadastro_escolar' in request.POST,
             'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
             'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
+            'institucional_integracoes': 'institucional_integracoes' in request.POST,
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
@@ -201,11 +211,15 @@ def escolas_excluir(request, id):
     user_data = {
         'is_active': False,
     }
+    integration_data = {
+        'is_active': False,
+    }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
     school_request = requests.patch(f'https://athena.thrucode.com.br/api/escola/{id}/', data=school_data, cookies=cookies, headers=headers)
+    integration_request = requests.patch(f'https://athena.thrucode.com.br/api/integracoes/{id}/', data=integration_data, cookies=cookies, headers=headers)
 
     return redirect('escolas')
 
@@ -329,6 +343,38 @@ def pessoas_estudantes_alterar(request, id):
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+        ############### CONTA AZUL ###############
+        escola = get_school_id(request)
+        try:
+            if IntegracaoContaAzul.objects.filter(escola=escola).exists():
+                if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
+                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
+                    conta_azul_customer = {
+                        'name': person_data['nome'],
+                        'email': person_data['email'],
+                        'business_phone': person_data['telefone'],
+                        'mobile_phone': person_data['celular'],
+                        'person_type': 'NATURAL',
+                        #'document': person_data['cpf'],
+                        #'identity_document': person_data['rg'],
+                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'address': {
+                            'zip_code': person_data['cep'],
+                            'street': person_data['lougradouro'],
+                            'number': person_data['numero'],
+                            'complement': person_data['complemento'],
+                            'neighborhood': person_data['bairro'],
+                        }
+                    }
+                    conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
+                    conta_azul_id = PessoaEstudante.objects.get(pk=id).id_conta_azul
+                    conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                    conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                    conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+        except:
+            pass
 
         return redirect('pessoas_estudantes')
 
@@ -487,6 +533,38 @@ def pessoas_responsaveis_alterar(request, id):
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{id}/', data=user_data, cookies=cookies, headers=headers)
         person_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=person_data, cookies=cookies, headers=headers)
+
+        ############### CONTA AZUL ###############
+        escola = get_school_id(request)
+        try:
+            if IntegracaoContaAzul.objects.filter(escola=escola).exists():
+                if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
+                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
+                    conta_azul_customer = {
+                        'name': person_data['nome'],
+                        'email': person_data['email'],
+                        'business_phone': person_data['telefone'],
+                        'mobile_phone': person_data['celular'],
+                        'person_type': 'NATURAL',
+                        #'document': person_data['cpf'],
+                        #'identity_document': person_data['rg'],
+                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'address': {
+                            'zip_code': person_data['cep'],
+                            'street': person_data['lougradouro'],
+                            'number': person_data['numero'],
+                            'complement': person_data['complemento'],
+                            'neighborhood': person_data['bairro'],
+                        }
+                    }
+                    conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
+                    conta_azul_id = PessoaResponsavel.objects.get(pk=id).id_conta_azul
+                    conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                    conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                    conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+        except:
+            pass
 
         return redirect('pessoas_responsaveis')
 
@@ -714,12 +792,13 @@ def contratos_incluir(request):
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
-            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
             if estudante_contratante is True:
                 contratante = estudante
+                tipo_pessoa = 'estudante'
             elif estudante_contratante is False:
                 contratante = responsavel
+                tipo_pessoa = 'responsavel'
             if request.POST['contract-code']:
                 codigo_contrato = request.POST['contract-code']
                 id_contrato = str(escola.id) + codigo_contrato
@@ -741,23 +820,23 @@ def contratos_incluir(request):
                 'curso_descricao': curso.descricao,
                 'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
                 'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
-                'custo_total_curso': curso.valor_curso,
-                'custo_total_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
-                'parcelas_totais_curso': curso.parcelamento_curso,
-                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso), 2), grouping=True),
-                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)), 2))) + ' centavos',
+                'custo_total_curso': turma.valor_curso,
+                'custo_total_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_curso': turma.parcelamento_curso,
+                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso), 2), grouping=True),
+                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso)-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso)), 2))) + ' centavos',
                 'percentual_desconto_curso': request.POST['discount'],
-                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
-                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
+                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
+                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
                 'parcelas_finais_curso': request.POST['installments'],
-                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
-                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
+                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
+                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
                 'dia_pagamento': request.POST['payment-day'],
                 'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
                 'ano_inicio_pagamento': inicio_pagamento.year,
-                'custo_total_material': curso.valor_material,
-                'custo_total_material_extenso': extenso.getExtenso(int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
-                'parcelas_totais_material': curso.parcelamento_material,
+                'custo_total_material': turma.valor_material,
+                'custo_total_material_extenso': extenso.getExtenso(int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_material': turma.parcelamento_material,
                 'data_assinatura': f'{data_assinatura.day} de {data_assinatura.strftime("%B")} de {data_assinatura.year}',
                 'escola_nome_fantasia': escola.nome_fantasia,
                 'escola_cnpj': escola.cnpj,
@@ -796,6 +875,60 @@ def contratos_incluir(request):
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
             headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
             contract_request = requests.post('https://athena.thrucode.com.br/api/contrato_educacional/', data=contract_data, cookies=cookies, headers=headers)
+
+            ############### CONTA AZUL ###############
+            if IntegracaoContaAzul.objects.filter(escola=escola.id).exists():
+                if IntegracaoContaAzul.objects.get(escola=escola.id).is_active == True:
+                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola.id).access_token}'}
+                    try:
+                        conta_azul_customer = {
+                            'name': contratante.nome,
+                            'email': contratante.email,
+                            'business_phone': contratante.telefone,
+                            'mobile_phone': contratante.celular,
+                            'person_type': 'NATURAL',
+                            'document': contratante.cpf,
+                            'identity_document': contratante.rg,
+                            'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(contratante.data_nascimento, '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                            'address': {
+                                'zip_code': contratante.cep,
+                                'street': contratante.lougradouro,
+                                'number': contratante.numero,
+                                'complement': contratante.complemento,
+                                'neighborhood': contratante.bairro,
+                            }
+                        }
+                        conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
+                        conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
+                        conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                        conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+                    except:
+                        pass
+
+                    conta_azul_contract = {
+                        'number': int(contract_data['codigo']),
+                        'emission': timezone.make_aware(datetime.combine(datetime.strptime(contract_data['data_inicio_pagamento_curso'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'status': 'COMMITTED',
+                        'customer_id': contratante.id_conta_azul,
+                        'services': [
+                            {
+                                'quantity': 1,
+                                'service_id': Turma.objects.get(pk=contract_data['turma']).id_conta_azul,
+                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2),
+                            },
+                        ],
+                        #'discount': {
+                        #  'measure_unit': 'PERCENT',
+                        #  'rate': float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.')),
+                        #},
+                        'due_day': int(contract_data['dia_pagamento_curso']),
+                        'duration': int(contract_data['parcelas_pagamento_curso']),
+                    }
+                    conta_azul_contract['emission'] = conta_azul_contract['emission'][:-8] + conta_azul_contract['emission'][-5:]
+                    conta_azul_create_contract_request = requests.post(f'https://api.contaazul.com/v1/contracts/', json=conta_azul_contract, headers=conta_azul_headers)
+                    conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    conta_azul_contract_data_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{contract_data["id"]}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
 
             return redirect('contratos')
 
@@ -847,12 +980,13 @@ def contratos_alterar(request, id):
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
-            locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
             if estudante_contratante is True:
                 contratante = estudante
+                tipo_pessoa = 'estudante'
             elif estudante_contratante is False:
                 contratante = responsavel
+                tipo_pessoa = 'responsavel'
 
             variaveis_dict = {
                 'contratante_nome': contratante.nome,
@@ -868,23 +1002,23 @@ def contratos_alterar(request, id):
                 'curso_descricao': curso.descricao,
                 'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
                 'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
-                'custo_total_curso': curso.valor_curso,
-                'custo_total_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
-                'parcelas_totais_curso': curso.parcelamento_curso,
-                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso), 2), grouping=True),
-                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)-int(float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(curso.parcelamento_curso)), 2))) + ' centavos',
+                'custo_total_curso': turma.valor_curso,
+                'custo_total_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_curso': turma.parcelamento_curso,
+                'custo_total_parcelas_curso': 'R$ ' + locale.format('%.2f', round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso), 2), grouping=True),
+                'custo_total_parcelas_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso)-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))/int(turma.parcelamento_curso)), 2))) + ' centavos',
                 'percentual_desconto_curso': request.POST['discount'],
-                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
-                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
+                'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
+                'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
                 'parcelas_finais_curso': request.POST['installments'],
-                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
-                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(curso.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
+                'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
+                'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
                 'dia_pagamento': request.POST['payment-day'],
                 'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
                 'ano_inicio_pagamento': inicio_pagamento.year,
-                'custo_total_material': curso.valor_material,
-                'custo_total_material_extenso': extenso.getExtenso(int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(curso.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
-                'parcelas_totais_material': curso.parcelamento_material,
+                'custo_total_material': turma.valor_material,
+                'custo_total_material_extenso': extenso.getExtenso(int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
+                'parcelas_totais_material': turma.parcelamento_material,
                 'data_assinatura': f'{data_assinatura.day} de {data_assinatura.strftime("%B")} de {data_assinatura.year}',
                 'escola_nome_fantasia': escola.nome_fantasia,
                 'escola_cnpj': escola.cnpj,
@@ -921,6 +1055,61 @@ def contratos_alterar(request, id):
             cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
             headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
             contract_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
+
+            ############### CONTA AZUL ###############
+            if IntegracaoContaAzul.objects.filter(escola=escola.id).exists():
+                if IntegracaoContaAzul.objects.get(escola=escola.id).is_active == True:
+                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola.id).access_token}'}
+                    try:
+                        conta_azul_customer = {
+                            'name': contratante.nome,
+                            'email': contratante.email,
+                            'business_phone': contratante.telefone,
+                            'mobile_phone': contratante.celular,
+                            'person_type': 'NATURAL',
+                            'document': contratante.cpf,
+                            'identity_document': contratante.rg,
+                            'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(contratante.data_nascimento, '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                            'address': {
+                                'zip_code': contratante.cep,
+                                'street': contratante.lougradouro,
+                                'number': contratante.numero,
+                                'complement': contratante.complemento,
+                                'neighborhood': contratante.bairro,
+                            }
+                        }
+                        conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
+                        conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
+                        conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                        conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+                    except:
+                        pass
+
+                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                    conta_azul_contract = {
+                        'number': int(str(id)[-6:]),
+                        'emission': timezone.make_aware(datetime.combine(datetime.strptime(contract_data['data_inicio_pagamento_curso'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'status': 'COMMITTED',
+                        'customer_id': contratante.id_conta_azul,
+                        'services': [
+                            {
+                                'quantity': 1,
+                                'service_id': Turma.objects.get(pk=contract_data['turma']).id_conta_azul,
+                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2),
+                            },
+                        ],
+                        #'discount': {
+                        #  'measure_unit': 'PERCENT',
+                        #  'rate': float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.')),
+                        #},
+                        'due_day': int(contract_data['dia_pagamento_curso']),
+                        'duration': int(contract_data['parcelas_pagamento_curso']),
+                    }
+                    conta_azul_contract['emission'] = conta_azul_contract['emission'][:-8] + conta_azul_contract['emission'][-5:]
+                    conta_azul_create_contract_request = requests.post(f'https://api.contaazul.com/v1/contracts/', json=conta_azul_contract, headers=conta_azul_headers)
+                    conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    conta_azul_contract_data_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
 
             return redirect('contratos')
 

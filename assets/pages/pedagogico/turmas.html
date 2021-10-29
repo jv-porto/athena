@@ -28,6 +28,7 @@
                             <th class="light-subtitle">Turno</th>
                             <th class="light-subtitle">Vagas</th>
                             <th class="light-subtitle">Tutor</th>
+                            <th class="light-subtitle">Disciplinas</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +43,23 @@
                             <td>{{ turma.turno }}</td>
                             <td>{{ turma.vagas }}</td>
                             <td>{{ turma.tutor|default:'' }}</td>
+                            <td>
+                                {% if turma.disciplinas.0 %}{{ turma.disciplinas.0 }}{% endif %}
+                                {% if turma.disciplinas.1 %}/ {{ turma.disciplinas.1 }}{% endif %}
+                                {% if turma.disciplinas.2 %}/ {{ turma.disciplinas.2 }}{% endif %}
+                                {% if turma.disciplinas.3 %}/ {{ turma.disciplinas.3 }}{% endif %}
+                                {% if turma.disciplinas.4 %}/ {{ turma.disciplinas.4 }}{% endif %}
+                                {% if turma.disciplinas.5 %}/ {{ turma.disciplinas.5 }}{% endif %}
+                                {% if turma.disciplinas.6 %}/ {{ turma.disciplinas.6 }}{% endif %}
+                                {% if turma.disciplinas.7 %}/ {{ turma.disciplinas.7 }}{% endif %}
+                                {% if turma.disciplinas.8 %}/ {{ turma.disciplinas.8 }}{% endif %}
+                                {% if turma.disciplinas.9 %}/ {{ turma.disciplinas.9 }}{% endif %}
+                                {% if turma.disciplinas.10 %}/ {{ turma.disciplinas.10 }}{% endif %}
+                                {% if turma.disciplinas.11 %}/ {{ turma.disciplinas.11 }}{% endif %}
+                                {% if turma.disciplinas.12 %}/ {{ turma.disciplinas.12 }}{% endif %}
+                                {% if turma.disciplinas.13 %}/ {{ turma.disciplinas.13 }}{% endif %}
+                                {% if turma.disciplinas.14 %}/ {{ turma.disciplinas.14 }}{% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                         {% endif %}

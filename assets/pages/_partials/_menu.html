@@ -108,6 +108,9 @@
             {% if selectedschool.modulosescola.institucional_ano_academico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
+            {% if selectedschool.modulosescola.institucional_integracoes %}
+            <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
+            {% endif %}
         </div>
     </div>
     {% endif %}
@@ -221,6 +224,9 @@
             {% endif %}
             {% if selectedschool.modulosescola.institucional_ano_academico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_integracoes %}
+            <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
         </div>
     </div>
@@ -336,6 +342,9 @@
             {% if selectedschool.modulosescola.institucional_ano_academico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
+            {% if selectedschool.modulosescola.institucional_integracoes %}
+            <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
+            {% endif %}
         </div>
     </div>
     {% endif %}
@@ -449,6 +458,9 @@
             {% endif %}
             {% if selectedschool.modulosescola.institucional_ano_academico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_integracoes %}
+            <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
         </div>
     </div>

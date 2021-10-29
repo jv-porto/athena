@@ -52,6 +52,7 @@ class ModulosEscola(models.Model):
     institucional_cadastro_escolar = models.BooleanField()
     institucional_usuarios_permissoes = models.BooleanField()
     institucional_ano_academico = models.BooleanField()
+    institucional_integracoes = models.BooleanField()
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.escola
@@ -83,6 +84,7 @@ class PessoaEstudante(models.Model):
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    id_conta_azul = models.CharField(max_length=36, blank=True)
     def __str__(self):
         return self.nome
 
@@ -113,6 +115,7 @@ class PessoaResponsavel(models.Model):
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    id_conta_azul = models.CharField(max_length=36, blank=True)
     def __str__(self):
         return self.nome
 
@@ -190,5 +193,6 @@ class ContratoEducacional(models.Model):
     datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
+    id_conta_azul = models.CharField(max_length=36, blank=True)
     def __str__(self):
         return self.codigo
