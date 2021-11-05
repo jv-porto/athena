@@ -142,15 +142,7 @@ EMAIL_HOST_USER = os.environ['EMAIL_USERNAME']
 DEFAULT_FROM_EMAIL = os.environ['EMAIL_USERNAME']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 
-"""EMAIL_HOST = 'email-smtp.us-east-1.amazonaws.com'
-
-EMAIL_HOST_USER = os.environ['EMAIL_USER']
-DEFAULT_FROM_EMAIL = os.environ['EMAIL_USER']
-EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
-
-EMAIL_HOST_USER = 'AKIA5Q2ODCHCTTILUEMB'
-DEFAULT_FROM_EMAIL = 'athena@hermes.thrucode.com'
-EMAIL_HOST_PASSWORD = 'BOxXV2lKmauZDubG3zaQo0Bj7FGsXJUiJRc1rhtpYgVj'"""
+ADMINS = [('João Victor', 'jvporto@thrucode.com.br')]
 
 EMAIL_PORT = 587
 
