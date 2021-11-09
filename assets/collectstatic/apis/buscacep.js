@@ -40,8 +40,8 @@ function buscacep_fill(data) {
     const pais = document.querySelector('#address-country')
 
     lougradouro.value = data.street
-    lougradouro.readOnly = true
-    lougradouro.tabIndex = '-1'
+    /*lougradouro.readOnly = true
+    lougradouro.tabIndex = '-1'*/
 
     bairro.value = data.neighborhood
     bairro.readOnly = true
