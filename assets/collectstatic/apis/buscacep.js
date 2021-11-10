@@ -44,8 +44,8 @@ function buscacep_fill(data) {
     lougradouro.tabIndex = '-1'*/
 
     bairro.value = data.neighborhood
-    bairro.readOnly = true
-    bairro.tabIndex = '-1'
+    /*bairro.readOnly = true
+    bairro.tabIndex = '-1'*/
 
     cidade.value = data.city
     cidade.readOnly = true
