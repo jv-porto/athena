@@ -346,35 +346,36 @@ def pessoas_estudantes_alterar(request, id):
 
         ############### CONTA AZUL ###############
         escola = get_school_id(request)
-        try:
-            if IntegracaoContaAzul.objects.filter(escola=escola).exists():
-                if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
-                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
-                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
-                    conta_azul_customer = {
-                        'name': person_data['nome'],
-                        'email': person_data['email'],
-                        'business_phone': person_data['telefone'],
-                        'mobile_phone': person_data['celular'],
-                        'person_type': 'NATURAL',
-                        #'document': person_data['cpf'],
-                        #'identity_document': person_data['rg'],
-                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
-                        'address': {
-                            'zip_code': person_data['cep'],
-                            'street': person_data['lougradouro'],
-                            'number': person_data['numero'],
-                            'complement': person_data['complemento'],
-                            'neighborhood': person_data['bairro'],
-                        }
+        if IntegracaoContaAzul.objects.filter(escola=escola).exists():
+            if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
+                conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
+                conta_azul_customer = {
+                    'name': person_data['nome'],
+                    'email': person_data['email'],
+                    'business_phone': person_data['telefone'],
+                    'mobile_phone': person_data['celular'],
+                    'person_type': 'NATURAL',
+                    #'document': person_data['cpf'],
+                    #'identity_document': person_data['rg'],
+                    'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                    'address': {
+                        'zip_code': person_data['cep'],
+                        'street': person_data['lougradouro'],
+                        'number': person_data['numero'],
+                        'complement': person_data['complemento'],
+                        'neighborhood': person_data['bairro'],
                     }
-                    conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
-                    conta_azul_id = PessoaEstudante.objects.get(pk=id).id_conta_azul
-                    conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                }
+                conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] +conta_azul_customer['date_of_birth'][-5:]
+                conta_azul_id = PessoaEstudante.objects.get(pk=id).id_conta_azul
+                conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                try:
                     conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
-                    conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
-        except:
-            pass
+                except:
+                    messages.error(request, conta_azul_create_customer_request.content)
+                    return redirect('pessoas_estudantes')
+                conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/estudante/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_estudantes')
 
@@ -536,35 +537,36 @@ def pessoas_responsaveis_alterar(request, id):
 
         ############### CONTA AZUL ###############
         escola = get_school_id(request)
-        try:
-            if IntegracaoContaAzul.objects.filter(escola=escola).exists():
-                if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
-                    conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
-                    conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
-                    conta_azul_customer = {
-                        'name': person_data['nome'],
-                        'email': person_data['email'],
-                        'business_phone': person_data['telefone'],
-                        'mobile_phone': person_data['celular'],
-                        'person_type': 'NATURAL',
-                        #'document': person_data['cpf'],
-                        #'identity_document': person_data['rg'],
-                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
-                        'address': {
-                            'zip_code': person_data['cep'],
-                            'street': person_data['lougradouro'],
-                            'number': person_data['numero'],
-                            'complement': person_data['complemento'],
-                            'neighborhood': person_data['bairro'],
-                        }
+        if IntegracaoContaAzul.objects.filter(escola=escola).exists():
+            if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
+                conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
+                conta_azul_customer = {
+                    'name': person_data['nome'],
+                    'email': person_data['email'],
+                    'business_phone': person_data['telefone'],
+                    'mobile_phone': person_data['celular'],
+                    'person_type': 'NATURAL',
+                    #'document': person_data['cpf'],
+                    #'identity_document': person_data['rg'],
+                    'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(person_data['data_nascimento'], '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                    'address': {
+                        'zip_code': person_data['cep'],
+                        'street': person_data['lougradouro'],
+                        'number': person_data['numero'],
+                        'complement': person_data['complemento'],
+                        'neighborhood': person_data['bairro'],
                     }
-                    conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
-                    conta_azul_id = PessoaResponsavel.objects.get(pk=id).id_conta_azul
-                    conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                }
+                conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] +conta_azul_customer['date_of_birth'][-5:]
+                conta_azul_id = PessoaResponsavel.objects.get(pk=id).id_conta_azul
+                conta_azul_create_customer_request = requests.put(f'https://api.contaazul.com/v1/customers/{conta_azul_id}/', json=conta_azul_customer, headers=conta_azul_headers)
+                try:
                     conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
-                    conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
-        except:
-            pass
+                except:
+                    messages.error(request, conta_azul_create_customer_request.content)
+                    return redirect('pessoas_responsaveis')
+                conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/responsavel/{id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_responsaveis')
 
@@ -881,30 +883,28 @@ def contratos_incluir(request):
                 if IntegracaoContaAzul.objects.get(escola=escola.id).is_active == True:
                     conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
                     conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola.id).access_token}'}
-                    try:
-                        conta_azul_customer = {
-                            'name': contratante.nome,
-                            'email': contratante.email,
-                            'business_phone': contratante.telefone,
-                            'mobile_phone': contratante.celular,
-                            'person_type': 'NATURAL',
-                            'document': contratante.cpf,
-                            'identity_document': contratante.rg,
-                            'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(contratante.data_nascimento, '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
-                            'address': {
-                                'zip_code': contratante.cep,
-                                'street': contratante.lougradouro,
-                                'number': contratante.numero,
-                                'complement': contratante.complemento,
-                                'neighborhood': contratante.bairro,
-                            }
+                    conta_azul_customer = {
+                        'name': contratante.nome,
+                        'email': contratante.email,
+                        'business_phone': contratante.telefone,
+                        'mobile_phone': contratante.celular,
+                        'person_type': 'NATURAL',
+                        'document': contratante.cpf,
+                        'identity_document': contratante.rg,
+                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(contratante.data_nascimento, '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'address': {
+                            'zip_code': contratante.cep,
+                            'street': contratante.lougradouro,
+                            'number': contratante.numero,
+                            'complement': contratante.complemento,
+                            'neighborhood': contratante.bairro,
                         }
-                        conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
-                        conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
-                        conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
-                        conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
-                    except:
-                        pass
+                    }
+                    conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] +conta_azul_customer['date_of_birth'][-5:]
+                    conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
+                    conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                    conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+
 
                     conta_azul_contract = {
                         'number': int(contract_data['codigo']),
@@ -927,7 +927,11 @@ def contratos_incluir(request):
                     }
                     conta_azul_contract['emission'] = conta_azul_contract['emission'][:-8] + conta_azul_contract['emission'][-5:]
                     conta_azul_create_contract_request = requests.post(f'https://api.contaazul.com/v1/contracts/', json=conta_azul_contract, headers=conta_azul_headers)
-                    conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    try:
+                        conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    except:
+                        messages.error(request, conta_azul_create_contract_request.content)
+                        return redirect('contratos')
                     conta_azul_contract_data_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{contract_data["id"]}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
 
             return redirect('contratos')
@@ -1061,7 +1065,7 @@ def contratos_alterar(request, id):
                 if IntegracaoContaAzul.objects.get(escola=escola.id).is_active == True:
                     conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
                     conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola.id).access_token}'}
-                    try:
+                    """try:
                         conta_azul_customer = {
                             'name': contratante.nome,
                             'email': contratante.email,
@@ -1084,7 +1088,7 @@ def contratos_alterar(request, id):
                         conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
                         conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
                     except:
-                        pass
+                        pass"""
 
                     conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
                     conta_azul_contract = {
@@ -1108,7 +1112,11 @@ def contratos_alterar(request, id):
                     }
                     conta_azul_contract['emission'] = conta_azul_contract['emission'][:-8] + conta_azul_contract['emission'][-5:]
                     conta_azul_create_contract_request = requests.post(f'https://api.contaazul.com/v1/contracts/', json=conta_azul_contract, headers=conta_azul_headers)
-                    conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    try:
+                        conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
+                    except:
+                        messages.error(request, conta_azul_create_contract_request.content)
+                        return redirect('contratos')
                     conta_azul_contract_data_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{id}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
 
             return redirect('contratos')
