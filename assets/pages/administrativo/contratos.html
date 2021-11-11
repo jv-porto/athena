@@ -42,7 +42,7 @@
                             <td>{{ contrato.curso }}</td>
                             <td>{{ contrato.turma }}</td>
                             <td>{{ contrato.data_assinatura|date:'d/m/Y' }}</td>
-                            <td><input type="hidden" name="contract-file-url" id="contract-file-url" class="select-value" value="{{contrato.arquivo_contrato}}"></td>
+                            <td><input type="hidden" name="contract-file-url-{{contrato.id}}" id="contract-file-url" class="select-value" value="{{contrato.arquivo_contrato}}"></td>
                         </tr>
                         {% endfor %}
                         {% endif %}

@@ -1,4 +1,3 @@
-from re import A
 import requests, locale
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 from datetime import datetime
@@ -933,7 +932,7 @@ def contratos_incluir(request):
                         'person_type': 'NATURAL',
                         'document': contratante.cpf,
                         'identity_document': contratante.rg,
-                        'date_of_birth': timezone.make_aware(datetime.combine(datetime.strptime(contratante.data_nascimento, '%Y-%m-%d'), datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
+                        'date_of_birth': timezone.make_aware(datetime.combine(contratante.data_nascimento, datetime.min.time())).strftime('%Y-%m-%dT%H:%M:%S.%f%z'),
                         'address': {
                             'zip_code': contratante.cep,
                             'street': contratante.lougradouro,
@@ -943,9 +942,12 @@ def contratos_incluir(request):
                         }
                     }
                     conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] +conta_azul_customer['date_of_birth'][-5:]
-                    conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
-                    conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
-                    conta_azul_customer_data_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+                    try:
+                        conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
+                        conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
+                        conta_azul_customer_data_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+                    except:
+                        pass
 
 
                     conta_azul_contract = {

@@ -93,7 +93,7 @@ for (const item of menuActionsId) {
         menuActionExcluir.href = `excluir/${idValue.replace('/', '_')}/`
         if (menuActionImprimir) {
             for (const item of menuActionImprimir) {
-                const imprimirUrl = document.querySelector('input.select-value#contract-file-url[type=hidden]').value
+                const imprimirUrl = document.querySelector('input.select-value#contract-file-url[type=hidden][name=contract-file-url-${idValue}]').value
                 item.href = imprimirUrl
             }
         }
