@@ -36,35 +36,35 @@ class ModulosEscolaViewSet(viewsets.ModelViewSet):
     search_fields = ['escola', 'descricao']
 
 class ContratoEducacionalViewSet(viewsets.ModelViewSet):
-    queryset = ContratoEducacional.objects.all().order_by('id')
+    queryset = ContratoEducacional.objects.all().order_by('-id')
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     search_fields = ['id', 'tipo', 'data_assinatura']
     filterset_fields = ['deleted']
 
 class ContratoTrabalhistaViewSet(viewsets.ModelViewSet):
-    queryset = ContratoTrabalhista.objects.all().order_by('id')
+    queryset = ContratoTrabalhista.objects.all().order_by('-id')
     serializer_class = ContratoTrabalhistaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     search_fields = ['id', 'tipo']
     filterset_fields = ['deleted']
 
 class PessoaEstudanteViewSet(viewsets.ModelViewSet):
-    queryset = PessoaEstudante.objects.all().order_by('id')
+    queryset = PessoaEstudante.objects.all().order_by('nome')
     serializer_class = PessoaEstudanteSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['id', 'escola', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'contratos']
     filterset_fields = ['is_active']
 
 class PessoaResponsavelViewSet(viewsets.ModelViewSet):
-    queryset = PessoaResponsavel.objects.all().order_by('id')
+    queryset = PessoaResponsavel.objects.all().order_by('nome')
     serializer_class = PessoaResponsavelSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['id', 'escola', 'estudantes', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'contratos']
     filterset_fields = ['is_active']
 
 class PessoaColaboradorViewSet(viewsets.ModelViewSet):
-    queryset = PessoaColaborador.objects.all().order_by('id')
+    queryset = PessoaColaborador.objects.all().order_by('nome')
     serializer_class = PessoaColaboradorSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ['id', 'escola', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'departamento', 'cargo', 'ramal', 'contratos']
@@ -133,7 +133,7 @@ class IntegracaoContaAzulViewSet(viewsets.ModelViewSet):
 ########## ESCOLAS ##########
 class EscolaUsuarios(generics.ListAPIView):
     def get_queryset(self):
-        queryset = User.objects.filter(escola=self.kwargs['school_id'])
+        queryset = User.objects.filter(escola=self.kwargs['school_id']).order_by('username')
         return queryset
     serializer_class = UsuarioSerializer
     filter_backends = [DjangoFilterBackend]
@@ -141,7 +141,7 @@ class EscolaUsuarios(generics.ListAPIView):
 
 class EscolaContratosEducacionais(generics.ListAPIView):
     def get_queryset(self):
-        queryset = ContratoEducacional.objects.filter(escola=self.kwargs['school_id'])
+        queryset = ContratoEducacional.objects.filter(escola=self.kwargs['school_id']).order_by('-id')
         return queryset
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -150,7 +150,7 @@ class EscolaContratosEducacionais(generics.ListAPIView):
 
 class EscolaContratosTrabalhistas(generics.ListAPIView):
     def get_queryset(self):
-        queryset = ContratoTrabalhista.objects.filter(escola=self.kwargs['school_id'])
+        queryset = ContratoTrabalhista.objects.filter(escola=self.kwargs['school_id']).order_by('-id')
         return queryset
     serializer_class = ContratoTrabalhistaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -159,7 +159,7 @@ class EscolaContratosTrabalhistas(generics.ListAPIView):
 
 class EscolaEstudantes(generics.ListAPIView):
     def get_queryset(self):
-        queryset = PessoaEstudante.objects.filter(escola=self.kwargs['school_id'])
+        queryset = PessoaEstudante.objects.filter(escola=self.kwargs['school_id']).order_by('nome')
         return queryset
     serializer_class = PessoaEstudanteSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -168,7 +168,7 @@ class EscolaEstudantes(generics.ListAPIView):
 
 class EscolaResponsaveis(generics.ListAPIView):
     def get_queryset(self):
-        queryset = PessoaResponsavel.objects.filter(escola=self.kwargs['school_id'])
+        queryset = PessoaResponsavel.objects.filter(escola=self.kwargs['school_id']).order_by('nome')
         return queryset
     serializer_class = PessoaResponsavelSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -177,7 +177,7 @@ class EscolaResponsaveis(generics.ListAPIView):
 
 class EscolaColaboradores(generics.ListAPIView):
     def get_queryset(self):
-        queryset = PessoaColaborador.objects.filter(escola=self.kwargs['school_id'])
+        queryset = PessoaColaborador.objects.filter(escola=self.kwargs['school_id']).order_by('nome')
         return queryset
     serializer_class = PessoaColaboradorSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -186,7 +186,7 @@ class EscolaColaboradores(generics.ListAPIView):
 
 class EscolaDisciplinas(generics.ListAPIView):
     def get_queryset(self):
-        queryset = Disciplina.objects.filter(escola=self.kwargs['school_id'])
+        queryset = Disciplina.objects.filter(escola=self.kwargs['school_id']).order_by('id')
         return queryset
     serializer_class = DisciplinaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -194,7 +194,7 @@ class EscolaDisciplinas(generics.ListAPIView):
 
 class EscolaCursos(generics.ListAPIView):
     def get_queryset(self):
-        queryset = Curso.objects.filter(escola=self.kwargs['school_id'])
+        queryset = Curso.objects.filter(escola=self.kwargs['school_id']).order_by('id')
         return queryset
     serializer_class = CursoSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -204,7 +204,7 @@ class EscolaCursos(generics.ListAPIView):
 
 class EscolaTurmas(generics.ListAPIView):
     def get_queryset(self):
-        queryset = Turma.objects.filter(escola=self.kwargs['school_id'])
+        queryset = Turma.objects.filter(escola=self.kwargs['school_id']).order_by('id')
         return queryset
     serializer_class = TurmaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -214,7 +214,7 @@ class EscolaTurmas(generics.ListAPIView):
 
 class CursoTurmas(generics.ListAPIView):
     def get_queryset(self):
-        queryset = Turma.objects.filter(curso=self.kwargs['course_id'])
+        queryset = Turma.objects.filter(curso=self.kwargs['course_id']).order_by('id')
         return queryset
     serializer_class = TurmaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
@@ -224,7 +224,7 @@ class CursoTurmas(generics.ListAPIView):
 
 class EscolaAnosAcademicos(generics.ListAPIView):
     def get_queryset(self):
-        queryset = AnoAcademico.objects.filter(escola=self.kwargs['school_id'])
+        queryset = AnoAcademico.objects.filter(escola=self.kwargs['school_id']).order_by('id')
         return queryset
     serializer_class = AnoAcademicoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -233,7 +233,7 @@ class EscolaAnosAcademicos(generics.ListAPIView):
 
 class EscolaUsuariosPermissoes(generics.ListAPIView):
     def get_queryset(self):
-        queryset = UsuariosPermissoes.objects.filter(escola=self.kwargs['school_id'])
+        queryset = UsuariosPermissoes.objects.filter(escola=self.kwargs['school_id']).order_by('escola')
         return queryset
     serializer_class = UsuariosPermissoesSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]

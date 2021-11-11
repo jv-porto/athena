@@ -92,7 +92,7 @@ def GeneratePdf(elements_list, logo=None):
 ############### Contrato de Prestação de Serviços Educacionais ###############
 def contrato_educacional(request, variaveis_dict, estudante_contratante):
     titulo = f'CLÁUSULAS DO CONTRATO'
-    subtitulo = f'CURSO ENGAJA'
+    subtitulo = f'CURSO ' + variaveis_dict["curso_descricao"].upper()
     if variaveis_dict['curso_descricao'] == 'Engaja':
         horarios_curso = 'SEGUNDA A SEXTA, das 9h às 19h'
     elif variaveis_dict['curso_descricao'] == 'Engaja Online':
@@ -133,7 +133,6 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     elements_list = [
         Paragraph(titulo, styles['centered-bold']),
         Paragraph(subtitulo, styles['centered-bold']),
-        Spacer(1, 10),
         Paragraph(paragrafo_1, styles['justified']),
         Paragraph(paragrafo_1_1, styles['justified-level-2']),
         Paragraph(paragrafo_1_2, styles['justified-level-2']),
