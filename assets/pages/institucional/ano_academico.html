@@ -5,12 +5,13 @@
                     <h1 class="page-title-institucional light-title disable-select">Ano acadêmico</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a class="body-black-text page-actions-pesquisar disable-select">Pesquisar</a>
                     <a href="{% url 'ano_academico_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
                     <a href="" class="body-black-text page-actions-alterar">Alterar</a>
                     <a href="" class="body-black-text page-actions-excluir">Excluir</a>
                 </div>
 
+                {% include '_partials/_pesquisar.html' %}
                 {% include '_partials/_menu.html' %}
 
         <main>

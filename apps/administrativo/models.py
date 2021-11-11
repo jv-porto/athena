@@ -12,6 +12,7 @@ class Escola(models.Model):
     celular = models.CharField(max_length=13, blank=True)
     site = models.CharField(max_length=200, blank=True)
     logo = models.CharField(max_length=200, blank=True)
+    assinatura = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
     numero = models.CharField(max_length=5)

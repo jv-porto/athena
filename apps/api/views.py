@@ -25,7 +25,7 @@ class EscolaViewSet(viewsets.ModelViewSet):
     queryset = Escola.objects.all().order_by('id')
     serializer_class = EscolaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'cnpj', 'razao_social', 'nome_fantasia', 'email', 'telefone', 'celular']
+    search_fields = ['id', 'cnpj', 'razao_social', 'nome_fantasia', 'email', 'telefone', 'celular', 'usuario__id']
     filterset_fields = ['is_active']
 
 class ModulosEscolaViewSet(viewsets.ModelViewSet):
@@ -46,7 +46,7 @@ class ContratoTrabalhistaViewSet(viewsets.ModelViewSet):
     queryset = ContratoTrabalhista.objects.all().order_by('id')
     serializer_class = ContratoTrabalhistaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    search_fields = ['id', 'tipo', 'data_assinatura']
+    search_fields = ['id', 'tipo']
     filterset_fields = ['deleted']
 
 class PessoaEstudanteViewSet(viewsets.ModelViewSet):
@@ -75,14 +75,14 @@ class DisciplinaViewSet(viewsets.ModelViewSet):
     serializer_class = DisciplinaSerializer
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['id']
-    search_fields = ['id', 'descricao', 'divisao_periodos', 'coordenador', 'professores']
+    search_fields = ['id', 'descricao']
 
 class CursoViewSet(viewsets.ModelViewSet):
     queryset = Curso.objects.all().order_by('id')
     serializer_class = CursoSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['id']
-    search_fields = ['id', 'descricao', 'divisao_periodos', 'coordenador', 'disciplinas', 'data_final_cancelamento']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['is_active']
 
 class TurmaViewSet(viewsets.ModelViewSet):
@@ -90,14 +90,14 @@ class TurmaViewSet(viewsets.ModelViewSet):
     serializer_class = TurmaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['id']
-    search_fields = ['id', 'descricao', 'ano_academico', 'curso', 'turno', 'tutor', 'alunos']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
 
 class AnoAcademicoViewSet(viewsets.ModelViewSet):
     queryset = AnoAcademico.objects.all().order_by('id')
     serializer_class = AnoAcademicoSerializer
     filter_backends = [filters.SearchFilter]
-    search_fields = ['id', 'descricao', 'periodicidade']
+    search_fields = ['id', 'descricao']
 
 class UsuariosPermissoesViewSet(viewsets.ModelViewSet):
     queryset = UsuariosPermissoes.objects.all().order_by('escola')
@@ -145,7 +145,7 @@ class EscolaContratosEducacionais(generics.ListAPIView):
         return queryset
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'razao_social', 'nome_fantasia', 'email', 'telefone', 'celular']
+    search_fields = ['id', 'codigo']
     filterset_fields = ['deleted']
 
 class EscolaContratosTrabalhistas(generics.ListAPIView):
@@ -163,7 +163,7 @@ class EscolaEstudantes(generics.ListAPIView):
         return queryset
     serializer_class = PessoaEstudanteSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'contratos']
+    search_fields = ['id', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email']
     filterset_fields = ['is_active']
 
 class EscolaResponsaveis(generics.ListAPIView):
@@ -172,7 +172,7 @@ class EscolaResponsaveis(generics.ListAPIView):
         return queryset
     serializer_class = PessoaResponsavelSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'estudantes', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'contratos']
+    search_fields = ['id', 'estudantes__nome', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email']
     filterset_fields = ['is_active']
 
 class EscolaColaboradores(generics.ListAPIView):
@@ -181,7 +181,7 @@ class EscolaColaboradores(generics.ListAPIView):
         return queryset
     serializer_class = PessoaColaboradorSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'departamento', 'cargo', 'ramal', 'contratos']
+    search_fields = ['id', 'nome', 'data_nascimento', 'cpf', 'rg', 'celular', 'telefone', 'email', 'departamento', 'cargo', 'ramal']
     filterset_fields = ['is_active']
 
 class EscolaDisciplinas(generics.ListAPIView):
@@ -190,7 +190,7 @@ class EscolaDisciplinas(generics.ListAPIView):
         return queryset
     serializer_class = DisciplinaSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'descricao', 'divisao_periodos', 'coordenador', 'professores']
+    search_fields = ['id', 'descricao']
 
 class EscolaCursos(generics.ListAPIView):
     def get_queryset(self):
@@ -198,8 +198,8 @@ class EscolaCursos(generics.ListAPIView):
         return queryset
     serializer_class = CursoSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    rdering_fields = ['id']
-    search_fields = ['id', 'descricao', 'divisao_periodos', 'coordenador', 'disciplinas', 'data_final_cancelamento']
+    ordering_fields = ['id']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['is_active']
 
 class EscolaTurmas(generics.ListAPIView):
@@ -209,7 +209,7 @@ class EscolaTurmas(generics.ListAPIView):
     serializer_class = TurmaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['id']
-    search_fields = ['id', 'descricao', 'ano_academico', 'curso', 'turno', 'tutor', 'alunos']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
 
 class CursoTurmas(generics.ListAPIView):
@@ -219,7 +219,7 @@ class CursoTurmas(generics.ListAPIView):
     serializer_class = TurmaSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     ordering_fields = ['id']
-    search_fields = ['id', 'descricao', 'ano_academico', 'curso', 'turno', 'tutor', 'alunos']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
 
 class EscolaAnosAcademicos(generics.ListAPIView):
@@ -228,7 +228,7 @@ class EscolaAnosAcademicos(generics.ListAPIView):
         return queryset
     serializer_class = AnoAcademicoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'descricao', 'periodicidade']
+    search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
 
 class EscolaUsuariosPermissoes(generics.ListAPIView):

@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['athena.thrucode.com.br']
+ALLOWED_HOSTS = ['athena.thrucode.com.br', '*']
 ALLOWED_HOSTS.extend(['172.31.84.235'])
 
 
@@ -209,7 +209,7 @@ MESSAGE_TAGS = {
 
 # DJANGO LOGS
 
-LOGGING = {
+"""LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
@@ -226,7 +226,7 @@ LOGGING = {
             'propagate': True,
         },
     },
-}
+}"""
 
 
 # DJANGO STORAGES - S3

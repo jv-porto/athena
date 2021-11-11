@@ -5,12 +5,13 @@
                     <h1 class="page-title-administrativo light-title disable-select">Pessoas - Colaboradores</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a class="body-black-text page-actions-pesquisar disable-select">Pesquisar</a>
                     <a href="{% url 'pessoas_colaboradores_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
                     <a href="" class="body-black-text page-actions-alterar">Alterar</a>
                     <a href="" class="body-black-text page-actions-excluir">Excluir</a>
                 </div>
-                
+
+                {% include '_partials/_pesquisar.html' %}
                 {% include '_partials/_menu.html' %}
 
                 <main>

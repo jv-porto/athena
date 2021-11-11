@@ -38,15 +38,16 @@ styles.add(ParagraphStyle(name='justified-level-3', alignment=TA_JUSTIFY, fontNa
 styles.add(ParagraphStyle(name='right', alignment=TA_RIGHT, fontName='Arial', fontSize=8))
 
 
+def get_image(path, height=1.27*cm):
+    img = ImageReader(path)
+    iw, ih = img.getSize()
+    aspect = iw / float(ih)
+    return Image(path, height=height, width=(height * aspect))
+
+
 
 def GeneratePdf(elements_list, logo=None):
     if logo != None:
-        def get_image(path, height=1.27*cm):
-            img = ImageReader(path)
-            iw, ih = img.getSize()
-            aspect = iw / float(ih)
-            return Image(path, height=height, width=(height * aspect))
-
         def generate_header_footer(canvas, doc, header_content=None, footer_content=None):
             width, height = doc.width+doc.leftMargin+doc.rightMargin, doc.height+doc.topMargin+doc.bottomMargin
             if header_content is not None:
@@ -129,35 +130,47 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     assinatura_escola = f'{variaveis_dict["escola_nome_fantasia"]} (CNPJ: {variaveis_dict["escola_cnpj"]})'
 
     escola = Escola.objects.get(pk=get_school_id(request))
+    elements_list = [
+        Paragraph(titulo, styles['centered-bold']),
+        Paragraph(subtitulo, styles['centered-bold']),
+        Spacer(1, 10),
+        Paragraph(paragrafo_1, styles['justified']),
+        Paragraph(paragrafo_1_1, styles['justified-level-2']),
+        Paragraph(paragrafo_1_2, styles['justified-level-2']),
+        Paragraph(paragrafo_2, styles['justified']),
+        Paragraph(paragrafo_3, styles['justified']),
+        Paragraph(paragrafo_3_1, styles['justified-level-2']),
+        Paragraph(paragrafo_3_2, styles['justified-level-2']),
+        Paragraph(paragrafo_3_3, styles['justified-level-2']),
+        Paragraph(paragrafo_3_4, styles['justified-level-2']),
+        Paragraph(paragrafo_4, styles['justified']),
+        Paragraph(paragrafo_4_1, styles['justified-level-2']),
+        Paragraph(paragrafo_4_1_1, styles['justified-level-3']),
+        Paragraph(paragrafo_4_2, styles['justified-level-2']),
+        Paragraph(paragrafo_4_3, styles['justified-level-2']),
+        Paragraph(paragrafo_4_4, styles['justified-level-2']),
+        Paragraph(paragrafo_5, styles['justified']),
+        Paragraph(paragrafo_6, styles['justified']),
+        Spacer(1, 10),
+        Paragraph(local_data, styles['right']),
+        Spacer(1, 25),
+        Paragraph(campo_assinatura, styles['centered']),
+        Paragraph(assinatura_cliente, styles['centered']),
+    ]
+
+    if escola.assinatura:
+        elements_list.extend([
+            get_image(escola.assinatura, height=1.7*cm)
+        ])
+    else:
+        elements_list.extend([
+            Spacer(1, 30),
+            Paragraph(campo_assinatura, styles['centered']),
+        ])
+    elements_list.extend([
+        Paragraph(assinatura_escola, styles['centered']),
+    ])
+
     return GeneratePdf(
-        elements_list = [
-            Paragraph(titulo, styles['centered-bold']),
-            Paragraph(subtitulo, styles['centered-bold']),
-            Spacer(1, 12),
-            Paragraph(paragrafo_1, styles['justified']),
-            Paragraph(paragrafo_1_1, styles['justified-level-2']),
-            Paragraph(paragrafo_1_2, styles['justified-level-2']),
-            Paragraph(paragrafo_2, styles['justified']),
-            Paragraph(paragrafo_3, styles['justified']),
-            Paragraph(paragrafo_3_1, styles['justified-level-2']),
-            Paragraph(paragrafo_3_2, styles['justified-level-2']),
-            Paragraph(paragrafo_3_3, styles['justified-level-2']),
-            Paragraph(paragrafo_3_4, styles['justified-level-2']),
-            Paragraph(paragrafo_4, styles['justified']),
-            Paragraph(paragrafo_4_1, styles['justified-level-2']),
-            Paragraph(paragrafo_4_1_1, styles['justified-level-3']),
-            Paragraph(paragrafo_4_2, styles['justified-level-2']),
-            Paragraph(paragrafo_4_3, styles['justified-level-2']),
-            Paragraph(paragrafo_4_4, styles['justified-level-2']),
-            Paragraph(paragrafo_5, styles['justified']),
-            Paragraph(paragrafo_6, styles['justified']),
-            Spacer(1, 10),
-            Paragraph(local_data, styles['right']),
-            Spacer(1, 30),
-            Paragraph(campo_assinatura, styles['centered']),
-            Paragraph(assinatura_cliente, styles['centered']),
-            Spacer(1, 30),
-            Paragraph(campo_assinatura, styles['centered']),
-            Paragraph(assinatura_escola, styles['centered']),
-        ],
-        logo=escola.logo,)
+        elements_list=elements_list,
+        logo=escola.logo)

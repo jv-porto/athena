@@ -5,7 +5,7 @@
                     <h1 class="page-title-administrativo light-title disable-select">Contratos</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
+                    <a class="body-black-text page-actions-pesquisar disable-select">Pesquisar</a>
                     <a href="{% url 'contratos_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
                     <a href="" class="body-black-text page-actions-imprimir" target="_blank">Imprimir</a>
                     <a href="" class="body-black-text page-actions-digitalizar">Digitalizar</a>
@@ -13,6 +13,7 @@
                     <a href="" class="body-black-text page-actions-excluir">Excluir</a>
                 </div>
 
+                {% include '_partials/_pesquisar.html' %}
                 {% include '_partials/_menu.html' %}
 
         <main>

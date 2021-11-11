@@ -5,12 +5,13 @@
                     <h1 class="page-title-administrativo light-title disable-select">Pessoas - Estudantes</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="" class="body-black-text page-actions-pesquisar">Pesquisar</a>
-                    <a href="{% url 'pessoas_estudantes_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
-                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
-                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                    <a class="body-black-text page-actions-pesquisar disable-select">Pesquisar</a>
+                    <a href="{% url 'pessoas_estudantes_incluir' %}" class="body-black-text page-actions-incluir disable-select">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar disable-select">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir disable-select">Excluir</a>
                 </div>
-                
+
+                {% include '_partials/_pesquisar.html' %}
                 {% include '_partials/_menu.html' %}
 
         <main>

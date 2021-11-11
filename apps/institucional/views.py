@@ -39,12 +39,11 @@ def get_school_id(request):
 @login_required()
 @permission_required('administrativo.view_escola', raise_exception=True)
 def cadastro_escolar(request):
-    if request.method == 'GET':
-        escola = get_school_id(request)
-        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
-        return render(request, 'institucional/cadastro_escolar.html', data)
+    escola = get_school_id(request)
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    data = {'escola': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
+    return render(request, 'institucional/cadastro_escolar.html', data)
 
 
 @login_required()
@@ -53,8 +52,8 @@ def cadastro_escolar_alterar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'escola': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        data = {'escola': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/cadastro_escolar_alterar.html', data)
     elif request.method == 'POST':
         if empty_input(request.POST['address-street']) or empty_input(request.POST['address-neighborhood']) or empty_input(request.POST['address-city']) or empty_input(request.POST['address-state']) or empty_input(request.POST['address-country']):
@@ -87,9 +86,9 @@ def cadastro_escolar_alterar(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        user_request = requests.patch(f'https://athena.thrucode.com.br/api/usuario/{escola}/', data=user_data, cookies=cookies, headers=headers)
-        school_request = requests.patch(f'https://athena.thrucode.com.br/api/escola/{escola}/', data=school_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        user_request = requests.patch(f'http://127.0.0.1:8000/api/usuario/{escola}/', data=user_data, cookies=cookies, headers=headers)
+        school_request = requests.patch(f'http://127.0.0.1:8000/api/escola/{escola}/', data=school_data, cookies=cookies, headers=headers)
 
         return redirect('cadastro_escolar')
 
@@ -98,12 +97,17 @@ def cadastro_escolar_alterar(request):
 @login_required()
 @permission_required('institucional.view_usuariospermissoes', raise_exception=True)
 def usuarios_permissoes(request):
-    if request.method == 'GET':
-        escola = get_school_id(request)
-        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
-        return render(request, 'institucional/usuarios_permissoes.html', data)
+    escola = get_school_id(request)
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+
+    if 'search' in request.GET:
+        search = request.GET['search']
+        data = {'permissoes': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/usuarios_permissoes/?is_active=true&search={search}', cookies=cookies, headers=headers).json()}
+    else:
+        data = {'permissoes': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
+
+    return render(request, 'institucional/usuarios_permissoes.html', data)
 
 
 @login_required()
@@ -200,8 +204,8 @@ def usuarios_permissoes_incluir(request):
         group.permissions.set(perms_list)
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        perms_request = requests.post(f'https://athena.thrucode.com.br/api/usuarios_permissoes/', data=perms_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        perms_request = requests.post(f'http://127.0.0.1:8000/api/usuarios_permissoes/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('usuarios_permissoes')
 
@@ -212,8 +216,8 @@ def usuarios_permissoes_alterar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'permissoes': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        data = {'permissoes': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/usuarios_permissoes/?is_active=true', cookies=cookies, headers=headers).json()}
         return render(request, 'institucional/usuarios_permissoes_alterar.html', data)
     elif request.method == 'POST':
         perms_data = {
@@ -302,8 +306,8 @@ def usuarios_permissoes_alterar(request):
         group.permissions.set(perms_list)
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        perms_request = requests.patch(f'https://athena.thrucode.com.br/api/usuarios_permissoes/{perms_data["descricao"]}/', data=perms_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        perms_request = requests.patch(f'http://127.0.0.1:8000/api/usuarios_permissoes/{perms_data["descricao"]}/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('usuarios_permissoes')
 
@@ -316,8 +320,8 @@ def usuarios_permissoes_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-    perms_request = requests.patch(f'https://athena.thrucode.com.br/api/usuarios_permissoes/{id}/',data=perms_data, cookies=cookies, headers=headers)
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    perms_request = requests.patch(f'http://127.0.0.1:8000/api/usuarios_permissoes/{id}/',data=perms_data, cookies=cookies, headers=headers)
 
     return redirect('usuarios_permissoes')
 
@@ -328,8 +332,14 @@ def usuarios_permissoes_excluir(request, id):
 def ano_academico(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-    data = {'ano_academico': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/anos_academicos/?deleted=false', cookies=cookies, headers=headers).json()}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+
+    if 'search' in request.GET:
+        search = request.GET['search']
+        data = {'ano_academico': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/anos_academicos/?deleted=false&search={search}', cookies=cookies, headers=headers).json()}
+    else:
+        data = {'ano_academico': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/anos_academicos/?deleted=false', cookies=cookies, headers=headers).json()}
+
     for item in data['ano_academico']:
         item['id'] = item['id'].replace('_', '/')
         item['codigo'] = item['codigo'].replace('_', '/')
@@ -359,8 +369,8 @@ def ano_academico_incluir(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        perms_request = requests.post(f'https://athena.thrucode.com.br/api/ano_academico/', data=perms_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        perms_request = requests.post(f'http://127.0.0.1:8000/api/ano_academico/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('ano_academico')
 
@@ -370,8 +380,8 @@ def ano_academico_incluir(request):
 def ano_academico_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'ano_academico': requests.get(f'https://athena.thrucode.com.br/api/ano_academico/{id}/', cookies=cookies, headers=headers).json()}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        data = {'ano_academico': requests.get(f'http://127.0.0.1:8000/api/ano_academico/{id}/', cookies=cookies, headers=headers).json()}
         data['ano_academico']['codigo'] = data['ano_academico']['codigo'].replace('_', '/')
         return render(request, 'institucional/ano_academico_alterar.html', data)
     elif request.method == 'POST':
@@ -383,8 +393,8 @@ def ano_academico_alterar(request, id):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        perms_request = requests.patch(f'https://athena.thrucode.com.br/api/ano_academico/{id}/', data=perms_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        perms_request = requests.patch(f'http://127.0.0.1:8000/api/ano_academico/{id}/', data=perms_data, cookies=cookies, headers=headers)
 
         return redirect('ano_academico')
 
@@ -397,8 +407,8 @@ def ano_academico_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-    perms_request = requests.patch(f'https://athena.thrucode.com.br/api/ano_academico/{id}/',data=perms_data, cookies=cookies, headers=headers)
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    perms_request = requests.patch(f'http://127.0.0.1:8000/api/ano_academico/{id}/',data=perms_data, cookies=cookies, headers=headers)
 
     return redirect('ano_academico')
 
@@ -407,14 +417,13 @@ def ano_academico_excluir(request, id):
 @login_required()
 @permission_required('institucional.view_integracoes', raise_exception=True)
 def integracoes(request):
-    if request.method == 'GET':
-        escola = get_school_id(request)
-        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'integracoes': requests.get(f'https://athena.thrucode.com.br/api/integracoes/{escola}/', cookies=cookies, headers=headers).json()}
-        if data['integracoes']['conta_azul'] == True:
-            data['integracaocontaazul'] = IntegracaoContaAzul.objects.get(escola=escola)
-        return render(request, 'institucional/integracoes.html', data)
+    escola = get_school_id(request)
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    data = {'integracoes': requests.get(f'http://127.0.0.1:8000/api/integracoes/{escola}/', cookies=cookies, headers=headers).json()}
+    if data['integracoes']['conta_azul'] == True:
+        data['integracaocontaazul'] = IntegracaoContaAzul.objects.get(escola=escola)
+    return render(request, 'institucional/integracoes.html', data)
 
 
 @login_required()
@@ -423,8 +432,8 @@ def integracoes_alterar(request):
     if request.method == 'GET':
         escola = get_school_id(request)
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'integracoes': requests.get(f'https://athena.thrucode.com.br/api/integracoes/{escola}/', cookies=cookies, headers=headers).json()}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        data = {'integracoes': requests.get(f'http://127.0.0.1:8000/api/integracoes/{escola}/', cookies=cookies, headers=headers).json()}
         if data['integracoes']['conta_azul'] == True:
             data['integracaocontaazul'] = IntegracaoContaAzul.objects.get(escola=escola)
         return render(request, 'institucional/integracoes_alterar.html', data)
@@ -436,7 +445,7 @@ def integracoes_alterar(request):
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
 
         if not IntegracaoContaAzul.objects.filter(escola=escola).exists():
             conta_azul_data = {
@@ -444,9 +453,9 @@ def integracoes_alterar(request):
                 'descricao': escola,
                 'is_active': False,
             }
-            conta_azul_request = requests.post(f'https://athena.thrucode.com.br/api/integracao_conta_azul/', data=conta_azul_data, cookies=cookies, headers=headers)
+            conta_azul_request = requests.post(f'http://127.0.0.1:8000/api/integracao_conta_azul/', data=conta_azul_data, cookies=cookies, headers=headers)
 
-        integrations_request = requests.patch(f'https://athena.thrucode.com.br/api/integracoes/{escola}/', data=integrations_data, cookies=cookies, headers=headers)
+        integrations_request = requests.patch(f'http://127.0.0.1:8000/api/integracoes/{escola}/', data=integrations_data, cookies=cookies, headers=headers)
 
         return redirect('integracoes')
 
@@ -454,17 +463,17 @@ def integracoes_alterar(request):
 @login_required()
 @permission_required('institucional.change_integracaocontaazul', raise_exception=True)
 def integracao_conta_azul_ativar(request):
-    redirect_uri = 'https://athena.thrucode.com.br' + reverse('integracao_conta_azul_token')
+    redirect_uri = 'http://127.0.0.1:8000' + reverse('integracao_conta_azul_token')
     client_id = os.environ['CONTAAZUL_CLIENT_ID']
     state = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(64))
 
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
     conta_azul_data = {
         'state': state,
     }
-    conta_azul_request = requests.patch(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
+    conta_azul_request = requests.patch(f'http://127.0.0.1:8000/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
 
     return redirect(f'https://api.contaazul.com/auth/authorize?redirect_uri={redirect_uri}&client_id={client_id}&scope=sales&state={state}')
 
@@ -474,18 +483,18 @@ def integracao_conta_azul_ativar(request):
 def integracao_conta_azul_token(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
 
     code = request.GET.get('code')
     state = request.GET.get('state')
-    db_state = requests.get(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', cookies=cookies,  headers=headers).json()['state']
+    db_state = requests.get(f'http://127.0.0.1:8000/api/integracao_conta_azul/{escola}/', cookies=cookies,  headers=headers).json()['state']
 
     if state != db_state:
         return HttpResponse(status=401)
     else:
         session_request = requests.Session()
         session_request.auth = (os.environ['CONTAAZUL_CLIENT_ID'], os.environ['CONTAAZUL_CLIENT_SECRET'])
-        redirect_uri = 'https://athena.thrucode.com.br' + reverse('integracao_conta_azul_token')
+        redirect_uri = 'http://127.0.0.1:8000' + reverse('integracao_conta_azul_token')
         conta_azul_token_request = session_request.post(f'https://api.contaazul.com/oauth2/token?grant_type=authorization_code&redirect_uri={redirect_uri}&code={code}')
         token_request_dict = conta_azul_token_request.json()
         token_request_datetime = datetime.now()
@@ -496,7 +505,7 @@ def integracao_conta_azul_token(request):
             'expires_in': token_request_datetime + timedelta(seconds=int(token_request_dict['expires_in'])),
             'is_active': True,
         }
-        conta_azul_request = requests.patch(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
+        conta_azul_request = requests.patch(f'http://127.0.0.1:8000/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
 
         if conta_azul_token_request.ok and conta_azul_request.ok:
             messages.success(request, 'A integração foi estabelecida com sucesso')
@@ -507,7 +516,7 @@ def integracao_conta_azul_token(request):
         ############### INITIAL SYNC ###############
         conta_azul_headers = {'Authorization': f'Bearer {conta_azul_data["access_token"]}'}
 
-        conta_azul_service_data_initial_request = requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()
+        conta_azul_service_data_initial_request = requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()
         for item in conta_azul_service_data_initial_request:
             conta_azul_service = {
                 'name': item['descricao'],
@@ -518,9 +527,9 @@ def integracao_conta_azul_token(request):
             }
             conta_azul_create_service_request = requests.post(f'https://api.contaazul.com/v1/services/', json=conta_azul_service, headers=conta_azul_headers)
             conta_azul_service_data = {'id_conta_azul': conta_azul_create_service_request.json()['id']}
-            conta_azul_service_data_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{item["id"]}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
+            conta_azul_service_data_request = requests.patch(f'http://127.0.0.1:8000/api/turma/{item["id"]}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
 
-        conta_azul_contract_data_initial_request = requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/contratos_educacionais/?deleted=false', cookies=cookies, headers=headers).json()
+        conta_azul_contract_data_initial_request = requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/contratos_educacionais/?deleted=false', cookies=cookies, headers=headers).json()
         for item in conta_azul_contract_data_initial_request:
             try:
                 if item['estudante_contratante'] == True:
@@ -549,7 +558,7 @@ def integracao_conta_azul_token(request):
                 conta_azul_customer['date_of_birth'] = conta_azul_customer['date_of_birth'][:-8] + conta_azul_customer['date_of_birth'][-5:]
                 conta_azul_create_customer_request = requests.post(f'https://api.contaazul.com/v1/customers/', json=conta_azul_customer, headers=conta_azul_headers)
                 conta_azul_customer_data = {'id_conta_azul': conta_azul_create_customer_request.json()['id']}
-                conta_azul_customer_data_request = requests.patch(f'https://athena.thrucode.com.br/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
+                conta_azul_customer_data_request = requests.patch(f'http://127.0.0.1:8000/api/pessoas/{tipo_pessoa}/{contratante.id}/', data=conta_azul_customer_data, cookies=cookies, headers=headers)
             except:
                 pass
 
@@ -582,13 +591,13 @@ def integracao_conta_azul_token(request):
             conta_azul_contract['emission'] = conta_azul_contract['emission'][:-8] + conta_azul_contract['emission'][-5:]
             conta_azul_create_contract_request = requests.post(f'https://api.contaazul.com/v1/contracts/', json=conta_azul_contract, headers=conta_azul_headers)
             conta_azul_contract_data = {'id_conta_azul': conta_azul_create_contract_request.json()['id']}
-            conta_azul_contract_data_request = requests.patch(f'https://athena.thrucode.com.br/api/contrato_educacional/{item["id"]}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
+            conta_azul_contract_data_request = requests.patch(f'http://127.0.0.1:8000/api/contrato_educacional/{item["id"]}/', data=conta_azul_contract_data, cookies=cookies, headers=headers)
 
         if conta_azul_create_service_request.ok and conta_azul_create_customer_request.ok and conta_azul_create_contract_request.ok:
             conta_azul_data = {
                 'is_active': True,
             }
-            conta_azul_request = requests.patch(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
+            conta_azul_request = requests.patch(f'http://127.0.0.1:8000/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
 
         return redirect('integracoes')
 
@@ -611,8 +620,8 @@ def integracao_conta_azul_refresh_token(request):
             'expires_in': refresh_token_request_datetime + timedelta(seconds=int(refresh_token_request_dict ['expires_in'])),
         }
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        conta_azul_request = requests.patch(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+        conta_azul_request = requests.patch(f'http://127.0.0.1:8000/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
 
         if conta_azul_refresh_token_request.ok and conta_azul_request.ok:
             return HttpResponse(status=200)
