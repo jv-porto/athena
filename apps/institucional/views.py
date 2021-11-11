@@ -569,7 +569,7 @@ def integracao_conta_azul_token(request):
                     {
                         'quantity': 1,
                         'service_id': Turma.objects.get(pk=item['turma']).id_conta_azul,
-                        'value': round(float(float((Turma.objects.get(pk=item['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(item['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(item['parcelas_pagamento_curso'])),2),
+                        'value': round(float(float((Turma.objects.get(pk=item['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(item['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(item['parcelas_pagamento_curso'])),2) + float(3.50*int(item['parcelas_pagamento_curso'])),
                     },
                 ],
                 #'discount': {

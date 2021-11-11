@@ -1,4 +1,5 @@
 import requests, locale
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 from datetime import datetime
 from django.utils import timezone
 from django.contrib import messages
@@ -915,7 +916,7 @@ def contratos_incluir(request):
                             {
                                 'quantity': 1,
                                 'service_id': Turma.objects.get(pk=contract_data['turma']).id_conta_azul,
-                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2),
+                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2) + float(3.50*int(contract_data['parcelas_pagamento_curso'])),
                             },
                         ],
                         #'discount': {
@@ -1100,7 +1101,7 @@ def contratos_alterar(request, id):
                             {
                                 'quantity': 1,
                                 'service_id': Turma.objects.get(pk=contract_data['turma']).id_conta_azul,
-                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2),
+                                'value': round(float(float((Turma.objects.get(pk=contract_data['turma']).valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))*(1-(float(contract_data['desconto_pagamento_curso'].replace('%', '').replace(',', '.'))/100))/int(contract_data['parcelas_pagamento_curso'])),2) + float(3.50*int(contract_data['parcelas_pagamento_curso'])),
                             },
                         ],
                         #'discount': {
