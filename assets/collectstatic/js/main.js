@@ -335,6 +335,10 @@ for (let i = 0; i < coursesField.length; i++) {
     }
     findCourseClasses()
     coursesField[i].addEventListener('change', function () {
+        var classesFieldLength = classesField[i].options.length - 1
+        for (let j = classesFieldLength; j >= 0; j--) {
+            classesField[i].remove(j)
+        }
         findCourseClasses()
     })
 }
