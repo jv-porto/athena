@@ -114,7 +114,15 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     paragrafo_3 = paragrafo_3 + f' Assim sendo, o (a) contratante pagará à contratada o valor de {variaveis_dict["custo_final_curso"]} ({variaveis_dict["custo_final_curso_extenso"]}), dividido em {variaveis_dict["parcelas_finais_curso"]} parcelas de {variaveis_dict["custo_final_parcelas_curso"]} ({variaveis_dict["custo_final_parcelas_curso_extenso"]}).'
     paragrafo_3_1 = f'3.1 – A ausência do (a) contratante em quaisquer aulas, mesmo que justificada, não o (a) eximirá do pagamento das parcelas correspondentes e nem dá direito a reposição dessas aulas.'
     paragrafo_3_2 = f'3.2 - O pagamento por meio de boleto deverá ser realizado todo dia {variaveis_dict["dia_pagamento"]}, a contar a partir do mês de {variaveis_dict["mes_inicio_pagamento"]} de {variaveis_dict["ano_inicio_pagamento"]}. Todos os boletos terão uma taxa de R$3,50, gerada automaticamente pelo sistema. O atraso no pagamento das parcelas implicará em juros de mora de 2% após o vencimento e correção de 0,03% ao dia.'
-    paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), 4 cadernos extras anuais (filosofia, sociologia, arte e questões do ENEM) e plataforma de exercícios (Sae Digital/Studos/Evolucional). O custo do material é de {variaveis_dict["custo_total_material"]} ({variaveis_dict["custo_total_material_extenso"]}), podendo ser dividido em até {variaveis_dict["parcelas_totais_material"]} parcelas (com juros).'
+    if variaveis_dict['curso_descricao'] == 'Engaja':
+        paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), '
+    elif variaveis_dict['curso_descricao'] == 'Engaja Online':
+        paragrafo_3_3 = f'3.3 - O material didático compreende 4 apostilas (bimestrais), '
+    elif variaveis_dict['curso_descricao'] == 'Conexão':
+        paragrafo_3_3 = f'3.3 - O material didático compreende 2 apostilas (bimestrais), '
+    elif variaveis_dict['curso_descricao'] == 'Conexão Online':
+        paragrafo_3_3 = f'3.3 - O material didático compreende 2 apostilas (bimestrais), '
+    paragrafo_3_3 = paragrafo_3_3 + f'4 cadernos extras anuais (filosofia, sociologia, arte e questões do ENEM) e plataforma de exercícios (Sae Digital/Studos/Evolucional). O custo do material é de {variaveis_dict["custo_total_material"]} ({variaveis_dict["custo_total_material_extenso"]}), podendo ser dividido em até {variaveis_dict["parcelas_totais_material"]} parcelas (com juros).'
     paragrafo_3_4 = f'3.4 - A venda dos recursos didáticos será feita de forma direta pela editora Sae Digital, em site específico do fornecedor. Qualquer adversidade surgida que venha a descumprir o pagamento do material deverá ser tratado diretamente com a editora.'
     paragrafo_4 = f'4 – CANCELAMENTO DO CONTRATO E MULTA RESCISÓRIA: caso seja necessário realizar o cancelamento deste contrato, o (a) contratante deverá informar à contratada por e-mail (endereçado a atendimento@personaleduca.com.br), Whatsapp ou presencialmente na secretaria.'
     paragrafo_4_1 = f'4.1 – Para a solicitação do cancelamento será considerada a data do comunicado, mas sua efetivação apenas ocorrerá após a assinatura do termo de cancelamento pelo (a) contratante em até 15 dias após a solicitação.'
