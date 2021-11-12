@@ -28,13 +28,13 @@ def get_school_id(request):
 def cursos(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
 
     if 'search' in request.GET:
         search = request.GET['search']
-        data = {'cursos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/cursos/?is_active=true&search={search}', cookies=cookies, headers=headers).json()}
+        data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true&search={search}', cookies=cookies, headers=headers).json()}
     else:
-        data = {'cursos': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
+        data = {'cursos': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/cursos/?is_active=true', cookies=cookies, headers=headers).json()}
 
     for item in data['cursos']:
         item['coordenador'] = Curso.objects.get(pk=item['id']).coordenador
@@ -69,8 +69,9 @@ def cursos_incluir(request):
         }
         if 'syllabus' in request.FILES:
             file = request.FILES['syllabus']
+            file_extension = str(file.name).split('.')[-1]
             storage = MediaStorage()
-            filename = storage.save(f'cursos/{course_data["id"]}/proposta_pedagogica/proposta_pedagogica-{course_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
+            filename = storage.save(f'cursos/{course_data["id"]}/proposta_pedagogica/proposta_pedagogica-{course_data["id"]}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}.{file_extension}', file)
             course_data['proposta_pedagogica'] = storage.url(filename)
         if request.POST['coordinator']:
             if PessoaColaborador.objects.filter(pk=request.POST['coordinator']).exists():
@@ -80,8 +81,8 @@ def cursos_incluir(request):
                 return redirect('cursos_incluir')
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        course_request = requests.post('http://127.0.0.1:8000/api/curso/', data=course_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.post('https://athena.thrucode.com.br/api/curso/', data=course_data, cookies=cookies, headers=headers)
 
         return redirect('cursos')
 
@@ -91,8 +92,8 @@ def cursos_incluir(request):
 def cursos_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        data = {'curso': requests.get(f'http://127.0.0.1:8000/api/curso/{id}/', cookies=cookies, headers=headers).json(), 'disciplinas': []}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        data = {'curso': requests.get(f'https://athena.thrucode.com.br/api/curso/{id}/', cookies=cookies, headers=headers).json(), 'disciplinas': []}
         return render(request, 'pedagogico/cursos_alterar.html', data)
     if request.method == 'POST':
         def empty_input(input):
@@ -110,8 +111,9 @@ def cursos_alterar(request, id):
         }
         if 'syllabus' in request.FILES:
             file = request.FILES['syllabus']
+            file_extension = str(file.name).split('.')[-1]
             storage = MediaStorage()
-            filename = storage.save(f'cursos/{id}/proposta_pedagogica/proposta_pedagogica-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}', file)
+            filename = storage.save(f'cursos/{id}/proposta_pedagogica/proposta_pedagogica-{id}-{datetime.now().strftime("%Y-%m-%d-%H:%M:%S")}.{file_extension}', file)
             course_data['proposta_pedagogica'] = storage.url(filename)
         if request.POST['coordinator']:
             if PessoaColaborador.objects.filter(pk=request.POST['coordinator']).exists():
@@ -123,8 +125,8 @@ def cursos_alterar(request, id):
             course_data['coordenador'] = ''
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        course_request = requests.patch(f'http://127.0.0.1:8000/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.patch(f'https://athena.thrucode.com.br/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
 
         return redirect('cursos')
 
@@ -137,8 +139,8 @@ def cursos_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-    course_request = requests.patch(f'http://127.0.0.1:8000/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    course_request = requests.patch(f'https://athena.thrucode.com.br/api/curso/{id}/', data=course_data, cookies=cookies, headers=headers)
 
     return redirect('cursos')
 
@@ -149,13 +151,13 @@ def cursos_excluir(request, id):
 def turmas(request):
     escola = get_school_id(request)
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
 
     if 'search' in request.GET:
         search = request.GET['search']
-        data = {'turmas': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/turmas/?deleted=false&search={search}', cookies=cookies, headers=headers).json()}
+        data = {'turmas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/turmas/?deleted=false&search={search}', cookies=cookies, headers=headers).json()}
     else:
-        data = {'turmas': requests.get(f'http://127.0.0.1:8000/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()}
+        data = {'turmas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/turmas/?deleted=false', cookies=cookies, headers=headers).json()}
 
     for item in data['turmas']:
         item['curso'] = Turma.objects.get(pk=item['id']).curso
@@ -226,8 +228,8 @@ def turmas_incluir(request):
                 return redirect('turmas_incluir')
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        course_request = requests.post('http://127.0.0.1:8000/api/turma/', data=class_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.post('https://athena.thrucode.com.br/api/turma/', data=class_data, cookies=cookies, headers=headers)
 
         i = 0
         while i <= 14:
@@ -250,7 +252,7 @@ def turmas_incluir(request):
                     messages.error(request, 'O ID do professor está incorreto!')
                     return redirect('cursos_incluir')
 
-                subjects_request = requests.post(f'http://127.0.0.1:8000/api/disciplina/', data=subjects_data, cookies=cookies, headers=headers)
+                subjects_request = requests.post(f'https://athena.thrucode.com.br/api/disciplina/', data=subjects_data, cookies=cookies, headers=headers)
                 class_data['disciplinas'].append(subjects_data['id'])
 
                 i += 1
@@ -260,7 +262,7 @@ def turmas_incluir(request):
         ############### CONTA AZUL ###############
         if IntegracaoContaAzul.objects.filter(escola=escola).exists():
             if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
-                conta_azul_refresh_token = requests.get(f'http://127.0.0.1:8000/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
                 conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
                 conta_azul_service = {
                 'name': class_data['descricao'],
@@ -271,7 +273,7 @@ def turmas_incluir(request):
                 }
                 conta_azul_create_service_request = requests.post(f'https://api.contaazul.com/v1/services/', json=conta_azul_service, headers=conta_azul_headers)
                 conta_azul_service_data = {'id_conta_azul': conta_azul_create_service_request.json()['id']}
-                conta_azul_service_data_request = requests.patch(f'http://127.0.0.1:8000/api/turma/{class_data["id"]}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
+                conta_azul_service_data_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{class_data["id"]}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
 
         return redirect('turmas')
 
@@ -281,8 +283,8 @@ def turmas_incluir(request):
 def turmas_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        data = {'turma': requests.get(f'http://127.0.0.1:8000/api/turma/{id}/', cookies=cookies, headers=headers).json(), 'turma_curso': Turma.objects.get(pk=id).curso, 'turma_ano_academico': Turma.objects.get(pk=id).ano_academico}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        data = {'turma': requests.get(f'https://athena.thrucode.com.br/api/turma/{id}/', cookies=cookies, headers=headers).json(), 'turma_curso': Turma.objects.get(pk=id).curso, 'turma_ano_academico': Turma.objects.get(pk=id).ano_academico}
         data['turma']['ano_academico'] = data['turma']['ano_academico'].replace('_', '/')
         for disciplina in data['turma']['disciplinas']:
             data['disciplinas'].append(Disciplina.objects.get(pk=disciplina))
@@ -325,8 +327,8 @@ def turmas_alterar(request, id):
             class_data['tutor'] = ''
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-        course_request = requests.patch(f'http://127.0.0.1:8000/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
 
         turma = Turma.objects.get(pk=id)
         i = 0
@@ -358,9 +360,9 @@ def turmas_alterar(request, id):
                     messages.error(request, 'O ID do professor está incorreto!')
                     return redirect('cursos_alterar')
 
-                subjects_request = requests.post(f'http://127.0.0.1:8000/api/disciplina/', data=subjects_data, cookies=cookies, headers=headers)
+                subjects_request = requests.post(f'https://athena.thrucode.com.br/api/disciplina/', data=subjects_data, cookies=cookies, headers=headers)
                 if not subjects_request.ok:
-                    subjects_request = requests.patch(f'http://127.0.0.1:8000/api/disciplina/{id}/', data=subjects_data, cookies=cookies, headers=headers)
+                    subjects_request = requests.patch(f'https://athena.thrucode.com.br/api/disciplina/{id}/', data=subjects_data, cookies=cookies, headers=headers)
                 disciplina = Disciplina.objects.get(pk=subjects_data['id'])
                 disciplina.professores.add(professor)
                 turma.disciplinas.add(disciplina)
@@ -372,7 +374,7 @@ def turmas_alterar(request, id):
         ############### CONTA AZUL ###############
         if IntegracaoContaAzul.objects.filter(escola=escola).exists():
             if IntegracaoContaAzul.objects.get(escola=escola).is_active == True:
-                conta_azul_refresh_token = requests.get(f'http://127.0.0.1:8000/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
+                conta_azul_refresh_token = requests.get(f'https://athena.thrucode.com.br/institucional/integracoes/conta_azul/refresh_token/', cookies=cookies, headers=headers)
                 conta_azul_headers = {'Authorization': f'Bearer {IntegracaoContaAzul.objects.get(escola=escola).access_token}'}
                 conta_azul_service = {
                 'name': class_data['descricao'],
@@ -384,7 +386,7 @@ def turmas_alterar(request, id):
                 conta_azul_id = Turma.objects.get(pk=id).id_conta_azul
                 conta_azul_create_service_request = requests.put(f'https://api.contaazul.com/v1/services/{conta_azul_id}/', json=conta_azul_service, headers=conta_azul_headers)
                 conta_azul_service_data = {'id_conta_azul': conta_azul_create_service_request.json()['id']}
-                conta_azul_service_data_request = requests.patch(f'http://127.0.0.1:8000/api/turma/{id}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
+                conta_azul_service_data_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=conta_azul_service_data, cookies=cookies, headers=headers)
 
         return redirect('turmas')
 
@@ -397,8 +399,8 @@ def turmas_excluir(request, id):
     }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
-    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'http://127.0.0.1:8000'}
-    class_request = requests.patch(f'http://127.0.0.1:8000/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    class_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
 
     return redirect('turmas')
 
