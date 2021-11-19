@@ -127,9 +127,7 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
     paragrafo_4 = f'4 – CANCELAMENTO DO CONTRATO E MULTA RESCISÓRIA: caso seja necessário realizar o cancelamento deste contrato, o (a) contratante deverá informar à contratada por e-mail (endereçado a atendimento@personaleduca.com.br), Whatsapp ou presencialmente na secretaria.'
     paragrafo_4_1 = f'4.1 – Para a solicitação do cancelamento será considerada a data do comunicado, mas sua efetivação apenas ocorrerá após a assinatura do termo de cancelamento pelo (a) contratante em até 15 dias após a solicitação.'
     paragrafo_4_1_1 = f'4.1.1 – Para a realização do cancelamento, deverão estar quitadas todas as parcelas com o vencimento até a data da solicitação.'
-    paragrafo_4_2 = f'4.2 – Caso o (a) contratante desista do curso, fica estipulada uma multa indenizatória correspondente a 02 (duas) parcelas de valor INTEGRAL, que deverão ser pagas na efetivação do cancelamento.'
-    paragrafo_4_3 = f'4.3 – A multa prevista na cláusula anterior não incidirá no caso de o (a) contratante avisar à contratada sobre a desistência do curso com um prazo de 02 (dois) meses de antecedência, podendo assim, assistir todas as aulas desse período.'
-    paragrafo_4_4 = f'4.4 – Diante da efetivação do cancelamento, o contratante poderá solicitar o estorno do valor referente ao material que ainda não tiver sido disponibilizado ao aluno até a data desta solicitação. O estorno do valor restante do material será feito diretamente pela editora Sae Digital, sendo a forma de pagamento equivalente a que foi adotada na aquisição do mesmo.'
+    paragrafo_4_2 = f'4.2 – Caso o (a) contratante desista do curso, fica estipulada uma multa indenizatória correspondente a 02 (duas) parcelas de valor INTEGRAL, uma vez que se cancela um contrato de serviços prestados. O valor da multa deverá ser pago na efetivação do cancelamento.'
     paragrafo_5 = f'5 – Por este contrato, o (a) contratante permite o uso de sua imagem em fotos, vídeos e outros materiais para serem usados com fins expositivos e de propaganda.'
     paragrafo_6 = f'6 – As partes elegem o foro da Comarca de São José do Rio Preto para dirimir eventuais dúvidas e controvérsias oriundas do presente contrato. E, por estarem justos e contratados, assinam o presente no verso em duas vias, de idênticos teores.'
     local_data = f'São José do Rio Preto, {variaveis_dict["data_assinatura"]}.'
@@ -154,8 +152,6 @@ def contrato_educacional(request, variaveis_dict, estudante_contratante):
         Paragraph(paragrafo_4_1, styles['justified-level-2']),
         Paragraph(paragrafo_4_1_1, styles['justified-level-3']),
         Paragraph(paragrafo_4_2, styles['justified-level-2']),
-        Paragraph(paragrafo_4_3, styles['justified-level-2']),
-        Paragraph(paragrafo_4_4, styles['justified-level-2']),
         Paragraph(paragrafo_5, styles['justified']),
         Paragraph(paragrafo_6, styles['justified']),
         Spacer(1, 10),
