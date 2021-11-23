@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet, IntegracoesViewSet, IntegracaoContaAzulViewSet
-from .views import EscolaUsuarios, EscolaContratosEducacionais, EscolaContratosTrabalhistas, EscolaEstudantes, EscolaResponsaveis, EscolaColaboradores, EscolaDisciplinas, EscolaCursos, EscolaTurmas, CursoTurmas, EscolaAnosAcademicos, EscolaUsuariosPermissoes
+from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, PlataformaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet, IntegracoesViewSet, IntegracaoContaAzulViewSet
+from .views import EscolaUsuarios, EscolaContratosEducacionais, EscolaContratosTrabalhistas, EscolaEstudantes, EscolaResponsaveis, EscolaColaboradores, EscolaDisciplinas, EscolaCursos, EscolaTurmas, CursoTurmas, EscolaPlataformas, EscolaAnosAcademicos, EscolaUsuariosPermissoes
 
 router = routers.DefaultRouter()
 router.register('usuario', UsuarioViewSet, basename='api-usuario')
@@ -16,6 +16,7 @@ router.register('pessoas/colaborador', PessoaColaboradorViewSet, basename='api-p
 router.register('disciplina', DisciplinaViewSet, basename='api-disciplina')
 router.register('curso', CursoViewSet, basename='api-curso')
 router.register('turma', TurmaViewSet, basename='api-turma')
+router.register('plataforma', PlataformaViewSet, basename='api-plataforma')
 router.register('ano_academico', AnoAcademicoViewSet, basename='api-ano-academico')
 router.register('usuarios_permissoes', UsuariosPermissoesViewSet, basename='api-usuarios-permissoes')
 router.register('email', EmailViewSet, basename='api-email')
@@ -34,6 +35,7 @@ urlpatterns = [
     path('escola/<str:school_id>/cursos/', EscolaCursos.as_view()),
     path('escola/<str:school_id>/turmas/', EscolaTurmas.as_view()),
     path('curso/<str:course_id>/turmas/', CursoTurmas.as_view()),
+    path('escola/<str:school_id>/plataformas/', EscolaPlataformas.as_view()),
     path('escola/<str:school_id>/anos_academicos/', EscolaAnosAcademicos.as_view()),
     path('escola/<str:school_id>/usuarios_permissoes/', EscolaUsuariosPermissoes.as_view()),
 ]

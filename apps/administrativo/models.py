@@ -54,6 +54,7 @@ class ModulosEscola(models.Model):
     institucional_usuarios_permissoes = models.BooleanField()
     institucional_ano_academico = models.BooleanField()
     institucional_integracoes = models.BooleanField()
+    institucional_plataformas = models.BooleanField()
     is_active = models.BooleanField(default=True)
     def __str__(self):
         return self.escola

@@ -109,7 +109,6 @@
                     <div class="form-section modules">
                         <h3 class="light-title">Módulos</h3>
                         <h4 class="light-subtitle">Index</h4>
-                        <input type="hidden" name="school-id" value="{{request.user.escola}}">
                         <div class="input-unit">
                             <label for="dashboard">Dashboard</label>
                             <input type="checkbox" name="dashboard" id="dashboard">
@@ -205,6 +204,10 @@
                         <div class="input-unit">
                             <label for="institucional_integracoes">Integrações</label>
                             <input type="checkbox" name="institucional_integracoes" id="institucional_integracoes">
+                        </div>
+                        <div class="input-unit">
+                            <label for="institucional_plataformas">Plataformas</label>
+                            <input type="checkbox" name="institucional_plataformas" id="institucional_plataformas">
                         </div>
                     </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">

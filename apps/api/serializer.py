@@ -2,7 +2,7 @@ import requests, json
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
 from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
-from pedagogico.models import Disciplina, Curso, Turma
+from pedagogico.models import Disciplina, Curso, Turma, Plataforma
 from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
 
@@ -93,6 +93,11 @@ class CursoSerializer(serializers.ModelSerializer):
 class TurmaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Turma
+        fields = '__all__'
+
+class PlataformaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plataforma
         fields = '__all__'
 
 class AnoAcademicoSerializer(serializers.ModelSerializer):

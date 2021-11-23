@@ -20,4 +20,9 @@ urlpatterns = [
     path('integracoes/conta_azul/ativar/', views.integracao_conta_azul_ativar, name='integracao_conta_azul_ativar'),
     path('integracoes/conta_azul/token/', views.integracao_conta_azul_token, name='integracao_conta_azul_token'),
     path('integracoes/conta_azul/refresh_token/', views.integracao_conta_azul_refresh_token, name='integracao_conta_azul_refresh_token'),
+
+    path('plataformas/', views.plataformas, name='plataformas'),
+    path('plataformas/incluir/', views.plataformas_incluir, name='plataformas_incluir'),
+    path('plataformas/alterar/<str:id>/', views.plataformas_alterar, name='plataformas_alterar'),
+    path('plataformas/excluir/<str:id>/', views.plataformas_excluir, name='plataformas_excluir'),
 ]

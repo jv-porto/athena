@@ -433,3 +433,12 @@ def vestibulares(request):
 @login_required()
 def pedagogico_relatorios(request):
     return render(request, 'pedagogico/relatorios.html')
+
+
+
+@login_required()
+def plataforma(request, id):
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    data = {'plataforma': requests.get(f'https://athena.thrucode.com.br/api/plataforma/{id}/', cookies=cookies, headers=headers).json()}
+    return render(request, 'pedagogico/plataforma.html', data)

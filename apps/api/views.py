@@ -2,10 +2,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, filters
 from django.contrib.auth.models import User, Group
 from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
-from pedagogico.models import Disciplina, Curso, Turma
+from pedagogico.models import Disciplina, Curso, Turma, Plataforma
 from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
-from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer, IntegracoesSerializer, IntegracaoContaAzulSerializer
+from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, PlataformaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer, IntegracoesSerializer, IntegracaoContaAzulSerializer
 
 ############### VIEWSETS ###############
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -92,6 +92,14 @@ class TurmaViewSet(viewsets.ModelViewSet):
     ordering_fields = ['id']
     search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
+
+class PlataformaViewSet(viewsets.ModelViewSet):
+    queryset = Plataforma.objects.all().order_by('id')
+    serializer_class = PlataformaSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    ordering_fields = ['id']
+    search_fields = ['id', 'descricao', 'link']
+    filterset_fields = ['is_active']
 
 class AnoAcademicoViewSet(viewsets.ModelViewSet):
     queryset = AnoAcademico.objects.all().order_by('id')
@@ -221,6 +229,16 @@ class CursoTurmas(generics.ListAPIView):
     ordering_fields = ['id']
     search_fields = ['id', 'descricao']
     filterset_fields = ['deleted']
+
+class EscolaPlataformas(generics.ListAPIView):
+    def get_queryset(self):
+        queryset = Plataforma.objects.filter(escola=self.kwargs['school_id']).order_by('id')
+        return queryset
+    serializer_class = PlataformaSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    ordering_fields = ['id']
+    search_fields = ['id', 'descricao', 'link']
+    filterset_fields = ['is_active']
 
 class EscolaAnosAcademicos(generics.ListAPIView):
     def get_queryset(self):

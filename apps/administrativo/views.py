@@ -123,6 +123,7 @@ def escolas_incluir(request):
             'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
             'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
             'institucional_integracoes': 'institucional_integracoes' in request.POST,
+            'institucional_plataformas': 'institucional_plataformas' in request.POST,
             'is_active': True,
         }
         integration_data = {
@@ -212,6 +213,7 @@ def escolas_alterar(request, id):
             'institucional_usuarios_permissoes': 'institucional_usuarios_permissoes' in request.POST,
             'institucional_ano_academico': 'institucional_ano_academico' in request.POST,
             'institucional_integracoes': 'institucional_integracoes' in request.POST,
+            'institucional_plataformas': 'institucional_plataformas' in request.POST,
         }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}

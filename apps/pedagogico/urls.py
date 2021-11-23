@@ -15,4 +15,5 @@ urlpatterns = [
     path('sala_virtual/', views.sala_virtual, name='sala_virtual'),
     path('vestibulares/', views.vestibulares, name='vestibulares'),
     path('relatorios/', views.pedagogico_relatorios, name='pedagogico_relatorios'),
+    path('plataforma/<str:id>/', views.plataforma, name='plataforma'),
 ]

@@ -353,3 +353,40 @@ if (select_value) {
         option.selected = true
     }
 }
+
+
+
+/*************** GET EDUCATIONAL PLATFORMS ***************/
+const school_id_menu = document.querySelectorAll('nav input[type=hidden][name="school-id"]')
+if (school_id_menu) {
+    const educational_platforms_anchor_search = document.querySelectorAll('nav div.menu div.link-section div.dropdown-section a.dropdown-button')
+    for (const item of educational_platforms_anchor_search) {
+        if (item.innerText == "Plataformas") {
+            var educational_platforms_anchor = item
+        }
+    }
+
+    for (let school of school_id_menu) {
+        const url = `${window.location.origin}/api/escola/${school.value}/plataformas/?is_active=true`
+        const options = {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'content-type': 'application/json;charset=utf-8'
+            }
+        }
+        fetch(url, options).then(
+            response => response.json()
+        ).then(
+            data => {
+                for (const item of data) {
+                    let anchor = document.createElement('a')
+                    anchor.innerText = item.descricao
+                    anchor.href = `${window.location.origin}/pedagogico/plataforma/${item.id}/`
+                    anchor.setAttribute('class', 'body-black-text')
+                    educational_platforms_anchor.nextElementSibling.appendChild(anchor)
+                }
+            }
+        )
+    }
+}

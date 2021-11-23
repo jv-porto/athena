@@ -10,7 +10,7 @@ from athena.custom_storages import MediaStorage
 from django.utils.dateparse import parse_date
 from django.contrib.auth.models import Group, Permission
 from administrativo.models import PessoaEstudante, PessoaResponsavel
-from pedagogico.models import Turma
+from pedagogico.models import Turma, Plataforma
 from .models import IntegracaoContaAzul
 
 def empty_input(input):
@@ -628,3 +628,95 @@ def integracao_conta_azul_refresh_token(request):
             return HttpResponse(status=200)
         else:
             return HttpResponse(status=400)
+
+
+
+@login_required()
+@permission_required('pedagogico.view_plataforma', raise_exception=True)
+def plataformas(request):
+    escola = get_school_id(request)
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+
+    if 'search' in request.GET:
+        search = request.GET['search']
+        data = {'plataformas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/plataformas/?is_active=true&search={search}', cookies=cookies, headers=headers).json()}
+    else:
+        data = {'plataformas': requests.get(f'https://athena.thrucode.com.br/api/escola/{escola}/plataformas/?is_active=true', cookies=cookies, headers=headers).json()}
+
+    return render(request, 'institucional/plataformas.html', data)
+
+
+@login_required()
+@permission_required('pedagogico.add_plataforma', raise_exception=True)
+def plataformas_incluir(request):
+    if request.method == 'GET':
+        return render(request, 'institucional/plataformas_incluir.html')
+    if request.method == 'POST':
+        def empty_input(input):
+            if not input.strip():
+                return redirect('plataformas_incluir')
+        empty_input(request.POST['description'])
+        empty_input(request.POST['link'])
+
+        escola = get_school_id(request)
+        if request.POST['code']:
+            codigo = request.POST['code']
+        else:
+            codigo = str(Plataforma.objects.filter(escola=escola).count()+1).zfill(7)
+
+        platform_data = {
+            'escola': escola,
+            'codigo': codigo,
+            'id': str(escola) + codigo,
+            'descricao': request.POST['description'],
+            'link': request.POST['link'],
+            'is_active': True,
+        }
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.post('https://athena.thrucode.com.br/api/plataforma/', data=platform_data, cookies=cookies, headers=headers)
+
+        return redirect('plataformas')
+
+
+@login_required()
+@permission_required('pedagogico.change_plataforma', raise_exception=True)
+def plataformas_alterar(request, id):
+    if request.method == 'GET':
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        data = {'plataforma': requests.get(f'https://athena.thrucode.com.br/api/plataforma/{id}/', cookies=cookies, headers=headers).json()}
+        return render(request, 'institucional/plataformas_alterar.html', data)
+    if request.method == 'POST':
+        def empty_input(input):
+            if not input.strip():
+                return redirect('plataformas_alterar')
+        empty_input(request.POST['description'])
+        empty_input(request.POST['link'])
+
+        platform_data = {
+            'descricao': request.POST['description'],
+            'link': request.POST['link'],
+        }
+
+        cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+        headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+        course_request = requests.patch(f'https://athena.thrucode.com.br/api/plataforma/{id}/', data=platform_data, cookies=cookies, headers=headers)
+
+        return redirect('plataformas')
+
+
+@login_required()
+@permission_required('pedagogico.delete_plataforma', raise_exception=True)
+def plataformas_excluir(request, id):
+    class_data = {
+        'is_active': False,
+    }
+
+    cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
+    headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
+    class_request = requests.patch(f'https://athena.thrucode.com.br/api/plataforma/{id}/', data=class_data, cookies=cookies, headers=headers)
+
+    return redirect('plataformas')

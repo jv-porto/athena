@@ -1,6 +1,7 @@
 {% load static %}
 {% if request.user.pessoaestudante %}
 {% with selectedschool=request.user.pessoaestudante.escola %}
+<input type="hidden" name="school-id" value="{{selectedschool.id}}">
 <div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
@@ -49,10 +50,15 @@
     {% endif %}
     {% endif %}
 
-    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a class="body-black-text dropdown-button">Plataformas</a>
+            <div class="dropdown-section">
+            </div>
+            {% endif %}
             {% if selectedschool.modulosescola.pedagogico_cursos %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
@@ -95,7 +101,7 @@
     </div>
     {% endif %}
 
-    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
@@ -111,13 +117,22 @@
             {% if selectedschool.modulosescola.institucional_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
+            {% endif %}
         </div>
     </div>
     {% endif %}
 </div>
 {% endwith %}
+
+
+
+
+
 {% elif request.user.pessoaresponsavel %}
 {% with selectedschool=request.user.pessoaresponsavel.escola %}
+<input type="hidden" name="school-id" value="{{selectedschool.id}}">
 <div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
@@ -166,10 +181,15 @@
     {% endif %}
     {% endif %}
 
-    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a class="body-black-text dropdown-button">Plataformas</a>
+            <div class="dropdown-section">
+            </div>
+            {% endif %}
             {% if selectedschool.modulosescola.pedagogico_cursos %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
@@ -212,7 +232,7 @@
     </div>
     {% endif %}
 
-    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
@@ -228,13 +248,22 @@
             {% if selectedschool.modulosescola.institucional_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
+            {% endif %}
         </div>
     </div>
     {% endif %}
 </div>
 {% endwith %}
+
+
+
+
+
 {% elif request.user.pessoacolaborador %}
 {% with selectedschool=request.user.pessoacolaborador.escola %}
+<input type="hidden" name="school-id" value="{{selectedschool.id}}">
 <div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
@@ -283,10 +312,15 @@
     {% endif %}
     {% endif %}
 
-    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a class="body-black-text dropdown-button">Plataformas</a>
+            <div class="dropdown-section">
+            </div>
+            {% endif %}
             {% if selectedschool.modulosescola.pedagogico_cursos %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
@@ -329,7 +363,7 @@
     </div>
     {% endif %}
 
-    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
@@ -344,14 +378,23 @@
             {% endif %}
             {% if selectedschool.modulosescola.institucional_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
     {% endif %}
 </div>
 {% endwith %}
+
+
+
+
+
 {% elif request.user.escola %}
 {% with selectedschool=request.user.escola %}
+<input type="hidden" name="school-id" value="{{selectedschool.id}}">
 <div class="menu disable-select">
     {% if selectedschool.modulosescola.dashboard %}
     <div class="link-section">
@@ -400,10 +443,15 @@
     {% endif %}
     {% endif %}
 
-    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios %}
+    {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a class="body-black-text dropdown-button">Plataformas</a>
+            <div class="dropdown-section">
+            </div>
+            {% endif %}
             {% if selectedschool.modulosescola.pedagogico_cursos %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
@@ -446,7 +494,7 @@
     </div>
     {% endif %}
 
-    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico %}
+    {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
@@ -461,6 +509,9 @@
             {% endif %}
             {% if selectedschool.modulosescola.institucional_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
+            {% endif %}
+            {% if selectedschool.modulosescola.institucional_plataformas %}
+            <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
@@ -468,6 +519,10 @@
 </div>
 {% endwith %}
 {% endif %}
+
+
+
+
 
 <div class="profile">
     {% if request.user.pessoaestudante and request.user.pessoaestudante.foto != "" %}

@@ -55,3 +55,15 @@ class Turma(models.Model):
     id_conta_azul = models.CharField(max_length=36, blank=True)
     def __str__(self):
         return self.descricao
+
+class Plataforma(models.Model):
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    id = models.CharField(primary_key=True, max_length=11)
+    codigo = models.CharField(max_length=7)
+    descricao = models.CharField(max_length=100)
+    link = models.CharField(max_length=100)
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    def __str__(self):
+        return self.descricao
