@@ -51,18 +51,19 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.pedagogico.view_plataforma or perms.pedagogico.view_curso or perms.pedagogico.view_turma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.view_plataforma %}
             <a class="body-black-text dropdown-button">Plataformas</a>
             <div class="dropdown-section">
             </div>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            {% if selectedschool.modulosescola.pedagogico_cursos and perms.pedagogico.view_curso %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            {% if selectedschool.modulosescola.pedagogico_turmas and perms.pedagogico.view_turma %}
             <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
             {% endif %}
             {% if selectedschool.modulosescola.pedagogico_boletim %}
@@ -83,6 +84,7 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 
     {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
     <div class="link-section">
@@ -102,26 +104,28 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.administrativo.view_escola or perms.institucional.view_anoacademico or perms.institucional.view_integracoes or perms.pedagogico.change_plataforma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar and perms.administrativo.view_escola %}
             <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
             {% endif %}
             {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
             <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            {% if selectedschool.modulosescola.institucional_ano_academico and perms.institucional.view_anoacademico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_integracoes %}
+            {% if selectedschool.modulosescola.institucional_integracoes and perms.institucional.view_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.change_plataforma %}
             <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endwith %}
@@ -182,18 +186,19 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.pedagogico.view_plataforma or perms.pedagogico.view_curso or perms.pedagogico.view_turma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.view_plataforma %}
             <a class="body-black-text dropdown-button">Plataformas</a>
             <div class="dropdown-section">
             </div>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            {% if selectedschool.modulosescola.pedagogico_cursos and perms.pedagogico.view_curso %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            {% if selectedschool.modulosescola.pedagogico_turmas and perms.pedagogico.view_turma %}
             <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
             {% endif %}
             {% if selectedschool.modulosescola.pedagogico_boletim %}
@@ -214,6 +219,7 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 
     {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
     <div class="link-section">
@@ -233,26 +239,28 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.administrativo.view_escola or perms.institucional.view_anoacademico or perms.institucional.view_integracoes or perms.pedagogico.change_plataforma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar and perms.administrativo.view_escola %}
             <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
             {% endif %}
             {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
             <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            {% if selectedschool.modulosescola.institucional_ano_academico and perms.institucional.view_anoacademico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_integracoes %}
+            {% if selectedschool.modulosescola.institucional_integracoes and perms.institucional.view_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.change_plataforma %}
             <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endwith %}
@@ -313,18 +321,19 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.pedagogico.view_plataforma or perms.pedagogico.view_curso or perms.pedagogico.view_turma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.view_plataforma %}
             <a class="body-black-text dropdown-button">Plataformas</a>
             <div class="dropdown-section">
             </div>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            {% if selectedschool.modulosescola.pedagogico_cursos and perms.pedagogico.view_curso %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            {% if selectedschool.modulosescola.pedagogico_turmas and perms.pedagogico.view_turma %}
             <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
             {% endif %}
             {% if selectedschool.modulosescola.pedagogico_boletim %}
@@ -345,6 +354,7 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 
     {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
     <div class="link-section">
@@ -364,26 +374,28 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.administrativo.view_escola or perms.institucional.view_anoacademico or perms.institucional.view_integracoes or perms.pedagogico.change_plataforma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar and perms.administrativo.view_escola %}
             <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
             {% endif %}
             {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
             <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            {% if selectedschool.modulosescola.institucional_ano_academico and perms.institucional.view_anoacademico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_integracoes %}
+            {% if selectedschool.modulosescola.institucional_integracoes and perms.institucional.view_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.change_plataforma %}
             <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endwith %}
@@ -444,18 +456,19 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.pedagogico_cursos or selectedschool.modulosescola.pedagogico_turmas or selectedschool.modulosescola.pedagogico_boletim or selectedschool.modulosescola.pedagogico_diario_classe or selectedschool.modulosescola.pedagogico_sala_virtual or selectedschool.modulosescola.pedagogico_vestibulares or selectedschool.modulosescola.pedagogico_relatorios or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.pedagogico.view_plataforma or perms.pedagogico.view_curso or perms.pedagogico.view_turma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-pedagogico">Pedagógico</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.view_plataforma %}
             <a class="body-black-text dropdown-button">Plataformas</a>
             <div class="dropdown-section">
             </div>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_cursos %}
+            {% if selectedschool.modulosescola.pedagogico_cursos and perms.pedagogico.view_curso %}
             <a href="{% url 'cursos' %}" class="body-black-text">Cursos</a>
             {% endif %}
-            {% if selectedschool.modulosescola.pedagogico_turmas %}
+            {% if selectedschool.modulosescola.pedagogico_turmas and perms.pedagogico.view_turma %}
             <a href="{% url 'turmas' %}" class="body-black-text">Turmas</a>
             {% endif %}
             {% if selectedschool.modulosescola.pedagogico_boletim %}
@@ -476,6 +489,7 @@
         </div>
     </div>
     {% endif %}
+    {% endif %}
 
     {% if selectedschool.modulosescola.financeiro_bancos or selectedschool.modulosescola.financeiro_movimentacoes or selectedschool.modulosescola.financeiro_relatorios %}
     <div class="link-section">
@@ -495,26 +509,28 @@
     {% endif %}
 
     {% if selectedschool.modulosescola.institucional_cadastro_escolar or selectedschool.modulosescola.institucional_usuarios_permissoes or selectedschool.modulosescola.institucional_ano_academico or selectedschool.modulosescola.institucional_plataformas %}
+    {% if perms.administrativo.view_escola or perms.institucional.view_anoacademico or perms.institucional.view_integracoes or perms.pedagogico.change_plataforma %}
     <div class="link-section">
         <a class="light-title main-button dropdown-button" id="light-title-institucional">Institucional</a>
         <div class="dropdown-section">
-            {% if selectedschool.modulosescola.institucional_cadastro_escolar %}
+            {% if selectedschool.modulosescola.institucional_cadastro_escolar and perms.administrativo.view_escola %}
             <a href="{% url 'cadastro_escolar' %}" class="body-black-text">Cadastro escolar</a>
             {% endif %}
             {% if selectedschool.modulosescola.institucional_usuarios_permissoes %}
             <a href="{% url 'usuarios_permissoes' %}" class="body-black-text">Usuários e Permissões</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_ano_academico %}
+            {% if selectedschool.modulosescola.institucional_ano_academico and perms.institucional.view_anoacademico %}
             <a href="{% url 'ano_academico' %}" class="body-black-text">Ano acadêmico</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_integracoes %}
+            {% if selectedschool.modulosescola.institucional_integracoes and perms.institucional.view_integracoes %}
             <a href="{% url 'integracoes' %}" class="body-black-text">Integrações</a>
             {% endif %}
-            {% if selectedschool.modulosescola.institucional_plataformas %}
+            {% if selectedschool.modulosescola.institucional_plataformas and perms.pedagogico.change_plataforma %}
             <a href="{% url 'plataformas' %}" class="body-black-text">Plataformas</a>
             {% endif %}
         </div>
     </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endwith %}
