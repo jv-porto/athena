@@ -326,6 +326,20 @@ def pessoas_estudantes_incluir(request):
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/estudante/', data=person_data, cookies=cookies, headers=headers)
 
+        escola_object = Escola.objects.get(pk=escola)
+        email_data = {
+            'tipo': 'NOVO_USUARIO',
+            'remetente_nome': escola_object.nome_fantasia,
+            'remetente_email': escola_object.email,
+            'destinatarios': [person_data['email']],
+            'assunto': 'Bem-vindo(a) à Athena!',
+            'variaveis': {
+                'nome': person_data['nome'],
+                'escola': escola_object.nome_fantasia,
+            },
+        }
+        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
+
         return redirect('pessoas_estudantes')
 
 
@@ -518,6 +532,20 @@ def pessoas_responsaveis_incluir(request):
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/responsavel/', data=person_data, cookies=cookies, headers=headers)
+
+        escola_object = Escola.objects.get(pk=escola)
+        email_data = {
+            'tipo': 'NOVO_USUARIO',
+            'remetente_nome': escola_object.nome_fantasia,
+            'remetente_email': escola_object.email,
+            'destinatarios': [person_data['email']],
+            'assunto': 'Bem-vindo(a) à Athena!',
+            'variaveis': {
+                'nome': person_data['nome'],
+                'escola': escola_object.nome_fantasia,
+            },
+        }
+        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_responsaveis')
 
@@ -726,6 +754,20 @@ def pessoas_colaboradores_incluir(request):
         user_request = requests.post('https://athena.thrucode.com.br/api/usuario/', data=user_data, cookies=cookies, headers=headers)
         person_data['usuario'] = User.objects.get(username=user_data['username']).id
         person_request = requests.post('https://athena.thrucode.com.br/api/pessoas/colaborador/', data=person_data, cookies=cookies, headers=headers)
+
+        escola_object = Escola.objects.get(pk=escola)
+        email_data = {
+            'tipo': 'NOVO_USUARIO',
+            'remetente_nome': escola_object.nome_fantasia,
+            'remetente_email': escola_object.email,
+            'destinatarios': [person_data['email']],
+            'assunto': 'Bem-vindo(a) à Athena!',
+            'variaveis': {
+                'nome': person_data['nome'],
+                'escola': escola_object.nome_fantasia,
+            },
+        }
+        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_colaboradores')
 
