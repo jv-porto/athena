@@ -455,6 +455,11 @@ def integracoes_alterar(request):
                 'is_active': False,
             }
             conta_azul_request = requests.post(f'https://athena.thrucode.com.br/api/integracao_conta_azul/', data=conta_azul_data, cookies=cookies, headers=headers)
+        else:
+            conta_azul_data = {
+                'is_active': 'conta_azul' in request.POST,
+            }
+            conta_azul_request = requests.patch(f'https://athena.thrucode.com.br/api/integracao_conta_azul/{escola}/', data=conta_azul_data, cookies=cookies, headers=headers)
 
         integrations_request = requests.patch(f'https://athena.thrucode.com.br/api/integracoes/{escola}/', data=integrations_data, cookies=cookies, headers=headers)
 

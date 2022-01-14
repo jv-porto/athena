@@ -2,6 +2,7 @@ import requests, locale
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 from datetime import datetime
 from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 from django.contrib import messages
 from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
@@ -293,6 +294,8 @@ def pessoas_estudantes_incluir(request):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -350,6 +353,8 @@ def pessoas_estudantes_alterar(request, id):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -473,6 +478,8 @@ def pessoas_responsaveis_incluir(request):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -540,6 +547,8 @@ def pessoas_responsaveis_alterar(request, id):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -677,6 +686,8 @@ def pessoas_colaboradores_incluir(request):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -748,6 +759,8 @@ def pessoas_colaboradores_alterar(request, id):
             'genero': request.POST['gender'],
             'cor': request.POST['color'],
             'estado_civil': request.POST['marital-status'],
+            'profissao': request.POST['occupation'],
+            'nacionalidade': request.POST['nationality'],
             'cep': request.POST['postal-code'],
             'lougradouro': request.POST['address-street'],
             'numero': request.POST['address-number'],
@@ -846,6 +859,7 @@ def contratos_incluir(request):
 
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
+            final_pagamento = inicio_pagamento + relativedelta(months=int(request.POST['installments']))
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
 
             if estudante_contratante is True:
@@ -865,6 +879,11 @@ def contratos_incluir(request):
                 'contratante_nome': contratante.nome,
                 'contratante_rg': contratante.rg,
                 'contratante_cpf': contratante.cpf,
+                'contratante_estado_civil': contratante.estado_civil.lower(),
+                'contratante_profissao': contratante.profissao,
+                'contratante_nacionalidade': contratante.nacionalidade.lower(),
+                'contratante_data_nascimento': contratante.data_nascimento,
+                'contratante_email': contratante.email,
                 'contratante_endereco_lougradouro': contratante.lougradouro,
                 'contratante_endereco_numero': contratante.numero,
                 'contratante_endereco_complemento': contratante.complemento,
@@ -872,9 +891,24 @@ def contratos_incluir(request):
                 'contratante_endereco_cidade': contratante.cidade,
                 'contratante_endereco_estado': contratante.estado,
                 'contratante_endereco_cep': contratante.cep,
+                'estudante_nome': estudante.nome,
+                'estudante_rg': estudante.rg,
+                'estudante_cpf': estudante.cpf,
+                'estudante_estado_civil': estudante.estado_civil.lower(),
+                'estudante_profissao': estudante.profissao,
+                'estudante_nacionalidade': estudante.nacionalidade.lower(),
+                'estudante_data_nascimento': estudante.data_nascimento,
+                'estudante_email': estudante.email,
+                'estudante_endereco_lougradouro': estudante.lougradouro,
+                'estudante_endereco_numero': estudante.numero,
+                'estudante_endereco_complemento': estudante.complemento,
+                'estudante_endereco_bairro': estudante.bairro,
+                'estudante_endereco_cidade': estudante.cidade,
+                'estudante_endereco_estado': estudante.estado,
+                'estudante_endereco_cep': estudante.cep,
                 'curso_descricao': curso.descricao,
-                'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
-                'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
+                'curso_data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
+                'curso_data_termino': turma.data_termino.strftime('%d/%m/%Y'),
                 'custo_total_curso': turma.valor_curso,
                 'custo_total_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_curso': turma.parcelamento_curso,
@@ -889,6 +923,8 @@ def contratos_incluir(request):
                 'dia_pagamento': request.POST['payment-day'],
                 'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
                 'ano_inicio_pagamento': inicio_pagamento.year,
+                'mes_final_pagamento': final_pagamento.strftime('%B'),
+                'ano_final_pagamento': final_pagamento.year,
                 'custo_total_material': turma.valor_material,
                 'custo_total_material_extenso': extenso.getExtenso(int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_material': turma.parcelamento_material,
@@ -1040,6 +1076,7 @@ def contratos_alterar(request, id):
 
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
+            final_pagamento = inicio_pagamento + relativedelta(months=int(request.POST['installments']))
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
 
             if estudante_contratante is True:
@@ -1053,6 +1090,11 @@ def contratos_alterar(request, id):
                 'contratante_nome': contratante.nome,
                 'contratante_rg': contratante.rg,
                 'contratante_cpf': contratante.cpf,
+                'contratante_estado_civil': contratante.estado_civil.lower(),
+                'contratante_profissao': contratante.profissao,
+                'contratante_nacionalidade': contratante.nacionalidade.lower(),
+                'contratante_data_nascimento': contratante.data_nascimento,
+                'contratante_email': contratante.email,
                 'contratante_endereco_lougradouro': contratante.lougradouro,
                 'contratante_endereco_numero': contratante.numero,
                 'contratante_endereco_complemento': contratante.complemento,
@@ -1060,9 +1102,24 @@ def contratos_alterar(request, id):
                 'contratante_endereco_cidade': contratante.cidade,
                 'contratante_endereco_estado': contratante.estado,
                 'contratante_endereco_cep': contratante.cep,
+                'estudante_nome': estudante.nome,
+                'estudante_rg': estudante.rg,
+                'estudante_cpf': estudante.cpf,
+                'estudante_estado_civil': estudante.estado_civil.lower(),
+                'estudante_profissao': estudante.profissao,
+                'estudante_nacionalidade': estudante.nacionalidade.lower(),
+                'estudante_data_nascimento': estudante.data_nascimento,
+                'estudante_email': estudante.email,
+                'estudante_endereco_lougradouro': estudante.lougradouro,
+                'estudante_endereco_numero': estudante.numero,
+                'estudante_endereco_complemento': estudante.complemento,
+                'estudante_endereco_bairro': estudante.bairro,
+                'estudante_endereco_cidade': estudante.cidade,
+                'estudante_endereco_estado': estudante.estado,
+                'estudante_endereco_cep': estudante.cep,
                 'curso_descricao': curso.descricao,
-                'data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
-                'data_termino': turma.data_termino.strftime('%d/%m/%Y'),
+                'curso_data_inicio': turma.data_inicio.strftime('%d/%m/%Y'),
+                'curso_data_termino': turma.data_termino.strftime('%d/%m/%Y'),
                 'custo_total_curso': turma.valor_curso,
                 'custo_total_curso_extenso': extenso.getExtenso(int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_curso': turma.parcelamento_curso,
@@ -1077,6 +1134,8 @@ def contratos_alterar(request, id):
                 'dia_pagamento': request.POST['payment-day'],
                 'mes_inicio_pagamento': inicio_pagamento.strftime('%B'),
                 'ano_inicio_pagamento': inicio_pagamento.year,
+                'mes_final_pagamento': final_pagamento.strftime('%B'),
+                'ano_final_pagamento': final_pagamento.year,
                 'custo_total_material': turma.valor_material,
                 'custo_total_material_extenso': extenso.getExtenso(int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(float(turma.valor_material.replace('R$ ', '').replace('.', '').replace(',', '.'))), 2))) + ' centavos',
                 'parcelas_totais_material': turma.parcelamento_material,

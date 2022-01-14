@@ -1,7 +1,7 @@
 import requests, json
 from rest_framework import serializers
 from django.contrib.auth.models import User, Group
-from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
+from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ModeloContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
 from pedagogico.models import Disciplina, Curso, Turma, Plataforma
 from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
@@ -58,6 +58,11 @@ class ModulosEscolaSerializer(serializers.ModelSerializer):
 class ContratoEducacionalSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContratoEducacional
+        fields = '__all__'
+
+class ModeloContratoEducacionalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ModeloContratoEducacional
         fields = '__all__'
 
 class ContratoTrabalhistaSerializer(serializers.ModelSerializer):

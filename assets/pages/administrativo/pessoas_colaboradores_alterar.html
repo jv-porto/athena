@@ -85,6 +85,14 @@
                                 <option value="Prefere não responder" selected>Prefere não responder</option>
                             </select>
                         </div>
+                        <div class="input-unit">
+                            <label for="occupation">Profissão <span>*</span></label>
+                            <input type="occupation" name="occupation" id="occupation" required value={{colaborador.profissao}} size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="nationality">Nacionalidade <span>*</span></label>
+                            <input type="nationality" name="nationality" id="nationality" required value={{colaborador.nacionalidade}} size="30">
+                        </div>
                         {% if colaborador.foto %}
                         <div class="input-unit">
                             <label for="photo">Foto atual</label>

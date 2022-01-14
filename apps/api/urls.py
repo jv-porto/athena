@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, PlataformaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet, IntegracoesViewSet, IntegracaoContaAzulViewSet
-from .views import EscolaUsuarios, EscolaContratosEducacionais, EscolaContratosTrabalhistas, EscolaEstudantes, EscolaResponsaveis, EscolaColaboradores, EscolaDisciplinas, EscolaCursos, EscolaTurmas, CursoTurmas, EscolaPlataformas, EscolaAnosAcademicos, EscolaUsuariosPermissoes
+from .views import UsuarioViewSet, GruposUsuariosViewSet, EscolaViewSet, ContratoEducacionalViewSet, ModeloContratoEducacionalViewSet, ContratoTrabalhistaViewSet, PessoaEstudanteViewSet, PessoaResponsavelViewSet, PessoaColaboradorViewSet, DisciplinaViewSet, CursoViewSet, TurmaViewSet, PlataformaViewSet, AnoAcademicoViewSet, UsuariosPermissoesViewSet, ModulosEscolaViewSet, EmailViewSet, IntegracoesViewSet, IntegracaoContaAzulViewSet
+from .views import EscolaUsuarios, EscolaContratosEducacionais, EscolaModeloContratosEducacionais, EscolaContratosTrabalhistas, EscolaEstudantes, EscolaResponsaveis, EscolaColaboradores, EscolaDisciplinas, EscolaCursos, EscolaTurmas, CursoTurmas, EscolaPlataformas, EscolaAnosAcademicos, EscolaUsuariosPermissoes
 
 router = routers.DefaultRouter()
 router.register('usuario', UsuarioViewSet, basename='api-usuario')
@@ -9,6 +9,7 @@ router.register('grupos_usuarios', GruposUsuariosViewSet, basename='api-grupos-u
 router.register('escola', EscolaViewSet, basename='api-escola')
 router.register('modulos_escola', ModulosEscolaViewSet, basename='api-modulos-escola')
 router.register('contrato_educacional', ContratoEducacionalViewSet, basename='api-contrato-educacional')
+router.register('modelo_contrato_educacional', ModeloContratoEducacionalViewSet, basename='api-modelo-contrato-educacional')
 router.register('contrato_trabalhista', ContratoTrabalhistaViewSet, basename='api-contrato-trabalhista')
 router.register('pessoas/estudante', PessoaEstudanteViewSet, basename='api-pessoa-estudante')
 router.register('pessoas/responsavel', PessoaResponsavelViewSet, basename='api-pessoa-responsavel')
@@ -27,6 +28,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('escola/<str:school_id>/usuarios/', EscolaUsuarios.as_view()),
     path('escola/<str:school_id>/contratos_educacionais/', EscolaContratosEducacionais.as_view()),
+    path('escola/<str:school_id>/modelo_contratos_educacionais/', EscolaModeloContratosEducacionais.as_view()),
     path('escola/<str:school_id>/contratos_trabalhistas/', EscolaContratosTrabalhistas.as_view()),
     path('escola/<str:school_id>/estudantes/', EscolaEstudantes.as_view()),
     path('escola/<str:school_id>/responsaveis/', EscolaResponsaveis.as_view()),

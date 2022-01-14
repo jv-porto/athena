@@ -1,11 +1,11 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, filters
 from django.contrib.auth.models import User, Group
-from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
+from administrativo.models import Escola, ModulosEscola, ContratoEducacional, ModeloContratoEducacional, ContratoTrabalhista, PessoaEstudante, PessoaResponsavel, PessoaColaborador
 from pedagogico.models import Disciplina, Curso, Turma, Plataforma
 from institucional.models import AnoAcademico, UsuariosPermissoes, Integracoes, IntegracaoContaAzul
 from funcionalidades.models import Email
-from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, PlataformaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer, IntegracoesSerializer, IntegracaoContaAzulSerializer
+from .serializer import UsuarioSerializer, GruposUsuariosSerializer, EscolaSerializer, ContratoEducacionalSerializer, ModeloContratoEducacionalSerializer, ContratoTrabalhistaSerializer, PessoaEstudanteSerializer, PessoaResponsavelSerializer, PessoaColaboradorSerializer, DisciplinaSerializer, CursoSerializer, TurmaSerializer, PlataformaSerializer, AnoAcademicoSerializer, UsuariosPermissoesSerializer, ModulosEscolaSerializer, EmailSerializer, IntegracoesSerializer, IntegracaoContaAzulSerializer
 
 ############### VIEWSETS ###############
 class UsuarioViewSet(viewsets.ModelViewSet):
@@ -39,7 +39,14 @@ class ContratoEducacionalViewSet(viewsets.ModelViewSet):
     queryset = ContratoEducacional.objects.all().order_by('-id')
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    search_fields = ['id', 'tipo', 'data_assinatura']
+    search_fields = ['id', 'codigo', 'data_assinatura', 'estudante__nome', 'estudante__id', 'estudante__matricula', 'estudante__cpf', 'estudante__rg', 'estudante__celular', 'estudante__telefone', 'estudante__email', 'responsavel__nome', 'responsavel__id', 'responsavel__cpf', 'responsavel__rg', 'responsavel__celular', 'responsavel__telefone', 'responsavel__email']
+    filterset_fields = ['deleted']
+
+class ModeloContratoEducacionalViewSet(viewsets.ModelViewSet):
+    queryset = ModeloContratoEducacional.objects.all().order_by('-id')
+    serializer_class = ModeloContratoEducacionalSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    search_fields = ['id', 'codigo', 'curso__id', 'curso__codigo', 'curso__descricao', 'turma__id', 'turma__codigo', 'turma__descricao']
     filterset_fields = ['deleted']
 
 class ContratoTrabalhistaViewSet(viewsets.ModelViewSet):
@@ -153,7 +160,16 @@ class EscolaContratosEducacionais(generics.ListAPIView):
         return queryset
     serializer_class = ContratoEducacionalSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
-    search_fields = ['id', 'codigo']
+    search_fields = ['id', 'codigo', 'data_assinatura', 'estudante__nome', 'estudante__id', 'estudante__matricula', 'estudante__cpf', 'estudante__rg', 'estudante__celular', 'estudante__telefone', 'estudante__email', 'responsavel__nome', 'responsavel__id', 'responsavel__cpf', 'responsavel__rg', 'responsavel__celular', 'responsavel__telefone', 'responsavel__email']
+    filterset_fields = ['deleted']
+
+class EscolaModeloContratosEducacionais(generics.ListAPIView):
+    def get_queryset(self):
+        queryset = ModeloContratoEducacional.objects.filter(escola=self.kwargs['school_id']).order_by('-id')
+        return queryset
+    serializer_class = ModeloContratoEducacionalSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    search_fields = ['id', 'codigo', 'curso__id', 'curso__codigo', 'curso__descricao', 'turma__id', 'turma__codigo', 'turma__descricao']
     filterset_fields = ['deleted']
 
 class EscolaContratosTrabalhistas(generics.ListAPIView):

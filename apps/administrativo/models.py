@@ -73,6 +73,8 @@ class PessoaEstudante(models.Model):
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
+    profissao = models.CharField(max_length=200)
+    nacionalidade = models.CharField(max_length=200)
     foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
@@ -104,6 +106,8 @@ class PessoaResponsavel(models.Model):
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
+    profissao = models.CharField(max_length=200)
+    nacionalidade = models.CharField(max_length=200)
     foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
@@ -147,6 +151,8 @@ class PessoaColaborador(models.Model):
     genero = models.CharField(max_length=200)
     cor = models.CharField(max_length=200)
     estado_civil = models.CharField(max_length=200)
+    profissao = models.CharField(max_length=200)
+    nacionalidade = models.CharField(max_length=200)
     foto = models.CharField(max_length=200, blank=True)
     cep = models.CharField(max_length=9)
     lougradouro = models.CharField(max_length=200)
@@ -196,5 +202,18 @@ class ContratoEducacional(models.Model):
     datahora_cadastro = models.DateTimeField(auto_now_add=True)
     deleted = models.BooleanField(default=False)
     id_conta_azul = models.CharField(max_length=36, blank=True)
+    def __str__(self):
+        return self.codigo
+
+class ModeloContratoEducacional(models.Model):
+    id = models.CharField(primary_key=True, max_length=11)
+    codigo = models.CharField(max_length=7)
+    escola = models.ForeignKey(Escola, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
+    contrato = models.TextField()
+    datahora_ultima_alteracao = models.DateTimeField(auto_now=True)
+    datahora_cadastro = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
     def __str__(self):
         return self.codigo

@@ -5,7 +5,7 @@ from athena.custom_storages import MediaStorage
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, redirect
 from .models import Curso, Disciplina, Turma
-from administrativo.models import PessoaColaborador
+from administrativo.models import PessoaColaborador, ModeloContratoEducacional
 from institucional.models import AnoAcademico, IntegracaoContaAzul
 
 def empty_input(input):
@@ -226,10 +226,21 @@ def turmas_incluir(request):
             else:
                 messages.error(request, 'O ID do tutor está incorreto!')
                 return redirect('turmas_incluir')
+        
+        contract_data = {
+            'id': class_data['id'],
+            'codigo': class_data['codigo'],
+            'escola': class_data['escola'],
+            'curso': class_data['curso'],
+            'turma': class_data['id'],
+            'contrato': request.POST['contract-model'],
+            'deleted': False,
+        }
 
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         course_request = requests.post('https://athena.thrucode.com.br/api/turma/', data=class_data, cookies=cookies, headers=headers)
+        contract_request = requests.post('https://athena.thrucode.com.br/api/modelo_contrato_educacional/', data=contract_data, cookies=cookies, headers=headers)
 
         i = 0
         while i <= 14:
@@ -284,7 +295,7 @@ def turmas_alterar(request, id):
     if request.method == 'GET':
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
-        data = {'turma': requests.get(f'https://athena.thrucode.com.br/api/turma/{id}/', cookies=cookies, headers=headers).json(), 'turma_curso': Turma.objects.get(pk=id).curso, 'turma_ano_academico': Turma.objects.get(pk=id).ano_academico}
+        data = {'turma': requests.get(f'https://athena.thrucode.com.br/api/turma/{id}/', cookies=cookies, headers=headers).json(), 'turma_curso': Turma.objects.get(pk=id).curso, 'turma_ano_academico': Turma.objects.get(pk=id).ano_academico, 'contrato': requests.get(f'https://athena.thrucode.com.br/api/modelo_contrato_educacional/{id}/', cookies=cookies, headers=headers).json()}
         data['turma']['ano_academico'] = data['turma']['ano_academico'].replace('_', '/')
         for disciplina in data['turma']['disciplinas']:
             data['disciplinas'].append(Disciplina.objects.get(pk=disciplina))
@@ -326,9 +337,14 @@ def turmas_alterar(request, id):
         else:
             class_data['tutor'] = ''
 
+        contract_data = {
+            'contrato': request.POST['contract-model'],
+        }
+
         cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
         headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
         course_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
+        contract_request = requests.patch(f'https://athena.thrucode.com.br/api/modelo_contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
 
         turma = Turma.objects.get(pk=id)
         i = 0
@@ -397,10 +413,14 @@ def turmas_excluir(request, id):
     class_data = {
         'deleted': True,
     }
+    contract_data = {
+        'deleted': True,
+    }
 
     cookies = {'csrftoken': request.COOKIES['csrftoken'], 'sessionid': request.session.session_key}
     headers = {'X-CSRFToken': cookies['csrftoken'], 'Referer': 'https://athena.thrucode.com.br'}
     class_request = requests.patch(f'https://athena.thrucode.com.br/api/turma/{id}/', data=class_data, cookies=cookies, headers=headers)
+    contract_request = requests.patch(f'https://athena.thrucode.com.br/api/modelo_contrato_educacional/{id}/', data=contract_data, cookies=cookies, headers=headers)
 
     return redirect('turmas')
 

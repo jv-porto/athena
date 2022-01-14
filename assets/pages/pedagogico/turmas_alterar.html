@@ -83,6 +83,21 @@
                             <input type="text" name="material-installments" id="material-installments" class="installments" required value="{{turma.parcelamento_material}}" size="2">
                         </div>
                     </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Contrato</h3>
+                        <div class="input-unit">
+                            <p>- As variáveis devem ser colocadas entre <b>&#123;&#123; &#125;&#125;</b>. São elas: contratante_nome, contratante_rg, contratante_cpf, contratante_estado_civil, contratante_profissao, contratante_nacionalidade, contrantante_data_nascimento, contratante_email, contratante_endereco_lougradouro, contratante_endereco_numero, contratante_endereco_complemento, contratante_endereco_bairro, contratante_endereco_cidade, contratante_endereco_estado, contratante_endereco_cep, estudante_nome, estudante_rg, estudante_cpf, estudante_estado_civil, estudante_profissao, estudante_nacionalidade, contrantante_data_nascimento, estudante_email, estudante_endereco_lougradouro, estudante_endereco_numero, estudante_endereco_complemento, estudante_endereco_bairro, estudante_endereco_cidade, estudante_endereco_estado, estudante_endereco_cep, curso_descricao, curso_data_inicio, curso_data_termino, custo_total_curso, custo_total_curso_extenso, parcelas_totais_curso, custo_total_parcelas_curso, custo_total_parcelas_curso_extenso, percentual_desconto_curso, custo_final_curso, custo_final_curso_extenso, parcelas_finais_curso, custo_final_parcelas_curso, custo_final_parcelas_curso_extenso, dia_pagamento, mes_inicio_pagamento, ano_inicio_pagamento, mes_final_pagamento, ano_final_pagamento, custo_total_material, custo_total_material_extenso, parcelas_totais_material, data_assinatura, escola_nome_fantasia, escola_cnpj.</p>
+                            <p>- Os parágrafos devem ser trocados por <b>/////</b> (5 "/" por cada nível de recuo).</p>
+                            <p>- Pode-se criar um título de seção por meio da adição de <b>*****</b> no início da linha.</p>
+                            <p>- Os textos podem ser decorados por <b>negrito (&#60;b&#62;&#60;/b&#62;)</b>, <sup>sobrescrito (&#60;sup&#62;&#60;/sup&#62;)</sup> e <sub>subescrito (&#60;sub&#62;&#60;/sub&#62;)</sub>.</p>
+                            <div style="height:0.8rem;"></div>
+                            <p><b>ATENÇÃO:</b> não se deve dar espaços entre os sinais de marcação de texto e o texto em si.</p>
+                        </div>
+                        <div class="input-unit">
+                            <label for="contract-model">Contrato <span>*</span></label>
+                            <textarea name="contract-model" id="contract-model" class="tab-textarea" required wrap rows="20">{{contrato.contrato}}</textarea>
+                        </div>
+                    </div>
                     <input type="submit" name="submit" id="submit" value="Enviar">
                 </form>
             </div>
