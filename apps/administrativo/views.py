@@ -902,6 +902,21 @@ def contratos_incluir(request):
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
             final_pagamento = inicio_pagamento + relativedelta(months=int(request.POST['installments']))
+            n = 0
+            lista_parcelas = []
+            while len(lista_parcelas) < int(request.POST['installments']):
+                lista_parcelas.append(inicio_pagamento + relativedelta(months=n))
+                n += 1
+            m = 0
+            parcelas = ''
+            while m < len(lista_parcelas):
+                if m == 0:
+                    parcelas = parcelas + lista_parcelas[m].strftime('%d/%m/%Y')
+                elif m == (len(lista_parcelas) - 1):
+                    parcelas = parcelas + ' e ' + lista_parcelas[m].strftime('%d/%m/%Y')
+                else:
+                    parcelas = parcelas + ', ' + lista_parcelas[m].strftime('%d/%m/%Y')
+                m += 1
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
 
             if estudante_contratante is True:
@@ -960,6 +975,7 @@ def contratos_incluir(request):
                 'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
                 'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
                 'parcelas_finais_curso': request.POST['installments'],
+                'data_parcelas_finais_curso': parcelas,
                 'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
                 'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
                 'dia_pagamento': request.POST['payment-day'],
@@ -1119,6 +1135,21 @@ def contratos_alterar(request, id):
             extenso = dExtenso()
             inicio_pagamento = datetime(int(request.POST['payment-start'].split('-')[0]), int(request.POST['payment-start'].split('-')[1]), int(request.POST['payment-start'].split('-')[2]))
             final_pagamento = inicio_pagamento + relativedelta(months=int(request.POST['installments']))
+            n = 0
+            lista_parcelas = []
+            while len(lista_parcelas) < int(request.POST['installments']):
+                lista_parcelas.append(inicio_pagamento + relativedelta(months=n))
+                n += 1
+            m = 0
+            parcelas = ''
+            while m < len(lista_parcelas):
+                if m == 0:
+                    parcelas = parcelas + lista_parcelas[m].strftime('%d/%m/%Y')
+                elif m == (len(lista_parcelas) - 1):
+                    parcelas = parcelas + ' e ' + lista_parcelas[m].strftime('%d/%m/%Y')
+                else:
+                    parcelas = parcelas + ', ' + lista_parcelas[m].strftime('%d/%m/%Y')
+                m += 1
             data_assinatura = datetime(int(request.POST['sign-date'].split('-')[0]), int(request.POST['sign-date'].split('-')[1]), int(request.POST['sign-date'].split('-')[2]))
 
             if estudante_contratante is True:
@@ -1171,6 +1202,7 @@ def contratos_alterar(request, id):
                 'custo_final_curso': 'R$ ' + locale.format('%.2f', round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')), 2), grouping=True),
                 'custo_final_curso_extenso': extenso.getExtenso(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))) + ' reais e ' + extenso.getExtenso(int(100*round((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.'))-int(int((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))), 2))) + ' centavos',
                 'parcelas_finais_curso': request.POST['installments'],
+                'data_parcelas_finais_curso': parcelas,
                 'custo_final_parcelas_curso': 'R$ ' + locale.format('%.2f', round(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']), 2), grouping=True),
                 'custo_final_parcelas_curso_extenso': extenso.getExtenso(int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments'])))) + ' reais e ' + extenso.getExtenso(int(100*round(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))-int(float(((1 - (float(request.POST['discount'].replace(',', '.').replace('%', ''))/100)) * float(turma.valor_curso.replace('R$ ', '').replace('.', '').replace(',', '.')))/int(request.POST['installments']))), 2))) + ' centavos',
                 'dia_pagamento': request.POST['payment-day'],
