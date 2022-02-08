@@ -338,7 +338,7 @@ def pessoas_estudantes_incluir(request):
                 'escola': escola_object.nome_fantasia,
             },
         }
-        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
+#        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_estudantes')
 
@@ -545,7 +545,7 @@ def pessoas_responsaveis_incluir(request):
                 'escola': escola_object.nome_fantasia,
             },
         }
-        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
+#        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_responsaveis')
 
@@ -767,7 +767,7 @@ def pessoas_colaboradores_incluir(request):
                 'escola': escola_object.nome_fantasia,
             },
         }
-        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
+#        email_request = requests.post('https://athena.thrucode.com.br/api/email/', json=email_data, cookies=cookies, headers=headers)
 
         return redirect('pessoas_colaboradores')
 

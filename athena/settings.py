@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['athena.thrucode.com.br', '*']
-ALLOWED_HOSTS.extend(['172.31.84.235'])
+ALLOWED_HOSTS = ['athena.thrucode.com.br']
+ALLOWED_HOSTS.extend(['172.31.80.182'])
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
