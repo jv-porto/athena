@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title disable-select">Cadastro escolar</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'cadastro_escolar' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Alterar</h2>
+                <form action="{% url 'cadastro_escolar_alterar' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados da Escola</h3>
+                        <div class="input-unit">
+                            <label for="school-id">Código <span>*</span></label>
+                            <input type="text" name="school-id" id="school-id" disabled value="{{escola.id}}" pattern="[0-9]{4}" size="4">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cnpj">CNPJ <span>*</span></label>
+                            <input type="text" name="cnpj" id="cnpj" disabled value="{{escola.cnpj}}" pattern="[0-9]{2}.[0-9]{3}.[0-9]{3}/[0-9]{4}-[0-9]{2}" size="18">
+                        </div>
+                        <div class="input-unit">
+                            <label for="corporate-name">Razão social <span>*</span></label>
+                            <input type="text" name="corporate-name" id="corporate-name" disabled value="{{escola.razao_social}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="trading-name">Nome fantasia <span>*</span></label>
+                            <input type="text" name="trading-name" id="trading-name" disabled value="{{escola.nome_fantasia}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="email">E-mail <span>*</span></label>
+                            <input type="email" name="email" id="email" required value="{{escola.email}}" size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="phone-number">Telefone <span>*</span></label>
+                            <input type="text" name="phone-number" id="phone-number" class="telephone" required value="{{escola.telefone}}" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="cellphone-number">Celular</label>
+                            <input type="text" name="cellphone-number" id="cellphone-number" class="telephone" value="{{escola.celular}}" pattern="[0-9]{2}\s[0-9]{4,5}\s[0-9]{4}" size="13">
+                        </div>
+                        <div class="input-unit">
+                            <label for="website">Site</label>
+                            <input type="url" name="website" id="website" value="{{escola.site}}" size="30">
+                        </div>
+                        {% if escola.logo %}
+                        <div class="input-unit">
+                            <label>Logo atual</label>
+                            <img src="{{ escola.logo }}" alt="logo" style='height: 70px; width: auto;'>
+                        </div>
+                        {% endif %}
+                        <div class="input-unit">
+                            <label for="logo">Logo</label>
+                            <input type="file" name="logo" id="logo" accept="image/*">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h3 class="light-title">Endereço</h3>
+                        <div class="input-unit">
+                            <label for="postal-code">CEP</label>
+                            <input type="text" name="postal-code" id="postal-code" pattern="[0-9]{5}-[0-9]{3}" value="{{escola.cep}}" size="9">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-street">Lougradouro</label>
+                            <input type="text" name="address-street" id="address-street" value="{{escola.lougradouro}}" size="30">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-number">Número</label>
+                            <input type="text" name="address-number" id="address-number" value="{{escola.numero}}" pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-complements">Complemento</label>
+                            <input type="text" name="address-complements" id="address-complements" value="{{escola.complemento}}" size="10">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-neighborhood">Bairro</label>
+                            <input type="text" name="address-neighborhood" id="address-neighborhood" value="{{escola.bairro}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-city">Cidade</label>
+                            <input type="text" name="address-city" id="address-city" value="{{escola.cidade}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-state">Estado</label>
+                            <input type="text" name="address-state" id="address-state" value="{{escola.estado}}" size="20">
+                        </div>
+                        <div class="input-unit">
+                            <label for="address-country">País</label>
+                            <input type="text" name="address-country" id="address-country" value="{{escola.pais}}" size="20">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

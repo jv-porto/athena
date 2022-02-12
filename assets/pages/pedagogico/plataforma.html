@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title disable-select">Plataforma - {{plataforma.descricao}}</h1>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-embed-body">
+                <embed type="text/html" src="{{plataforma.link}}" width="100%" height="100%">
+            </div>
+        </main>
+{% endblock %}

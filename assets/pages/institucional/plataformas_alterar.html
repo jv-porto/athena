@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title disable-select">Plataformas</h1>
+                </div>
+                <div class="page-actions">
+                        <a href="{% url 'plataformas' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Alterar</h2>
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'plataformas_alterar' plataforma.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados básicos</h3>
+                        <div class="input-unit">
+                            <label for="code">Código</label>
+                            <input type="text" name="code" id="code" class="uppercase-code-7" required readonly value="{{plataforma.codigo}}" pattern="[A-Z0-9]{1,7}" size="7">
+                        </div>
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required value="{{plataforma.descricao}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="link">Link <span>*</span></label>
+                            <input type="text" name="link" id="link" required value="{{plataforma.link}}" size="50">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

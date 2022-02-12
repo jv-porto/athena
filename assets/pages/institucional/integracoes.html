@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title disable-select">Integrações</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'integracoes_alterar' %}" class="body-black-text page-actions-alterar">Alterar</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Visualizar</h2>
+                {% include '_partials/_alertas.html' %}
+                <form>
+                    <div class="form-section integration">
+                        <h3 class="light-title">Conta Azul</h3>
+                        <div class="input-unit">
+                            <input type="hidden" name="school-id" id="school-id" value="{{integracoes.escola}}">
+                        </div>
+                        <div class="input-unit">
+                            <label for="conta_azul">Integrar?</label>
+                            <input type="checkbox" name="conta_azul" id="conta_azul" disabled {% if integracoes.conta_azul %}checked{% endif %}>
+                        </div>
+                        {% if integracoes.conta_azul %}
+                        <div class="input-unit">
+                            <label for="conta_azul-active">Ativo?</label>
+                            <input type="checkbox" name="conta_azul-active" id="conta_azul-active" disabled {% if integracaocontaazul.is_active %}checked{% endif %}>
+                        </div>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </main>
+{% endblock %}

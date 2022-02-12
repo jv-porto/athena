@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title disable-select">Turmas</h1>
+                </div>
+                <div class="page-actions">
+                    <a class="body-black-text page-actions-pesquisar disable-select">Pesquisar</a>
+                    <a href="{% url 'turmas_incluir' %}" class="body-black-text page-actions-incluir">Incluir</a>
+                    <a href="" class="body-black-text page-actions-alterar">Alterar</a>
+                    <a href="" class="body-black-text page-actions-excluir">Excluir</a>
+                </div>
+
+                {% include '_partials/_pesquisar.html' %}
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                {% if turmas %}
+                <h2 class="title">Lista</h2>
+                <table class="list-db-items">
+                    <thead>
+                        <tr>
+                            <th class="light-subtitle"></th>
+                            <th class="light-subtitle">Código</th>
+                            <th class="light-subtitle">Curso</th>
+                            <th class="light-subtitle">Descrição</th>
+                            <th class="light-subtitle">Ano acadêmico</th>
+                            <th class="light-subtitle">Turno</th>
+                            <th class="light-subtitle">Vagas</th>
+                            <th class="light-subtitle">Tutor</th>
+                            <th class="light-subtitle">Disciplinas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if turmas %}
+                        {% for turma in turmas %}
+                        <tr>
+                            <td><input type="radio" name="person" class="choose-menu-id" id="{{ turma.id }}" value="{{ turma.id }}"></td>
+                            <td>{{ turma.codigo }}</td>
+                            <td>{{ turma.curso.descricao }}</td>
+                            <td>{{ turma.descricao }}</td>
+                            <td>{{ turma.ano_academico.descricao }}</td>
+                            <td>{{ turma.turno }}</td>
+                            <td>{{ turma.vagas }}</td>
+                            <td>{{ turma.tutor|default:'' }}</td>
+                            <td>
+                                {% if turma.disciplinas.0 %}{{ turma.disciplinas.0 }}{% endif %}
+                                {% if turma.disciplinas.1 %}/ {{ turma.disciplinas.1 }}{% endif %}
+                                {% if turma.disciplinas.2 %}/ {{ turma.disciplinas.2 }}{% endif %}
+                                {% if turma.disciplinas.3 %}/ {{ turma.disciplinas.3 }}{% endif %}
+                                {% if turma.disciplinas.4 %}/ {{ turma.disciplinas.4 }}{% endif %}
+                                {% if turma.disciplinas.5 %}/ {{ turma.disciplinas.5 }}{% endif %}
+                                {% if turma.disciplinas.6 %}/ {{ turma.disciplinas.6 }}{% endif %}
+                                {% if turma.disciplinas.7 %}/ {{ turma.disciplinas.7 }}{% endif %}
+                                {% if turma.disciplinas.8 %}/ {{ turma.disciplinas.8 }}{% endif %}
+                                {% if turma.disciplinas.9 %}/ {{ turma.disciplinas.9 }}{% endif %}
+                                {% if turma.disciplinas.10 %}/ {{ turma.disciplinas.10 }}{% endif %}
+                                {% if turma.disciplinas.11 %}/ {{ turma.disciplinas.11 }}{% endif %}
+                                {% if turma.disciplinas.12 %}/ {{ turma.disciplinas.12 }}{% endif %}
+                                {% if turma.disciplinas.13 %}/ {{ turma.disciplinas.13 }}{% endif %}
+                                {% if turma.disciplinas.14 %}/ {{ turma.disciplinas.14 }}{% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+                {% endif %}
+            </div>
+        </main>
+{% endblock %}
