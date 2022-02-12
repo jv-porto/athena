@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-institucional light-title disable-select">Usuários e Permissões</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="{% url 'usuarios_permissoes' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <form action="{% url 'usuarios_permissoes_incluir' %}" method="post">
+                    {% csrf_token %}
+                    <h2 class="title">Incluir</h2>
+                    <div class="form-section">
+                        <h3 class="light-title">Grupos de Usuários</h3>
+                        <input type="hidden" name="id-escola" value="{{request.user.escola}}">
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required size="35">
+                        </div>
+                    </div>
+                    <div class="form-section permissions">
+                        <h3 class="light-title">Permissões</h3>
+                        <h4 class="light-subtitle">Index</h4>
+                        {% if request.user.escola.modulosescola.dashboard %}
+                        <div class="input-unit">
+                            <label for="dashboard">Dashboard</label>
+                            <select name="dashboard" id="dashboard" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if request.user.escola.modulosescola.administrativo_escolas or request.user.escola.modulosescola.administrativo_pessoas_estudantes or request.user.escola.modulosescola.administrativo_pessoas_responsaveis or request.user.escola.modulosescola.administrativo_pessoas_colaboradores or request.user.escola.modulosescola.administrativo_contratos or request.user.escola.modulosescola.administrativo_secretaria or request.user.escola.modulosescola.administrativo_recepcao or request.user.escola.modulosescola.administrativo_relatorios %}
+                        <h4 class="light-subtitle">Administrativo</h4>
+                        {% if request.user.escola.modulosescola.administrativo_escolas %}
+                        <div class="input-unit">
+                            <label for="administrativo_escolas">Escolas</label>
+                            <select name="administrativo_escolas" id="administrativo_escolas" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_pessoas_estudantes %}
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_estudantes">Pessoas - Estudantes</label>
+                            <select name="administrativo_pessoas_estudantes" id="administrativo_pessoas_estudantes" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_pessoas_responsaveis %}
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_responsaveis">Pessoas - Responsáveis</label>
+                            <select name="administrativo_pessoas_responsaveis" id="administrativo_pessoas_responsaveis" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_pessoas_colaboradores %}
+                        <div class="input-unit">
+                            <label for="administrativo_pessoas_colaboradores">Pessoas - Colaboradores</label>
+                            <select name="administrativo_pessoas_colaboradores" id="administrativo_pessoas_colaboradores" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_contratos %}
+                        <div class="input-unit">
+                            <label for="administrativo_contratos">Contratos</label>
+                            <select name="administrativo_contratos" id="administrativo_contratos" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_secretaria %}
+                        <div class="input-unit">
+                            <label for="administrativo_secretaria">Secretaria</label>
+                            <select name="administrativo_secretaria" id="administrativo_secretaria" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_recepcao %}
+                        <div class="input-unit">
+                            <label for="administrativo_recepcao">Recepção</label>
+                            <select name="administrativo_recepcao" id="administrativo_recepcao" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.administrativo_relatorios %}
+                        <div class="input-unit">
+                            <label for="administrativo_relatorios">Relatórios</label>
+                            <select name="administrativo_relatorios" id="administrativo_relatorios" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if request.user.escola.modulosescola.pedagogico_cursos or request.user.escola.modulosescola.pedagogico_turmas or request.user.escola.modulosescola.pedagogico_boletim or request.user.escola.modulosescola.pedagogico_diario_classe or request.user.escola.modulosescola.pedagogico_sala_virtual or request.user.escola.modulosescola.pedagogico_vestibulares or request.user.escola.modulosescola.pedagogico_relatorios %}
+                        <h4 class="light-subtitle">Pedagógico</h4>
+                        {% if request.user.escola.modulosescola.pedagogico_cursos %}
+                        <div class="input-unit">
+                            <label for="pedagogico_cursos">Cursos</label>
+                            <select name="pedagogico_cursos" id="pedagogico_cursos" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_turmas %}
+                        <div class="input-unit">
+                            <label for="pedagogico_turmas">Turmas</label>
+                            <select name="pedagogico_turmas" id="pedagogico_turmas" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_boletim %}
+                        <div class="input-unit">
+                            <label for="pedagogico_boletim">Boletim</label>
+                            <select name="pedagogico_boletim" id="pedagogico_boletim" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_diario_classe %}
+                        <div class="input-unit">
+                            <label for="pedagogico_diario_classe">Diário de Classe</label>
+                            <select name="pedagogico_diario_classe" id="pedagogico_diario_classe" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_sala_virtual %}
+                        <div class="input-unit">
+                            <label for="pedagogico_sala_virtual">Sala Virtual</label>
+                            <select name="pedagogico_sala_virtual" id="pedagogico_sala_virtual" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_vestibulares %}
+                        <div class="input-unit">
+                            <label for="pedagogico_vestibulares">Vestibulares</label>
+                            <select name="pedagogico_vestibulares" id="pedagogico_vestibulares" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.pedagogico_relatorios %}
+                        <div class="input-unit">
+                            <label for="pedagogico_relatorios">Relatórios</label>
+                            <select name="pedagogico_relatorios" id="pedagogico_relatorios" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if request.user.escola.modulosescola.financeiro_bancos or request.user.escola.modulosescola.financeiro_movimentacoes or request.user.escola.modulosescola.financeiro_relatorios %}
+                        <h4 class="light-subtitle">Financeiro</h4>
+                        {% if request.user.escola.modulosescola.financeiro_bancos %}
+                        <div class="input-unit">
+                            <label for="financeiro_bancos">Bancos</label>
+                            <select name="financeiro_bancos" id="financeiro_bancos" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.financeiro_movimentacoes %}
+                        <div class="input-unit">
+                            <label for="financeiro_movimentacoes">Movimentações</label>
+                            <select name="financeiro_movimentacoes" id="financeiro_movimentacoes" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.financeiro_relatorios %}
+                        <div class="input-unit">
+                            <label for="financeiro_relatorios">Relatórios</label>
+                            <select name="financeiro_relatorios" id="financeiro_relatorios" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+
+                        {% if request.user.escola.modulosescola.institucional_cadastro_escolar or request.user.escola.modulosescola.institucional_usuarios_permissoes or request.user.escola.modulosescola.institucional_ano_academico %}
+                        <h4 class="light-subtitle">Institucional</h4>
+                        {% if request.user.escola.modulosescola.institucional_cadastro_escolar %}
+                        <div class="input-unit">
+                            <label for="institucional_cadastro_escolar">Cadastro Escolar</label>
+                            <select name="institucional_cadastro_escolar" id="institucional_cadastro_escolar" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.institucional_usuarios_permissoes %}
+                        <div class="input-unit">
+                            <label for="institucional_usuarios_permissoes">Usuários e Permissões</label>
+                            <select name="institucional_usuarios_permissoes" id="institucional_usuarios_permissoes" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% if request.user.escola.modulosescola.institucional_ano_academico %}
+                        <div class="input-unit">
+                            <label for="institucional_ano_academico">Ano Acadêmico</label>
+                            <select name="institucional_ano_academico" id="institucional_ano_academico" required>
+                                <option value="NENHUMA">Nenhuma</option>
+                                <option value="VER">Ver</option>
+                                <option value="VER_EDITAR">Ver e editar</option>
+                                <option value="VER_EDITAR_APAGAR">Ver, editar e apagar</option>
+                            </select>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

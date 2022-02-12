@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title disable-select">Disciplinas</h1>
+                </div>
+                <div class="page-actions">
+                        <a href="{% url 'disciplinas' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Incluir</h2>
+                <form action="turmas.html" method="post">
+                    <div class="form-classes-include-program-data">
+                        <h3 class="light-title">Dados do Curso</h3>
+                        <div class="input-unit">
+                            <label for="school-code">Código da Escola <span>*</span></label>
+                            <input type="text" name="school-code" id="school-code" required pattern="[0-9]{4}" title="Um código de quatro dígitos deve ser inserido" size="4">
+                        </div>
+                        <div class="input-unit">
+                            <label for="course-code">Código do Curso <span>*</span></label>
+                            <input type="text" name="course-code" id="course-code" required pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
+                        </div>
+                        <div class="input-unit">
+                            <label for="course-period">Período do curso <span>*</span></label>
+                            <input type="text" name="course-period" id="course-period" required pattern="[0-9]{1,2}" title="Digite apenas números" size="2">
+                        </div>
+                        <div class="input-unit">
+                            <label for="academic-year">Ano acadêmico <span>*</span></label>
+                            <input type="text" name="academic-year" id="academic-year" required pattern="[0-9]{4}" title="Digite apenas números" size="4">
+                        </div>
+                    </div>
+                    <div class="form-classes-include-class-data">
+                        <h3 class="light-title">Dados da Turma</h3>
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="slots">Vagas <span>*</span></label>
+                            <input type="text" name="slots" id="slots" required pattern="[0-9]{1,4}" title="Digite apenas números" size="4">
+                        </div>
+                        <div class="input-unit">
+                            <label for="start-date">Data de início <span>*</span></label>
+                            <input type="date" name="start-date" id="start-date" required>
+                        </div>
+                        <div class="input-unit">
+                            <label for="end-date">Data de término <span>*</span></label>
+                            <input type="date" name="end-date" id="end-date" required>
+                        </div>
+                    </div>
+                    <div class="form-classes-include-course-data">
+                        <h3 class="light-title">Disciplinas</h3>
+                        <div class="input-unit">
+                            <label for="course-code">Código <span>*</span></label>
+                            <input type="text" name="course-code" id="course-code" required pattern="[0-9]{1,5}" title="Digite apenas números" size="5">
+                        </div>
+                        <div class="input-unit">
+                            <label for="course-description">Descrição <span>*</span></label>
+                            <input type="text" name="course-description" id="course-description" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="course-room">Sala <span>*</span></label>
+                            <input type="text" name="course-room" id="course-room" size="5">
+                        </div>
+                    </div>
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}

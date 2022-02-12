@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt_BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link rel="icon" href="{% static 'files/athena_icon.svg' %}">
+        <title>Athena</title>
+        <link href="{% static 'css/main.css' %}" rel="stylesheet">
+    </head>
+    <body class="django-screen-body">
+        <main class="django-screen">
+            <h1><img class="logo" src="{% static 'files/athena_icon.svg' %}" alt="Athena"></h1>
+            <div class="django">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2 class="light-title">Alterar senha</h2>
+                    <p>Sua senha não pode ser muito parecida com o resto das suas informações pessoais.
+                    <br>
+                    Sua senha precisa conter pelo menos 8 caracteres.
+                    <br>
+                    Sua senha não pode ser uma senha comumente utilizada.
+                    <br>
+                    Sua senha não pode ser inteiramente numérica.</p>
+                    <div class="input-unit">
+                        <label for="id_old_password">Senha atual</label>
+                        <input type="password" name="old_password" id="id_old_password" autocomplete="current-password" required>
+                    </div>
+                    <div class="input-unit">
+                        <label for="id_new_password1">Nova senha</label>
+                        <input type="password" name="new_password1" id="id_new_password1" autocomplete="new-password" required>
+                    </div>
+                    <div class="input-unit">
+                        <label for="id_new_password2">Confirmação</label>
+                        <input type="password" name="new_password2" id="id_new_password2" autocomplete="new-password" required>
+                    </div>
+                    <input type="submit" value="Enviar">
+                </form> 
+            </div>
+        </main>
+
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>

@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+                <div class="page-title">
+                    <h1 class="page-title-pedagogico light-title disable-select">Cursos</h1>
+                </div>
+                <div class="page-actions">
+                        <a href="{% url 'cursos' %}" class="body-black-text page-actions-cancelar">Cancelar</a>
+                </div>
+                
+                {% include '_partials/_menu.html' %}
+
+        <main>
+            <div class="container-body">
+                <h2 class="title">Alterar</h2>
+                {% include '_partials/_alertas.html' %}
+                <form action="{% url 'cursos_alterar' curso.id %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-section">
+                        <h3 class="light-title">Dados básicos</h3>
+                        <div class="input-unit">
+                            <label for="code">Código <span>*</span></label>
+                            <input type="text" name="code" id="code" class="uppercase-code-7" required readonly value="{{curso.codigo}}" pattern="[A-Z0-9]{7}" size="7">
+                        </div>
+                        <div class="input-unit">
+                            <label for="description">Descrição <span>*</span></label>
+                            <input type="text" name="description" id="description" required value="{{curso.descricao}}" size="35">
+                        </div>
+                        <div class="input-unit">
+                            <label for="periodicity">Periodicidade <span>*</span></label>
+                            <input type="hidden" name="periodicity" id="periodicity" class="select-value" value="{{curso.periodicidade}}">
+                            <select name="periodicity" id="periodicity" required>
+                                <option value="Bimestral">Bimestral</option>
+                                <option value="Trimestral">Trimestral</option>
+                                <option value="Semestral">Semestral</option>
+                            </select>
+                        </div>
+                        <div class="input-unit">
+                            <label for="coordinator">Coordenador</label>
+                            <input type="text" name="coordinator" id="coordinator" class="numeric-code-9" value="{{curso.coordenador|default:''}}" pattern="[0-9]{9}" size="9">
+                        </div>
+                        {% if curso.proposta_pedagogica %}
+                        <div class="input-unit">
+                            <label for="syllabus">Proposta Pedagógica atual</label>
+                            <a href="{{curso.proposta_pedagogica}}" target="_blank">Clique aqui</a>
+                        </div>
+                        {% endif %}
+                        <div class="input-unit">
+                            <label for="syllabus">Proposta Pedagógica</label>
+                            <input type="file" name="syllabus" id="syllabus" accept=".pdf, .docx">
+                        </div>
+                    </div>
+<!--                    <div class="form-section subjects">
+                        <h3 class="light-title">Disciplinas<strong class="action-add-item disable-select">+</strong><strong class="action-remove-item disable-select">-</strong></h3>
+                        {% for disciplina in disciplinas %}
+                        <div class="item-section">
+                            <div class="input-unit">
+                                <label for="subject-code-0">Código</label>
+                                <input type="text" name="subject-code-0" id="subject-code-0" class="uppercase-code-11" value="{{disciplina.id}}" pattern="[A-Z0-9]{11}" size="11">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-description-0">Descrição <span>*</span></label>
+                                <input type="text" name="subject-description-0" id="subject-description-0" required value="{{disciplina.descricao}}" size="35">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-teacher-0">Professor <span>*</span></label>
+                                <input type="text" name="subject-teacher-0" id="subject-teacher-0" class="numeric-code-9" required value="{{disciplina.professores.0}}" pattern="[0-9]{9}" title="Digite o ID do(a) professor(a)" size="9">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-weekday-0">Dia da semana <span>*</span></label>
+                                <input type="hidden" name="subject-weekday-0" id="subject-weekday-0" class="select-value" value="{{disciplina.weekday.0}}">
+                                <select name="subject-weekday-0" id="subject-weekday-0" required>
+                                    <option value="Segunda">Segunda</option>
+                                    <option value="Terça">Terça</option>
+                                    <option value="Quarta">Quarta</option>
+                                    <option value="Quinta">Quinta</option>
+                                    <option value="Sexta">Sexta</option>
+                                    <option value="Sábado">Sábado</option>
+                                    <option value="Domingo">Domingo</option>
+                                </select>
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-start-time-0">Início <span>*</span></label>
+                                <input type="time" name="subject-start-time-0" id="subject-start-time-0" class="time" required value="{{disciplina.horario_inicio.0}}">
+                            </div>
+                            <div class="input-unit">
+                                <label for="subject-end-time-0">Término <span>*</span></label>
+                                <input type="time" name="subject-end-time-0" id="subject-end-time-0" class="time" required value="{{disciplina.horario_termino.0}}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>-->
+                    <input type="submit" name="submit" id="submit" value="Enviar">
+                </form>
+            </div>
+        </main>
+
+        {% include '_partials/_form_validation.html' %}
+{% endblock %}
