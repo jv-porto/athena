@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = False
 
 ALLOWED_HOSTS = ['athena.thrucode.com.br']
-ALLOWED_HOSTS.extend(['172.31.80.182'])
+ALLOWED_HOSTS.append(os.environ['SERVER_IP'])
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
